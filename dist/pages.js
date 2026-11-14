@@ -95,8 +95,8 @@
   function lifePhotoSection(collection,number){
     const isTeam=collection.id==='team',heading=isTeam?['我与','我的球队']:['生活','片段'];
     // Each chapter is a continuous composition; paired smaller photos share a column.
-    const desktop=[[.07,.40,.22,.44],[.42,.14,.335,.60],[.84,.28,.19,.34],[.84,.67,.19,.21],[1.11,.14,.335,.62],[1.53,.30,.19,.33],[1.53,.67,.19,.21],[1.80,.14,.335,.62]];
-    const mobile=[[.08,.44,.62,.41],[.77,.24,.70,.52],[1.54,.44,.54,.37],[1.54,.18,.54,.22],[2.16,.24,.70,.52],[2.93,.44,.54,.37],[2.93,.18,.54,.22],[3.55,.24,.70,.52]];
+    const desktop=[[.07,.40,.22,.44],[.42,.14,.335,.60],[.81,.28,.19,.34],[.81,.67,.19,.21],[1.06,.14,.335,.62],[1.45,.30,.19,.33],[1.45,.67,.19,.21],[1.70,.14,.335,.62]];
+    const mobile=[[.08,.44,.62,.41],[.75,.24,.70,.52],[1.50,.44,.54,.37],[1.50,.18,.54,.22],[2.10,.24,.70,.52],[2.85,.44,.54,.37],[2.85,.18,.54,.22],[3.45,.24,.70,.52]];
     let width=0,mobileWidth=0;
     const groups=collection.items.map((group,index)=>{
       const start=width,mobileStart=mobileWidth;
@@ -104,8 +104,8 @@
         const d=group.photos.length===1?[.42,.14,.335,.60]:desktop[i],m=group.photos.length===1?[.08,.34,.70,.52]:mobile[i];
         return {...photo,localIndex:i+1,total:group.photos.length,d:[start+d[0],...d.slice(1)],m:[mobileStart+m[0],...m.slice(1)]};
       });
-      width+=Math.max(1.03,...photos.map(p=>p.d[0]-start+p.d[2]+.10));
-      mobileWidth+=Math.max(1.03,...photos.map(p=>p.m[0]-mobileStart+p.m[2]+.10));
+      width+=Math.max(.83,...photos.map(p=>p.d[0]-start+p.d[2]+.06));
+      mobileWidth+=Math.max(.90,...photos.map(p=>p.m[0]-mobileStart+p.m[2]+.06));
       return {...group,index,start,mobileStart,photos};
     });
     const anchors=groups.map(g=>g.start.toFixed(3)).join(','),mobileAnchors=groups.map(g=>g.mobileStart.toFixed(3)).join(',');
@@ -220,7 +220,7 @@
     if(!metrics||route==='home')return;
     const {h,w,sections:s}=metrics;
     document.documentElement.style.setProperty('--header-color',menuPaused?'#f3f3eb':ui.caseStudy?ui.headerColor:route==='life'?'#0a2447':'#f3f3eb');
-    if(ui.footerPhoto&&!ui.caseStudy)ui.footerPhoto.style.transform=`translate3d(${mouseX*8}px,${mouseY*5}px,0)`;
+    if(ui.footerPhoto&&!ui.caseStudy&&y+h>s.footer.start)ui.footerPhoto.style.transform=`translate3d(${mouseX*8}px,${mouseY*5}px,0)`;
     if(ui.kind==='project'){
       if(!ui.caseStudy)ui.projectCover.style.transform=`translate3d(0,${clamp(y/h)*22}px,0)`;
       ui.sectionButtons.forEach((button,i)=>{const section=s[button.dataset.section],next=ui.sectionButtons[i+1];const active=ui.caseStudy?(y>=section.anchor-2||i===0)&&(!next||y<s[next.dataset.section].anchor-2):y>=section.start-h*.2&&y<section.start+section.length-h*.2;if(button.classList.contains('active')!==active){button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');}if(active&&ui.caseStudy&&ui.activeToc!==button.dataset.section){ui.activeToc=button.dataset.section;ui.toc.scrollTop=Math.max(0,button.offsetTop-ui.toc.clientHeight/2+button.offsetHeight/2);}});
@@ -229,11 +229,12 @@
     const hp=clamp(y/Math.max(1,s.hero.length-h));
     if(ui.resume){
       // The resume is a normal reading layout, with no pointer or scroll transforms.
-    }else if(ui.editorial){
+    }else if(ui.editorial&&ui.heroProgress!==hp){
       ui.heroTitle.style.transform=`translate3d(0,${-hp*28}px,0)`;
       ui.heroCopy.style.transform=`translate3d(0,${-hp*12}px,0)`;
       ui.heroPhoto.style.transform=`translate3d(0,${hp*12}px,0)`;
-    }else{
+      ui.heroProgress=hp;
+    }else if(!ui.editorial){
     ui.heroTitle.style.transform=`translate3d(${-mouseX*9}px,${-hp*70-mouseY*6}px,0)`;
     ui.object.style.transform=`perspective(1300px) translate3d(${mouseX*18}px,${hp*15-mouseY*8}px,0) rotateY(${mouseX*9+hp*18}deg) rotateZ(${-4-hp*5}deg) scale(${mix(1,.9,hp)})`;
     ui.scribble.style.transform=`translate3d(${-mouseX*15}px,${-hp*35}px,0) rotate(${mouseX*3}deg)`;
@@ -438,8 +439,8 @@
     touchGesture=null;
   },{passive:true});
   addEventListener('touchcancel',()=>{touchGesture=null;},{passive:true});
-  document.addEventListener('pointermove',e=>{if(route==='home'||ui?.caseStudy||busy||menuPaused||reduced.matches||e.pointerType==='touch')return;aimX=clamp(e.clientX/innerWidth*2-1,-1,1);aimY=clamp(e.clientY/innerHeight*2-1,-1,1);request();},{passive:true});
-  document.addEventListener('pointerleave',()=>{aimX=aimY=0;request();});
+  document.addEventListener('pointermove',e=>{if(route==='home'||ui?.caseStudy||busy||menuPaused||reduced.matches||e.pointerType==='touch'||(route==='life'&&(!metrics||position+metrics.h<=metrics.sections.footer.start)))return;aimX=clamp(e.clientX/innerWidth*2-1,-1,1);aimY=clamp(e.clientY/innerHeight*2-1,-1,1);request();},{passive:true});
+  document.addEventListener('pointerleave',()=>{if(!aimX&&!aimY)return;aimX=aimY=0;request();});
   document.addEventListener('portfolio:menu',e=>{menuPaused=e.detail.open;if(menuPaused){stop();if(route!=='home')document.documentElement.style.setProperty('--header-color','#f3f3eb');}else request();});
   document.addEventListener('keydown',e=>{
     if(route==='home'||busy||menuPaused||dialog.open||!metrics)return;
