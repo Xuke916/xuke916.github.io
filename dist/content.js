@@ -2,10 +2,10 @@
 // Put image files in dist/assets/ and use paths such as "assets/portrait.webp".
 window.PORTFOLIO_CONTENT = {
   name: ["XU", "KE"],
-  heroImage: "assets/hero-person.webp",
-  heroHelmetImage: "assets/hero-helmet.webp",
-  heroImageSmall: "assets/hero-person-small.webp",
-  heroHelmetImageSmall: "assets/hero-helmet-small.webp",
+  heroImage: "assets/hero-person-v2.png",
+  heroHelmetImage: "assets/hero-helmet-v2.png",
+  heroImageSmall: "assets/hero-person-small-v2.webp",
+  heroHelmetImageSmall: "assets/hero-helmet-small-v2.webp",
   message: {
     lines: ["GREAT OF ALL TIME", "BE THE BEST OF THE BEST"]
   },
