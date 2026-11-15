@@ -11,6 +11,7 @@ w.matchMedia=()=>({matches:false,addEventListener(){},removeEventListener(){}});
 for(const file of ['content.js','moneyball.js','poro.js','rewinder.js','work-profile.js','i18n-data.js','i18n.js']) w.eval(fs.readFileSync(path.join(dist,file),'utf8'));
 const settle=()=>new Promise(resolve=>w.setTimeout(resolve,0));
 const language=w.PortfolioLanguage;
+let syntheticResizes=0;w.addEventListener('resize',()=>syntheticResizes++);
 const host=d.createElement('div');d.body.append(host);
 const chinese=/[\u3400-\u9fff]/;
 function untranslated(root){
@@ -20,6 +21,7 @@ function untranslated(root){
   return [...missing];
 }
 d.querySelector('[data-site-language="en"]').click();
+assert.equal(syntheticResizes,0,'Language selection must not reset the animation through a synthetic browser resize');
 assert.equal(d.documentElement.lang,'en');assert.equal(w.localStorage.getItem('portfolio-language'),'en');
 assert.equal(d.querySelector('[data-site-language="en"]').getAttribute('aria-pressed'),'true');
 assert.deepEqual(untranslated(d.body),[],'Homepage translation coverage');
@@ -53,6 +55,18 @@ host.firstChild.firstChild.nodeValue='关闭导航';await settle();assert.equal(
 host.innerHTML='<button aria-label="播放演示：强化钩锁：蓄力、出钩与反弹">播放演示</button>';await settle();assert.deepEqual(untranslated(host),[],'Dynamically paused media controls');
 host.innerHTML='<p>关闭导航</p>';await settle();
 d.querySelector('[data-site-language="zh"]').click();assert.equal(host.textContent,'关闭导航');
+// Animation counters and SVG updates must not rewrite language controls or
+// perform document-wide selector work on every frame, in either language.
+for(const selected of ['zh','en']){
+  language.setLanguage(selected);await settle();
+  let globalQueries=0;
+  const query=d.querySelectorAll.bind(d);
+  d.querySelectorAll=(...args)=>{globalQueries++;return query(...args);};
+  const counter=d.querySelector('#moment-counter');
+  for(let frame=0;frame<20;frame++){counter.textContent=String(frame%8+1).padStart(2,'0');counter.style.transform=`translateX(${frame}px)`;await settle();}
+  d.querySelectorAll=query;
+  assert.equal(globalQueries,0,selected+': unrelated animation frames must bypass language refresh');
+}
 // Reload with an existing preference, including a browser with unavailable storage.
 for(const storage of ['en','blocked']){
   const reload=new JSDOM('<title>XU KE / Portfolio</title><body><p>日常生活</p>',{url:'https://example.github.io/',runScripts:'outside-only'});

@@ -385,6 +385,12 @@
     if(route==='home'||busy||Math.abs(scrollY-written)<1)return;
     jump=null;position=target=written=clamp(scrollY,0,metrics.max);request();
   },{passive:true});
+  document.addEventListener('portfolio:languagechange',()=>{
+    if(route==='home'||!metrics)return;
+    // Copy changes only require detail-page measurement, not a browser resize
+    // that restarts the home scroll timeline and fluid renderer.
+    measure();position=target=written=clamp(position,0,metrics.max);write(position);render(position);
+  });
   addEventListener('resize',()=>{
     if(route==='home'||!metrics)return;
     const old=metrics, entries=Object.entries(old.sections);

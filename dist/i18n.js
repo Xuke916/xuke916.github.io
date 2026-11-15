@@ -4,6 +4,7 @@
   const normalize = text => text.replace(/\s+/g, ' ').trim();
   const attributes = ['alt', 'title', 'aria-label', 'placeholder'];
   const sources = new WeakMap();
+  const hasChinese = text => /[\u3400-\u9fff]/.test(text || '');
   let language = 'zh';
   try { if (localStorage.getItem('portfolio-language') === 'en') language = 'en'; } catch {}
 
@@ -61,17 +62,26 @@
         else process(node);
       }
     }
+    syncButtons();
     observe();
   }
   const observer = new MutationObserver(records => {
+    // Chinese is already the source language. Never do localization work for
+    // animation counters or other DOM activity while it is selected.
+    if (language !== 'en') return;
     const pending = new Set();
+    const add = node => {
+      if (node.nodeType === Node.TEXT_NODE) { if (hasChinese(node.nodeValue)) pending.add(node); return; }
+      if (node.nodeType !== Node.ELEMENT_NODE || node.closest('script,style,noscript,code,[data-language-label]')) return;
+      if (hasChinese(node.textContent) || attributes.some(attr=>hasChinese(node.getAttribute(attr))) || [...node.querySelectorAll('[alt],[title],[aria-label],[placeholder]')].some(el=>attributes.some(attr=>hasChinese(el.getAttribute(attr))))) pending.add(node);
+    };
     for (const record of records) {
-      if (record.type === 'childList') for (const node of record.addedNodes) if (node.nodeType === 1 || node.nodeType === 3) pending.add(node);
-      if (record.type === 'characterData' || record.type === 'attributes') pending.add(record.target);
+      if (record.type === 'childList') for (const node of record.addedNodes) add(node);
+      if (record.type === 'characterData') add(record.target);
+      if (record.type === 'attributes' && hasChinese(record.target.getAttribute(record.attributeName))) pending.add(record.target);
     }
     for (const node of pending) if (node.isConnected) refresh(node);
-    updateTitle();
-    syncButtons();
+    if (pending.size) updateTitle();
   });
   function observe() { observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributes}); }
   function updateTitle() {
@@ -79,7 +89,10 @@
     if (title) updateValue(title,'title',()=>title.textContent,value=>{title.textContent=value;});
   }
   function syncButtons() {
-    for (const button of document.querySelectorAll('[data-site-language],[data-resume-language]')) button.setAttribute('aria-pressed', String((button.dataset.siteLanguage || button.dataset.resumeLanguage) === language));
+    for (const button of document.querySelectorAll('[data-site-language],[data-resume-language]')) {
+      const pressed=String((button.dataset.siteLanguage || button.dataset.resumeLanguage) === language);
+      if (button.getAttribute('aria-pressed') !== pressed) button.setAttribute('aria-pressed',pressed);
+    }
   }
   function setLanguage(next) {
     if (!['zh','en'].includes(next)) return;
@@ -90,8 +103,6 @@
     updateTitle();
     syncButtons();
     document.dispatchEvent(new CustomEvent('portfolio:languagechange',{detail:{language}}));
-    // Let translated text settle before existing page measurement runs.
-    window.dispatchEvent(new Event('resize'));
   }
   document.addEventListener('click', event => {
     const button = event.target.closest?.('[data-site-language],[data-resume-language]');

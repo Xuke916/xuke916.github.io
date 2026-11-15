@@ -30,6 +30,7 @@ async function boot({reduce=false, detail=false, fail=false, pauseDuringLoad=fal
   w.PORTFOLIO_CONTENT={heroImage:'person.png',heroHelmetImage:'helmet.png'};
   if(random!==undefined)w.Math.random=()=>random;
   w.eval(source.replace('field=new FlowField(', 'field=window.__fieldForTest=new FlowField('));if(pauseDuringLoad)w.HeroFluid.setActive(false);
+  for(const file of ['i18n-data.js','i18n.js'])w.eval(fs.readFileSync(path.join(__dirname,'../dist',file),'utf8'));
   await new Promise(resolve=>setImmediate(resolve));
   function step(n=1){for(let i=0;i<n;i++){clock+=16.667;for(const [id,t] of [...timers])if(t.at<=clock){timers.delete(id);t.cb();}const jobs=[...queue.values()];queue.clear();jobs.forEach(cb=>cb(clock));}}
   function move(x,y,type='mouse'){const e=new w.Event('pointermove');Object.assign(e,{clientX:x,clientY:y,pointerType:type});d.dispatchEvent(e);}
