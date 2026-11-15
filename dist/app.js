@@ -43,9 +43,13 @@
     { x:60,y:330,w:24,r:.8,speed:1.01,c:'#6384ad',mx:55 }
   ];
 
-  function addImage(parent, path, alt) {
+  function addImage(parent, path, alt, options = {}) {
     if (!path) return;
-    const img = document.createElement('img'); img.src = path; img.alt = alt;
+    const img = document.createElement('img');
+    img.alt = alt; img.decoding = 'async';
+    if(options.lazy) img.loading = 'lazy';
+    if(options.srcset) { img.srcset = options.srcset; img.sizes = options.sizes; }
+    img.src = path;
     img.addEventListener('error', () => { img.remove(); });
     parent.append(img);
   }
@@ -77,10 +81,16 @@
     figure.style.cssText = `--x:${l.x}%;--mobile-x:${l.mx}%;--y:${l.y}%;--w:${l.w}%;--ratio:${l.r};--slot-color:${l.c}`;
     const caption = document.createElement('figcaption'); caption.textContent = data.caption;
     const link = document.createElement('a'); link.className = 'image-slot';
+    if(data.fit) link.style.setProperty('--image-fit', data.fit);
+    if(data.background) link.style.background = data.background;
     link.href = '#explore';
     link.setAttribute('aria-label', `${data.caption}：前往专业作品与日常生活`);
-    link.innerHTML = `<span class="slot-grid"></span><span class="slot-cross"></span><span class="slot-corner">↗</span><span class="slot-number">${String(i + 2).padStart(2, '0')} / IMAGE PLACEHOLDER</span>`;
-    addImage(link, data.image, data.caption);
+    link.innerHTML = data.image ? '' : `<span class="slot-grid"></span><span class="slot-cross"></span><span class="slot-corner">↗</span><span class="slot-number">${String(i + 2).padStart(2, '0')} / IMAGE PLACEHOLDER</span>`;
+    addImage(link, data.image, data.caption, {
+      lazy: true,
+      srcset: data.thumbnail ? `${data.thumbnail} ${data.smallWidth}w, ${data.image} ${data.width}w` : '',
+      sizes: `(max-width:600px) ${l.w * 1.65}vw, ${l.w}vw`
+    });
     figure.append(caption, link); world.append(figure);
   });
   const cards = $$('.gallery-card');

@@ -9,7 +9,16 @@ window.PORTFOLIO_CONTENT = {
   message: {
     lines: ["GREAT OF ALL TIME", "BE THE BEST OF THE BEST"]
   },
-  gallery: Array.from({ length: 8 }, (_, i) => ({ image: "", caption: "IMAGE / " + String(i + 2).padStart(2, "0") })),
+  gallery: [
+    { image: 'assets/gallery/poro-cover.webp', caption: '01 / PORO ADVENTURE', fit: 'contain', background: '#152940' },
+    { image: 'assets/gallery/rewinder-cover.webp', caption: '02 / REWINDER', fit: 'contain', background: '#000' },
+    { image: 'assets/gallery/moneyball-cover.webp', caption: '03 / MONEY BALL', fit: 'contain', background: '#c5cecd' },
+    { image: 'assets/team/at-bat-01.webp', thumbnail: 'assets/team/at-bat-01-small.webp', width: 1600, smallWidth: 640, caption: '04 / AT BAT' },
+    { image: 'assets/team/field-days-03.webp', thumbnail: 'assets/team/field-days-03-small.webp', width: 1280, smallWidth: 587, caption: '05 / BATTING PRACTICE' },
+    { image: 'assets/team/field-days-04.webp', thumbnail: 'assets/team/field-days-04-small.webp', width: 1600, smallWidth: 640, caption: '06 / WITH MY TEAM' },
+    { image: 'assets/team/pitching-03.webp', thumbnail: 'assets/team/pitching-03-small.webp', width: 1600, smallWidth: 640, caption: '07 / ON THE MOUND' },
+    { image: 'assets/team/pitching-04.webp', thumbnail: 'assets/team/pitching-04-small.webp', width: 1280, smallWidth: 587, caption: '08 / THE PITCH' }
+  ],
   footer: { portrait: "", headline: [["YOUR", "STORY"], ["GOES", "HERE"]], socials: [] },
   pages: {
     work: {

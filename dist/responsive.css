@@ -47,6 +47,7 @@ body{min-width:280px;overflow-wrap:break-word}
 }
 
 @media(min-width:601px) and (max-width:1100px) and (min-height:601px){
+ .message-signature{width:88vw}
  .hero-photo-mode .hero-portrait{width:min(138svh,165vw);left:50%}
  .split-options{width:62%;gap:32px}
  .split-heading em,.split-heading strong{font-size:clamp(48px,7vw,72px)}
