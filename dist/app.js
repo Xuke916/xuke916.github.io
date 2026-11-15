@@ -246,8 +246,8 @@
     ui.marqueeGroup.style.opacity=messageText;
     ui.messageEyebrow.style.opacity=smooth(range(t,2.35,2.9))*(1-messageOut);
     ui.messageFooter.style.opacity=messageText;
-    const draw=smooth(range(t,2.5,3.35));
-    signature.style.opacity=draw*(1-messageOut);
+    const draw=smooth(range(t,2.65,3.35));
+    signature.style.opacity=smooth(range(t,2.45,2.7))*(1-messageOut);
     signaturePath.style.strokeDashoffset=1-draw;
     signature.style.transform=`translate3d(calc(-50% + ${-heroPX*22}px),calc(-50% + ${-heroPY*14}px),0) rotate(${heroPX*3}deg) scale(${mix(.92,1,draw)})`;
 
