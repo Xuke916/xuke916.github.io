@@ -39,6 +39,9 @@ async function boot({reduce=false, detail=false, fail=false, pauseDuringLoad=fal
 (async()=>{
   for(const [width,height] of [[1280,720],[1200,1173],[390,844]]){
     const a=await boot({width,height}),c=a.d.querySelector('.hero-fluid-canvas');
+    assert.ok(a.field.n<=88*88,'fluid work is bounded on desktop as well as mobile');
+    assert.ok(c.width*c.height<=552000,'portrait compositor stays within its GPU pixel budget');
+    assert.ok(a.d.querySelector('.hero-fluid-air').width*a.d.querySelector('.hero-fluid-air').height<=262000,'background compositor has a separate pixel budget');
     if(width<=600){assert.ok(c.width*c.height<=422000,'mobile portrait GPU surface has a fixed pixel budget');assert.ok(a.d.querySelector('.hero-fluid-air').width*a.d.querySelector('.hero-fluid-air').height<=222000,'blank-space fluid has a separate small pixel budget');assert.ok(a.field.n<=96*96,'mobile simulation cannot grow with device pixel density');}
     assert.equal(c.dataset.renderer,'canvas');
     const initial=a.draws;a.step(119);

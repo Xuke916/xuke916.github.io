@@ -4,7 +4,6 @@
   const normalize = text => text.replace(/\s+/g, ' ').trim();
   const attributes = ['alt', 'title', 'aria-label', 'placeholder'];
   const sources = new WeakMap();
-  const hasChinese = text => /[\u3400-\u9fff]/.test(text || '');
   let language = 'zh';
   try { if (localStorage.getItem('portfolio-language') === 'en') language = 'en'; } catch {}
 
@@ -40,9 +39,8 @@
 
   function refresh(scope = document.body) {
     if (!scope) return;
-    observer.disconnect();
     const element = scope.nodeType === Node.ELEMENT_NODE ? scope : scope.parentElement;
-    if (!element || element.closest('script,style,noscript,code,[data-language-label]')) { observe(); return; }
+    if (!element || element.closest('script,style,noscript,code,[data-language-label]')) return;
     const process = el => {
       for (const attr of attributes) if (el.hasAttribute(attr)) updateValue(el, attr, () => el.getAttribute(attr), value => el.setAttribute(attr,value));
       if (el.matches('.wp-content')) el.lang = language === 'en' ? 'en' : 'zh-CN';
@@ -63,27 +61,8 @@
       }
     }
     syncButtons();
-    observe();
+    updateTitle();
   }
-  const observer = new MutationObserver(records => {
-    // Chinese is already the source language. Never do localization work for
-    // animation counters or other DOM activity while it is selected.
-    if (language !== 'en') return;
-    const pending = new Set();
-    const add = node => {
-      if (node.nodeType === Node.TEXT_NODE) { if (hasChinese(node.nodeValue)) pending.add(node); return; }
-      if (node.nodeType !== Node.ELEMENT_NODE || node.closest('script,style,noscript,code,[data-language-label]')) return;
-      if (hasChinese(node.textContent) || attributes.some(attr=>hasChinese(node.getAttribute(attr))) || [...node.querySelectorAll('[alt],[title],[aria-label],[placeholder]')].some(el=>attributes.some(attr=>hasChinese(el.getAttribute(attr))))) pending.add(node);
-    };
-    for (const record of records) {
-      if (record.type === 'childList') for (const node of record.addedNodes) add(node);
-      if (record.type === 'characterData') add(record.target);
-      if (record.type === 'attributes' && hasChinese(record.target.getAttribute(record.attributeName))) pending.add(record.target);
-    }
-    for (const node of pending) if (node.isConnected) refresh(node);
-    if (pending.size) updateTitle();
-  });
-  function observe() { observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributes}); }
   function updateTitle() {
     const title = document.querySelector('title');
     if (title) updateValue(title,'title',()=>title.textContent,value=>{title.textContent=value;});

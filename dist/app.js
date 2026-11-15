@@ -127,7 +127,7 @@
     cursorActive = false; cursor.classList.remove('visible');
     const holder = $('.dialog-image'); holder.innerHTML = '<span class="slot-cross"></span>';
     addImage(holder, path, caption); $('.dialog-label').textContent = caption;
-    dialog.showModal(); document.body.style.overflow = 'hidden';
+    window.PortfolioLanguage?.refresh(dialog);dialog.showModal(); document.body.style.overflow = 'hidden';
   }
   function closePreview() { dialog.close(); }
   $('.dialog-close').addEventListener('click', closePreview);
@@ -139,7 +139,7 @@
     aimX = aimY = 0;
     menuOpen = open; document.body.classList.toggle('menu-open', open);
     menu.inert = !open; $('.stage').inert = open; $('.chapter-navigation').inert = open;
-    toggle.setAttribute('aria-expanded', String(open)); toggle.setAttribute('aria-label', open ? '关闭导航' : '打开导航');
+    toggle.setAttribute('aria-expanded', String(open)); toggle.setAttribute('aria-label', open ? '关闭导航' : '打开导航');window.PortfolioLanguage?.refresh(toggle);
     document.body.style.overflow = open ? 'hidden' : '';
     document.dispatchEvent(new CustomEvent('portfolio:menu', { detail: { open } }));
     if (open) { cursor.classList.remove('visible'); $('a', menu).focus({preventScroll:true}); }
@@ -262,7 +262,7 @@
     quote.style.opacity=galleryEnter*(1-splitEnter);
     quote.style.transform=`translate3d(${px*15}px,${-gp*.68*unit-py*11}px,0)`;
     ui.galleryContours.style.transform=`translate3d(${-px*16}px,${-gp*2.8-py}%,0)`;
-    ui.counter.textContent=String(clamp(Math.floor(gp*2.3)+1,1,8)).padStart(2,'0');
+    const count=String(clamp(Math.floor(gp*2.3)+1,1,8)).padStart(2,'0');if(ui.counter.textContent!==count)ui.counter.textContent=count;
 
     }
     if(t>7.95){
@@ -284,7 +284,7 @@
       activeChapter=chapter;
       ui.chapterLinks.forEach((a,i)=>{a.classList.toggle('active',i===chapter);if(i===chapter)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current');});
       [hero,message,gallery,split].forEach((scene,i)=>{scene.inert=chapter!==i;scene.setAttribute('aria-hidden',String(chapter!==i));});
-      ui.liveStatus.textContent=['01 / 开场','02 / 缩小画面','03 / 图片叙事','04 / 双栏入口'][chapter];
+      ui.liveStatus.textContent=['01 / 开场','02 / 缩小画面','03 / 图片叙事','04 / 双栏入口'][chapter];window.PortfolioLanguage?.refresh(ui.liveStatus);
     }
     const max=Math.max(1,unit*TOTAL_HEIGHT-innerHeight);
     progress.style.transform=`scaleX(${clamp(y/max)})`;

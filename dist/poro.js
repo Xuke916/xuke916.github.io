@@ -73,14 +73,14 @@
  function mount(root){
   const toc=root.querySelector('.poro-toc'),toggle=root.querySelector('.poro-toc-toggle');
   const compact=matchMedia('(max-width:1100px)'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');};
+  const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');window.PortfolioLanguage?.refresh(toggle);};
   const onToggle=()=>setNav(toggle.getAttribute('aria-expanded')!=='true');
   const onNavClick=e=>{if(e.target.closest('[data-section]')&&compact.matches)setNav(false);};
   const onEscape=e=>{if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){setNav(false);toggle.focus();}};
   const onMode=()=>setNav(false);
   let menuPaused=false,disposed=false,fallbackFrame=0;
   const motions=[...root.querySelectorAll('[data-motion-figure]')].map(figure=>({figure,video:figure.querySelector('video'),button:figure.querySelector('[data-poro-motion]'),requested:!reduced.matches,manualPaused:false,visible:false,wanted:false,pending:false,blocked:false}));
-  const labels=item=>{const enabled=item.requested&&!item.blocked;item.button.setAttribute('aria-pressed',String(enabled));item.button.setAttribute('aria-label',(enabled?'暂停演示：':'播放演示：')+item.button.dataset.title);item.button.innerHTML=(enabled?'暂停演示':'播放演示')+` <span aria-hidden="true">${enabled?'Ⅱ':'▶'}</span>`;};
+  const labels=item=>{const enabled=item.requested&&!item.blocked;item.button.setAttribute('aria-pressed',String(enabled));item.button.setAttribute('aria-label',(enabled?'暂停演示：':'播放演示：')+item.button.dataset.title);item.button.innerHTML=(enabled?'暂停演示':'播放演示')+` <span aria-hidden="true">${enabled?'Ⅱ':'▶'}</span>`;window.PortfolioLanguage?.refresh(item.button);};
   const sync=item=>{
    const video=item.video;
    item.wanted=!disposed&&item.requested&&item.visible&&!document.hidden&&!menuPaused;
@@ -109,8 +109,8 @@
   const dialog=document.querySelector('.image-dialog'),holder=dialog.querySelector('.dialog-image');
   dialog.classList.add('poro-lightbox');
   const zoom=document.createElement('button');zoom.className='poro-zoom';zoom.textContent='放大细节 ＋';zoom.setAttribute('aria-pressed','false');
-  zoom.addEventListener('click',()=>{const on=holder.classList.toggle('poro-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));});
-  dialog.querySelector('.dialog-footer').append(zoom);
+  zoom.addEventListener('click',()=>{const on=holder.classList.toggle('poro-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));window.PortfolioLanguage?.refresh(zoom);});
+  dialog.querySelector('.dialog-footer').append(zoom);window.PortfolioLanguage?.refresh(zoom);
   dialog.addEventListener('close',()=>{dialog.classList.remove('poro-lightbox');holder.classList.remove('poro-zoomed');zoom.remove();},{once:true});
  }
  window.PoroCaseStudy={render,mount,openImage,tocSelector:'.poro-toc',headerColor:'#edf8ff'};

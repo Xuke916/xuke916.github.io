@@ -407,14 +407,14 @@
     surfaceSize=key;
     width=nextWidth;height=nextHeight;
     const light=lightweight();
-    const long=Math.min(light?96:160,Math.max(72,Math.round(Math.max(width,height)*.1)));
+    const long=Math.min(light?64:88,Math.max(48,Math.round(Math.max(width,height)*.1)));
     field=new FlowField(Math.max(24,Math.round(long*width/Math.max(width,height))),Math.max(24,Math.round(long*height/Math.max(width,height))));
     if (!ready) return;
     const surface=renderer.surface,w=portrait.clientWidth,h=portrait.clientHeight;
-    const scale=Math.min(devicePixelRatio||1,light?1.25:1.5,Math.sqrt((light?420000:1400000)/(w*h)));
+    const scale=Math.min(devicePixelRatio||1,light?1.25:1.5,Math.sqrt((light?240000:550000)/(w*h)));
     surface.width=Math.round(w*scale);surface.height=Math.round(h*scale);
     if (airRenderer) {
-      const scale=Math.min(devicePixelRatio||1,1,Math.sqrt((light?220000:750000)/(width*height)));
+      const scale=Math.min(devicePixelRatio||1,1,Math.sqrt((light?120000:260000)/(width*height)));
       airRenderer.surface.width=Math.round(width*scale);airRenderer.surface.height=Math.round(height*scale);
     }
     stop(!wanted?'paused':reduced.matches?'static':thumbnail>=.995?'thumbnail':'idle');
@@ -422,7 +422,7 @@
   }
   document.addEventListener('pointermove',event => {
     if (!interactive() || event.pointerType==='touch') {lastPoint=null;return;}
-    const events=event.getCoalescedEvents?.();
+    const events=event.getCoalescedEvents?.()?.slice(-4);
     for (const point of events?.length?events:[event]) {
       const s=scene.getBoundingClientRect();
       const x=clamp((point.clientX-s.left)/s.width),y=clamp((point.clientY-s.top)/s.height);
@@ -436,7 +436,7 @@
         // Discard re-entry jumps, not continuous strokes across the blank space.
         if (now-lastPoint.time<150 && distance<Math.max(width,height)*.65) {
           takePointer(now);
-          pending.push({px:lastPoint.x,py:lastPoint.y,x,y});lastInput=now;
+          pending.push({px:lastPoint.x,py:lastPoint.y,x,y});if(pending.length>16)pending.splice(0,pending.length-16);lastInput=now;
           (renderer.surface).dataset.input=`${x.toFixed(3)},${y.toFixed(3)}`;
         }
       }

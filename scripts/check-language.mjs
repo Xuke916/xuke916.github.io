@@ -9,7 +9,7 @@ const dom=new JSDOM(fs.readFileSync(path.join(dist,'index.html'),'utf8'),{url:'h
 const w=dom.window,d=w.document;
 w.matchMedia=()=>({matches:false,addEventListener(){},removeEventListener(){}});
 for(const file of ['content.js','moneyball.js','poro.js','rewinder.js','work-profile.js','i18n-data.js','i18n.js']) w.eval(fs.readFileSync(path.join(dist,file),'utf8'));
-const settle=()=>new Promise(resolve=>w.setTimeout(resolve,0));
+const settle=()=>{w.PortfolioLanguage.refresh();return new Promise(resolve=>w.setTimeout(resolve,0));};
 const language=w.PortfolioLanguage;
 let syntheticResizes=0;w.addEventListener('resize',()=>syntheticResizes++);
 const host=d.createElement('div');d.body.append(host);
@@ -63,7 +63,7 @@ for(const selected of ['zh','en']){
   const query=d.querySelectorAll.bind(d);
   d.querySelectorAll=(...args)=>{globalQueries++;return query(...args);};
   const counter=d.querySelector('#moment-counter');
-  for(let frame=0;frame<20;frame++){counter.textContent=String(frame%8+1).padStart(2,'0');counter.style.transform=`translateX(${frame}px)`;await settle();}
+  for(let frame=0;frame<20;frame++){counter.textContent=String(frame%8+1).padStart(2,'0');counter.style.transform=`translateX(${frame}px)`;await new Promise(resolve=>w.setTimeout(resolve,0));}
   d.querySelectorAll=query;
   assert.equal(globalQueries,0,selected+': unrelated animation frames must bypass language refresh');
 }

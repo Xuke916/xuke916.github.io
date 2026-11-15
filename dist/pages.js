@@ -304,7 +304,7 @@
       position=target=clamp(destination,0,metrics.max);written=position;write(position);render(position);
       const title=info?(info.project.caseTitle||info.project.title):data.title.join('');
       $('.skip-link').href='#detail-section-navigation';$('.live-status').textContent=title;
-      document.title=title+' / Portfolio';
+      document.title=title+' / Portfolio';window.PortfolioLanguage?.refresh($('.live-status'));
     }
   }
   function transitionTo(to,{chapter='explore',push=true,restore=false,immediate=false,projectIndex}={}){
@@ -316,7 +316,7 @@
     stop();busy=true;document.body.classList.add('is-routing');home.inert=true;root.inert=true;$('.site-header').inert=true;document.body.style.overflow='hidden';
     if(push)history.pushState({page:to},'',to==='home'?'#'+chapter:'#'+to);
     const caption=routeCaption(to);
-    $('.route-transition-caption').textContent=caption;
+    $('.route-transition-caption').textContent=caption;window.PortfolioLanguage?.refresh($('.route-transition-caption'));
     if(immediate||reduced.matches||to==='work/project-03'||route==='work/project-03'){
       applyRoute(to,{chapter,restore,projectIndex});finish(chapter);return;
     }

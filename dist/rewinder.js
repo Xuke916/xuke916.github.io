@@ -71,7 +71,7 @@
  }
  function mount(root){
   const toc=root.querySelector('.rw-toc'),toggle=root.querySelector('.rw-toc-toggle'),compact=matchMedia('(max-width:1100px)');
-  const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');};
+  const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');window.PortfolioLanguage?.refresh(toggle);};
   const onToggle=()=>setNav(toggle.getAttribute('aria-expanded')!=='true');
   const onNav=e=>{if(e.target.closest('[data-section]')&&compact.matches)setNav(false);};
   const onEscape=e=>{if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){setNav(false);toggle.focus();}};
@@ -84,8 +84,8 @@
   const dialog=document.querySelector('.image-dialog'),holder=dialog.querySelector('.dialog-image');
   dialog.classList.add('rw-lightbox');
   const zoom=document.createElement('button');zoom.className='rw-zoom';zoom.textContent='放大细节 ＋';zoom.setAttribute('aria-pressed','false');
-  zoom.addEventListener('click',()=>{const on=holder.classList.toggle('rw-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));});
-  dialog.querySelector('.dialog-footer').append(zoom);
+  zoom.addEventListener('click',()=>{const on=holder.classList.toggle('rw-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));window.PortfolioLanguage?.refresh(zoom);});
+  dialog.querySelector('.dialog-footer').append(zoom);window.PortfolioLanguage?.refresh(zoom);
   dialog.addEventListener('close',()=>{dialog.classList.remove('rw-lightbox');holder.classList.remove('rw-zoomed');zoom.remove();},{once:true});
  }
  window.RewinderCaseStudy={render,mount,openImage,tocSelector:'.rw-toc',headerColor:'#f2ece7'};

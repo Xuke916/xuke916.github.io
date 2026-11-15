@@ -96,7 +96,7 @@
  function mount(root){
   const toc=root.querySelector('.mb-toc'),toggle=root.querySelector('.mb-toc-toggle');
   const compact=matchMedia('(max-width:1100px)');
-  const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');};
+  const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');window.PortfolioLanguage?.refresh(toggle);};
   const onToggle=()=>setNav(toggle.getAttribute('aria-expanded')!=='true');
   const onNavClick=e=>{if(e.target.closest('[data-section]')&&compact.matches)setNav(false);};
   const onEscape=e=>{if(e.key==='Escape'&&toggle.getAttribute('aria-expanded')==='true'){setNav(false);toggle.focus();}};
@@ -116,7 +116,7 @@
    demo.querySelector('.mb-demo-grid').innerHTML=`<svg viewBox="0 0 270 270" role="img" aria-label="${step===0?'起始标记位于中央':step===1?`中央${cover}格打击覆盖`:`球最终${drop?'下移一格':'留在原位'}`}" xmlns="http://www.w3.org/2000/svg">${cells}<rect x="69" y="69" width="132" height="132" fill="none" stroke="#1e90ff" stroke-width="2"/>${step===2&&drop?'<circle cx="135" cy="135" r="9" fill="none" stroke="#1e90ff88"/><path d="M135 147v20m-4-4 4 5 4-5" fill="none" stroke="#1e90ff"/>':''}${ball}</svg>`;
    demo.querySelectorAll('[data-mb-step]').forEach((el,i)=>{el.setAttribute('aria-pressed',String(i===step));el.classList.toggle('active',i===step);});
    const status=step===0?['起始标记已公开','投手已暗选球种；现在只能根据标记和前几球的经验预测。']:step===1?['打者画出覆盖范围',cover===3?'覆盖中央三个相连格子，争取碰到更多可能落点。':'只覆盖中央一格，争取一格命中的全垒打收益。']:cover===1&&drop?['挥空，记一次好球','最终落点向下移动一格，没有进入打击覆盖。']:cover===1?['一格命中，全垒打','该打者直接得一分，不经过普通守备判定。']:['普通击中，继续守备判定','最终落点进入三格覆盖；相关球员全部守备失败，才形成安打。'];
-   demo.querySelector('.mb-demo-status').innerHTML=`<strong>${status[0]}</strong><p>${status[1]}</p>`;
+   demo.querySelector('.mb-demo-status').innerHTML=`<strong>${status[0]}</strong><p>${status[1]}</p>`;window.PortfolioLanguage?.refresh(demo);
   }
   demo.addEventListener('click',e=>{const b=e.target.closest('[data-mb-step]');if(b){step=Number(b.dataset.mbStep);update();}});
   demo.addEventListener('change',()=>{step=0;update();});update();
@@ -127,8 +127,8 @@
   const dialog=document.querySelector('.image-dialog'),holder=dialog.querySelector('.dialog-image');
   dialog.classList.add('moneyball-lightbox');
   const zoom=document.createElement('button');zoom.className='mb-zoom';zoom.textContent='放大细节 ＋';zoom.setAttribute('aria-pressed','false');
-  zoom.addEventListener('click',()=>{const on=holder.classList.toggle('mb-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));});
-  dialog.querySelector('.dialog-footer').append(zoom);
+  zoom.addEventListener('click',()=>{const on=holder.classList.toggle('mb-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));window.PortfolioLanguage?.refresh(zoom);});
+  dialog.querySelector('.dialog-footer').append(zoom);window.PortfolioLanguage?.refresh(zoom);
   dialog.addEventListener('close',()=>{dialog.classList.remove('moneyball-lightbox');holder.classList.remove('mb-zoomed');zoom.remove();},{once:true});
  }
  window.MoneyBallCaseStudy={render,mount,openImage};
