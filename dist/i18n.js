@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const dictionary = window.PORTFOLIO_EN;
+  const dictionary = Object.assign(window.PORTFOLIO_EN,window.OtherWorkCaseStudy?.translations || {});
   const normalize = text => text.replace(/\s+/g, ' ').trim();
   const attributes = ['alt', 'title', 'aria-label', 'placeholder'];
   const sources = new WeakMap();

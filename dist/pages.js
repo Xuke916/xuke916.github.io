@@ -50,7 +50,7 @@
   function buildProject(info) {
     const {project,index} = info, projects = window.PORTFOLIO_CONTENT.pages.work.projects;
     data = window.PORTFOLIO_CONTENT.pages.work;
-    const caseStudy=project.slug==='project-01'?window.PoroCaseStudy:project.slug==='project-02'?window.RewinderCaseStudy:project.slug==='project-03'?window.MoneyBallCaseStudy:null;
+    const caseStudy=project.slug==='project-01'?window.PoroCaseStudy:project.slug==='project-02'?window.RewinderCaseStudy:project.slug==='project-03'?window.MoneyBallCaseStudy:project.slug==='other-work'?window.OtherWorkCaseStudy:null;
     if(caseStudy){
       const previous=projects[(index+projects.length-1)%projects.length],next=projects[(index+1)%projects.length];
       const pagination=`<section class="project-pagination" data-detail-section="projectNavigation"><a href="#${projectRoute(previous)}" data-project-route="${projectRoute(previous)}"><span class="mono">← 上一个项目</span><strong>${esc(previous.title)}</strong></a><button data-back-projects class="mono">返回个人项目 ↗</button><a href="#${projectRoute(next)}" data-project-route="${projectRoute(next)}"><span class="mono">下一个项目 →</span><strong>${esc(next.title)}</strong></a></section>`;
