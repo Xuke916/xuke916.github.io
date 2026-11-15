@@ -87,7 +87,7 @@ body{min-width:280px;overflow-wrap:break-word}
  .chapter-navigation a.active i{height:22px}
  .message-eyebrow{top:14%;max-width:90%;text-align:center;white-space:normal}
  .message-eyebrow .mono{font-size:9px}.message-footer{bottom:var(--edge-bottom);font-size:8px;max-width:88%;white-space:normal;text-align:center}
- .message-signature{width:92vw;height:40svh}
+ .message-signature{width:104vw;height:auto}
  .gallery-card{width:calc(var(--w)*1.4)}
  .gallery-card figcaption{font-size:8px}.slot-number{font-size:8px}
  .gallery-quote>.mono{font-size:8px;line-height:1.4}.gallery-counter{font-size:9px}
@@ -173,7 +173,7 @@ body{min-width:280px;overflow-wrap:break-word}
  .chapter-navigation,.detail-section-nav{gap:0;right:0}
  .chapter-navigation a span,.detail-section-nav button>span{display:none}
  .message-eyebrow{top:8%;gap:7px}.message-eyebrow svg{height:26px;width:23px}.message-eyebrow .mono{font-size:8px}
- .message-signature{height:67svh;width:48vw}.message-footer{font-size:8px;bottom:16px}
+ .message-signature{height:auto;width:54vw}.message-footer{font-size:8px;bottom:16px}
  .split-options{top:46%;width:55%;gap:28px}.split-heading em,.split-heading strong{font-size:8svh}
  .option-index{font-size:8px;margin-bottom:10px}.description-skeleton{margin-top:16px;min-height:10px;gap:4px}
  .square-arrow{margin-top:12px;width:44px;height:44px}.split-bottom{font-size:8px}
