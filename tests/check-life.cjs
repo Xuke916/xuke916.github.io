@@ -25,7 +25,7 @@ assert.deepEqual([...gallery.querySelectorAll('.life-group-nav button')].map(b=>
 
 for(const key of ['editorialAnchors','editorialMobileAnchors']){const anchors=gallery.dataset[key].split(',').map(Number);assert.equal(anchors.length,5);assert.equal(anchors[0],0);assert.ok(anchors.every((x,i)=>i===0||x>anchors[i-1]));}
 assert.equal(gallery.querySelectorAll('.life-photo-group').length,5);assert.equal(new Set([...gallery.querySelectorAll('.life-photo-panel')].map(p=>p.style.getPropertyValue('--photo-height'))).size>2,true,'the photo composition mixes large and small images');
-assert.equal(d.querySelector('.life-editorial h1').textContent,'日常生活');assert.equal(d.querySelector('.life-editorial-photo img').getAttribute('fetchpriority'),'high');
+assert.equal(d.querySelector('.life-editorial h1').textContent,'OFFDESIGN');assert.equal(d.querySelector('.life-editorial-photo img').getAttribute('fetchpriority'),'high');
 assert.equal(d.querySelector('.life-editorial-photo img').getAttribute('src'),'assets/life/xu-ke-portrait.webp');assert.equal(d.querySelector('.life-editorial-photo img').width,1344);assert.equal(d.querySelector('.life-editorial-photo img').height,2400);
 assert.match(d.querySelector('.life-hero-intro').textContent,/中国传媒大学/);
 assert.equal(team.querySelectorAll('.project-panel').length,17,'the separate team collection remains before life photos');

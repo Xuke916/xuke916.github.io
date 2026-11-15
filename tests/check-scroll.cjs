@@ -218,7 +218,7 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,t
  d.querySelector('.project-art-main').click();flush();assert.equal(d.querySelector('dialog').open,false);assert.equal(d.body.dataset.page,'project');assert.equal(w.location.hash,'#work/project-01');
  d.querySelector('[data-back-projects]').click();flush();assert.equal(d.body.dataset.page,'work');
  d.querySelector('.footer-pages [data-open-page="life"]').click();flush();
- assert.equal(d.body.dataset.page,'life');assert.equal(d.querySelector('.detail-hero-title').textContent,'日常生活');
+ assert.equal(d.body.dataset.page,'life');assert.equal(d.querySelector('.detail-hero-title').textContent,'OFFDESIGN');
  assert.equal(d.body.classList.contains('detail-light'),true,'daily life uses its light theme');
  assert.equal(d.querySelectorAll('[data-horizontal-id="projects"] .project-panel').length,15,'daily life omits the removed hero photographs');
  assert.equal(d.querySelectorAll('[data-horizontal-id="projects"] .life-group-nav button').length,5,'life photographs have five remaining category shortcuts');
@@ -243,7 +243,9 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
  for(let i=0;i<projects.length;i++){
    const link=d.querySelectorAll('.project-art-main')[i];
    assert.equal(link.tagName,'A');assert.equal(link.getAttribute('href'),'#work/'+projects[i].slug);
-   link.click();flush();
+   link.click();
+   if(i===2&&!reduce)assert.equal(d.querySelector('.route-transition').hidden,false,'Project 03 uses the shared blue transition');
+   flush();
    assert.equal(d.body.dataset.page,'project');assert.equal(d.body.dataset.project,projects[i].slug);
    assert.equal(d.querySelector('.project-detail-title').textContent,projects[i].title);
    assert.equal(w.location.hash,'#work/'+projects[i].slug);assert.equal(d.querySelector('dialog').open,false);
@@ -308,3 +310,12 @@ assert.ok(Math.abs(frameSamples[0]-frameSamples[1])<.5,'high-refresh and standar
 for (const file of ['styles.css', 'content.js', 'app.js', 'pages.js', 'pages.css']) assert.ok(fs.statSync(path.join(root, file)).size > 0);
 assert.ok(!/https?:\/\//.test(fs.readFileSync(path.join(root, 'app.js'), 'utf8')), 'no remote runtime dependency');
 console.log('PASS local assets and self-contained runtime');
+{
+ const {w,d,scroll}=boot(1600,900);
+ const title=d.querySelector('.split-heading em'),arrow=d.querySelector('.square-arrow');
+ scroll(8.7);assert.ok(+title.style.opacity>+arrow.style.opacity,'Entry headings lead the button reveal');
+ const before=[title.style.opacity,title.style.translate];scroll(9.4);scroll(8.7);
+ assert.deepEqual([title.style.opacity,title.style.translate],before,'Layered entrance reverses without a jump');
+ scroll(10);assert.equal(title.style.opacity,'1');assert.equal(arrow.style.opacity,'1');
+ w.close();console.log('PASS staged entry headings/buttons, complete reveal and reversible scrolling');
+}

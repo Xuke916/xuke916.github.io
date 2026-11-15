@@ -94,6 +94,7 @@
     messageEyebrow: $('.message-eyebrow'), messageFooter: $('.message-footer'),
     galleryContours: $('.gallery-contours'), counter: $('#moment-counter'),
     splitPortraits: $$('.split-portrait'), splitOptions: $('.split-options'),
+    splitParts: $$('.split-option').map(option=>['.option-index','.split-heading em','.split-heading strong','.description-skeleton','.square-arrow'].map(selector=>$(selector,option))),
     splitContours: $('.split-contours'), centerMark: $('.center-mark', header),
     chapterLinks: $$('.chapter-navigation a'), liveStatus: $('.live-status')
   };
@@ -268,12 +269,20 @@
     if(t>7.95){
     // Fade the whole white scene in over the blue gallery, without a spatial wipe.
     split.style.transform='none';
-    const endP=smooth(range(t,8.75,10.3));
+    const endP=smooth(range(t,8.15,9.65));
     const dist=mobile?28:32;
     ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)-px*2}%,${py*-1}%,0) scaleX(-1)`;
     ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)+px*2}%,${py}%,0)`;
-    ui.splitOptions.style.opacity=smooth(range(t,8.55,9.4));
-    ui.splitOptions.style.transform=`translate(calc(-50% + ${px*6}px),${mix(-25,-48,endP)}%)`;
+    ui.splitOptions.style.opacity=smooth(range(t,8.3,8.8));
+    ui.splitOptions.style.transform=`translate(calc(-50% + ${px*6}px),-48%)`;
+    ui.splitParts.forEach((parts,column)=>parts.forEach((part,index)=>{
+      if(!part)return;
+      const start=8.35+index*.14+column*.08;
+      const reveal=reduced.matches?1:smooth(range(t,start,start+.65));
+      part.style.opacity=reveal;
+      // Stagger whole lines rather than creating per-letter animation work.
+      part.style.translate=`0 ${(1-reveal)*(mobile?16:26)}px`;
+    }));
     ui.splitContours.style.transform=`translate3d(${-px*14}px,${py*-10}px,0) rotate(${mix(-6,0,endP)}deg) scale(${mix(1.15,1,endP)})`;
     }
     const isDark=menuOpen||thumb>.12&&splitEnter<.7;

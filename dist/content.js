@@ -13,7 +13,7 @@ window.PORTFOLIO_CONTENT = {
   footer: { portrait: "", headline: [["YOUR", "STORY"], ["GOES", "HERE"]], socials: [] },
   pages: {
     work: {
-      title: ["专业", "作品"], english: "PROFESSIONAL WORK", mark: "WORK",
+      title: ["专业", "作品"], english: "ON DESIGN", mark: "WORK",
       heroImage: "", statementImage: "", statement: ["探索", "创造", "体验"],
       galleryTitle: "专业项目", projectsTitle: "个人项目", showStatement: false, showGallery: false, projectLayout: "covers",
       projects: ["项目01", "项目02", "项目03", "other work"].map((title, i) => ({
@@ -23,7 +23,7 @@ window.PORTFOLIO_CONTENT = {
       }))
     },
     life: {
-      title: ["日常", "生活"], english: "DAILY LIFE", mark: "LIFE",
+      title: ["OFF", "DESIGN"], english: "OFF DESIGN", mark: "LIFE",
       profile: {
         name: 'XU KE',
         intro: '我是 XU KE，中国传媒大学动画专业游戏美术方向在读。我做游戏制作、战斗设计与概念美术，也担任校棒球队副队长。',
@@ -252,8 +252,8 @@ window.PORTFOLIO_CONTENT = {
     }
   },
   entries: [
-    { title: ["ON", "DESIGN"], eyebrow: "01 / PROFESSIONAL WORK", description: "", image: "" },
-    { title: ["OFF", "DESIGN"], eyebrow: "02 / DAILY LIFE", description: "", image: "" }
+    { title: ["ON", "DESIGN"], eyebrow: "01 / ON DESIGN", description: "", image: "" },
+    { title: ["OFF", "DESIGN"], eyebrow: "02 / OFF DESIGN", description: "", image: "" }
   ]
 };
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[2], {

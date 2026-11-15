@@ -317,7 +317,7 @@
     if(push)history.pushState({page:to},'',to==='home'?'#'+chapter:'#'+to);
     const caption=routeCaption(to);
     $('.route-transition-caption').textContent=caption;window.PortfolioLanguage?.refresh($('.route-transition-caption'));
-    if(immediate||reduced.matches||to==='work/project-03'||route==='work/project-03'){
+    if(immediate||reduced.matches){
       applyRoute(to,{chapter,restore,projectIndex});finish(chapter);return;
     }
     overlay.hidden=false;let started=null,switched=false;
