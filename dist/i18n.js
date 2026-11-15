@@ -4,8 +4,9 @@
   const normalize = text => text.replace(/\s+/g, ' ').trim();
   const attributes = ['alt', 'title', 'aria-label', 'placeholder'];
   const sources = new WeakMap();
-  let language = 'zh';
-  try { if (localStorage.getItem('portfolio-language') === 'en') language = 'en'; } catch {}
+  // Every document visit starts in English; the current choice lasts for
+  // in-page navigation, without carrying a Chinese choice into the next visit.
+  let language = 'en';
 
   function translate(text) {
     const key = normalize(text);

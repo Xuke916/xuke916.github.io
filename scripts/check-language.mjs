@@ -26,7 +26,9 @@ assert.equal(d.documentElement.lang,'en');assert.equal(w.localStorage.getItem('p
 assert.equal(d.querySelector('[data-site-language="en"]').getAttribute('aria-pressed'),'true');
 assert.deepEqual(untranslated(d.body),[],'Homepage translation coverage');
 for(const name of ['MoneyBallCaseStudy','PoroCaseStudy','RewinderCaseStudy','WorkProfile']){
+  language.setLanguage('zh');
   host.innerHTML=w[name].render({pagination:''});const original=host.textContent;
+  language.setLanguage('en');
   await settle();assert.deepEqual(untranslated(host),[],name+' translation coverage');
   d.querySelector('[data-site-language="zh"]').click();assert.equal(host.textContent,original,name+' restores exact Chinese');
   d.querySelector('[data-site-language="en"]').click();
@@ -68,12 +70,12 @@ for(const selected of ['zh','en']){
   assert.equal(globalQueries,0,selected+': unrelated animation frames must bypass language refresh');
 }
 // Reload with an existing preference, including a browser with unavailable storage.
-for(const storage of ['en','blocked']){
+for(const storage of ['en','zh','blocked']){
   const reload=new JSDOM('<title>XU KE / Portfolio</title><body><p>日常生活</p>',{url:'https://example.github.io/',runScripts:'outside-only'});
-  if(storage==='en')reload.window.localStorage.setItem('portfolio-language','en');
+  if(storage!=='blocked')reload.window.localStorage.setItem('portfolio-language',storage);
   else Object.defineProperty(reload.window,'localStorage',{get(){throw Error('storage disabled');}});
   for(const file of ['i18n-data.js','i18n.js'])reload.window.eval(fs.readFileSync(path.join(dist,file),'utf8'));
-  assert.equal(reload.window.document.documentElement.lang,storage==='en'?'en':'zh-CN');reload.window.close();
+  assert.equal(reload.window.document.documentElement.lang,'en','Every visit starts in English');reload.window.close();
 }
 dom.window.close();
 console.log('PASS global language toggle, case studies, dynamic results, life copy, Chinese restoration and persistence');

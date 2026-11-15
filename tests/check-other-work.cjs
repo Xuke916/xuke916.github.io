@@ -2,6 +2,7 @@ const fs=require('fs'),path=require('path'),assert=require('node:assert/strict')
 const dist=path.resolve(__dirname,'../dist');
 const dom=new JSDOM(fs.readFileSync(path.join(dist,'index.html'),'utf8'),{runScripts:'outside-only',url:'https://portfolio.test/#work/other-work'}),w=dom.window,d=w.document;
 for(const name of ['i18n-data.js','other-work.js','i18n.js'])w.eval(fs.readFileSync(path.join(dist,name),'utf8'));
+w.PortfolioLanguage.setLanguage('zh');
 const api=w.OtherWorkCaseStudy,host=d.createElement('main');host.innerHTML=api.render();d.body.append(host);w.PortfolioLanguage.refresh(host);
 assert.equal(host.querySelectorAll('.ow-project').length,4);assert.deepEqual([...host.querySelectorAll('.ow-project')].map(el=>el.dataset.detailSection),['other-mercedes','other-drill','other-anchor','other-popmart']);
 assert.equal(host.querySelectorAll('iframe').length,0,'No provider iframe or third-party player loads before a click');

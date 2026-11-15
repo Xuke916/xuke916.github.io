@@ -76,7 +76,7 @@ for(const [width,height,reduce] of [[1280,800,false],[390,844,false],[320,568,tr
  p.querySelector('.rw-toc [data-section="rwCombat"]').click();flush();assert.equal(p.querySelector('.rw-toc-toggle').getAttribute('aria-expanded'),'false');
  p.querySelector('.rw-image').click();assert.ok(p.querySelector('dialog').open);p.querySelector('.dialog-close').click();assert.equal(p.querySelector('.rw-zoom'),null);
  p.querySelector('[data-back-projects]').click();flush();assert.equal(v.location.hash,'#work');assert.equal(p.querySelector('.project-current').textContent,'02');
- assert.equal(p.querySelector('[data-project-index="1"] img').getAttribute('src'),'assets/rewinder/image-01.webp');
+ assert.equal(p.querySelector('[data-project-index="1"] img').getAttribute('src'),'assets/project02-cover-v2.png');
  p.querySelector('[data-project-index="1"]').click();flush();assert.equal(v.location.hash,'#work/project-02');assert.ok(p.querySelector('.rw-case'));
  p.querySelector('.rw-footer [data-footer-home]').click();flush();assert.equal(v.location.hash,'#intro');assert.equal(p.body.classList.contains('detail-mode'),false);assert.equal(p.querySelector('#detail-pages').hidden,true);assert.equal(p.querySelector('#detail-pages').inert,true);
  page.window.close();console.log(`PASS Rewinder ${width}x${height}, reduced-motion=${reduce}: direct link, chapter navigation, image preview, project02 cover, return position and HOME cleanup`);

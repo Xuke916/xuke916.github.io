@@ -252,12 +252,12 @@ window.PORTFOLIO_CONTENT = {
     }
   },
   entries: [
-    { title: ["专业", "作品"], eyebrow: "01 / PROFESSIONAL WORK", description: "", image: "" },
-    { title: ["日常", "生活"], eyebrow: "02 / DAILY LIFE", description: "", image: "" }
+    { title: ["ON", "DESIGN"], eyebrow: "01 / PROFESSIONAL WORK", description: "", image: "" },
+    { title: ["OFF", "DESIGN"], eyebrow: "02 / DAILY LIFE", description: "", image: "" }
   ]
 };
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[2], {
-  caseTitle: 'Money Ball', image: 'assets/moneyball/photos/hero.webp', year: '2025',
+  caseTitle: 'Money Ball', image: 'assets/moneyball/photos/title.webp', year: '2025',
   role: '独立设计与制作', category: '双人棒球策略桌游',
   overview: '把球场上一瞬间的判断，转化为桌面上可以观察、预测和调整的选择。'
 });
@@ -267,7 +267,7 @@ Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[0], {
   overview: '从魄罗柔软、活泼的形象出发，用钩锁、碰撞反弹与坠落风险组织移动体验。'
 });
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[1], {
-  caseTitle:'Rewinder', image:'assets/rewinder/image-01.webp',
+  caseTitle:'Rewinder', image:'assets/project02-cover-v2.png',
   category:'第三人称近战动作游戏', role:'战斗策划 · 概念美术',
   overview:'用回溯扭转眼前的交锋，也面对改写过去留下的后果。'
 });
