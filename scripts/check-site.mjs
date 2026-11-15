@@ -83,4 +83,6 @@ for (const test of ['check-scroll.cjs', 'check-responsive.cjs', 'check-fluid.cjs
   const result = spawnSync(process.execPath, [path.join(root, 'tests', test)], { cwd: root, stdio: 'inherit' });
   assert.equal(result.status, 0, test);
 }
+const languageCheck = spawnSync(process.execPath, [path.join(root, 'scripts/check-language.mjs')], { cwd: root, stdio: 'inherit' });
+assert.equal(languageCheck.status, 0, 'global language switching');
 console.log('PASS all portfolio publication checks');

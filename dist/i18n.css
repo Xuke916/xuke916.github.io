@@ -1,0 +1,12 @@
+.site-language{display:flex;align-items:center;gap:2px;margin-right:14px;flex-shrink:0}
+.site-language button{appearance:none;border:1px solid transparent;background:transparent;color:inherit;font:600 12px/1.2 Arial,sans-serif;padding:7px 8px;border-radius:3px;cursor:pointer}
+.site-language button[aria-pressed="true"]{border-color:currentColor}
+.site-language button:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+html[lang="en"] .split-heading{font-size:clamp(38px,7vw,108px);letter-spacing:-.055em}
+html[lang="en"] .detail-hero-title{overflow-wrap:normal;word-break:normal}
+html[lang="en"] .life-editorial .detail-hero-title{font-size:clamp(66px,14vw,260px)}
+html[lang="en"] .life-editorial .life-hero-intro{font-size:clamp(16px,1.25vw,22px);line-height:1.55}
+html[lang="en"] .life-photo-heading{letter-spacing:-.04em}
+html[lang="en"] .mb-toc,html[lang="en"] .poro-toc,html[lang="en"] .rw-toc{font-size:11px}
+html[lang="en"] .mb-title{font-size:clamp(32px,4.5vw,64px);line-height:1.12}
+@media(max-width:600px){.site-language{margin-right:5px;gap:0}.site-language button{padding:6px;font-size:11px}}

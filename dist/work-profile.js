@@ -13,7 +13,7 @@
   skills:['Combat mechanics','Ability design','Game balancing','Environment concept design']
  };
  function body(){
-  const en=language==='en',p=window.PORTFOLIO_CONTENT.pages.life.profile,c=en?english:p;
+  const en=!window.PortfolioLanguage&&language==='en',p=window.PORTFOLIO_CONTENT.pages.life.profile,c=en?english:p;
   const entries=items=>items.map(x=>`<li><span class="wp-date">${esc(x.date)}</span><h3>${x.route?`<a href="#${esc(x.route)}" data-project-route="${esc(x.route)}">${esc(x.title)} <span aria-hidden="true">↗</span></a>`:esc(x.title)}</h3><p>${esc(x.text)}</p></li>`).join('');
   return `<div class="wp-heading"><div><span class="wp-kicker">XU KE / PORTFOLIO</span><h1 class="detail-hero-title" tabindex="-1">${en?'Professional work':'专业作品'}</h1><p>${en?'Game production, combat design and concept art.':'游戏制作、战斗设计与概念美术。'}</p></div><div class="wp-language" role="group" aria-label="${en?'Résumé language':'简历语言'}"><button type="button" data-resume-language="zh" aria-pressed="${!en}" lang="zh-CN">中文</button><button type="button" data-resume-language="en" aria-pressed="${en}" lang="en">EN</button></div></div>
   <div class="wp-columns"><section class="wp-experience"><h2>${en?'Education & experience':'学习与经历'}</h2><ol>${entries(c.background)}</ol></section><section class="wp-awards"><h2>${en?'Awards & recognition':'获奖经历'}</h2><ol>${c.recognition.split(en?';':'；').map(x=>`<li><p>${esc(x.trim())}</p></li>`).join('')}</ol></section></div>

@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="rewinder.css?v=review-refinements-v1">
   <link rel="stylesheet" href="life-profile.css?v=team-photos-preview-v2">
   <link rel="stylesheet" href="work-profile.css?v=review-refinements-v1">
+  <link rel="stylesheet" href="i18n.css?v=global-language-v1">
   <script src="content.js?v=moneyball-photos-v1" defer></script>
   <script src="app.js?v=inline-media-perf-v1" defer></script>
   <script src="helmet-ink.js?v=inline-media-perf-v1" defer></script>
@@ -24,6 +25,8 @@
   <script src="rewinder.js?v=rewinder-preview-v1" defer></script>
   <script src="work-profile.js?v=review-refinements-v1" defer></script>
   <script src="pages.js?v=resume-preview-v1" defer></script>
+  <script src="i18n-data.js?v=global-language-v1" defer></script>
+  <script src="i18n.js?v=global-language-v1" defer></script>
 </head>
 <body>
   <div id="viewport-metric" aria-hidden="true"></div>
@@ -56,7 +59,7 @@
   <header class="site-header">
     <a href="#intro" class="wordmark" aria-label="回到开场"><span>XU</span><strong>KE</strong></a>
     <a href="#intro" class="center-mark" aria-label="回到首页"><svg viewBox="0 0 36 36"><path d="M9 8 27 28M27 8 9 28"/></svg></a>
-    <div class="header-actions"><a class="index-button" href="#gallery"><svg viewBox="0 0 20 20"><path d="M5 7h10v10H5zM8 7V4h4v3"/></svg><span>INDEX</span></a><button class="menu-toggle" aria-label="打开导航" aria-expanded="false" aria-controls="site-menu"><span></span><span></span></button></div>
+    <div class="header-actions"><div class="site-language" role="group" aria-label="语言切换"><button type="button" data-site-language="zh" data-language-label lang="zh-CN" aria-pressed="true">中文</button><button type="button" data-site-language="en" data-language-label lang="en" aria-pressed="false">EN</button></div><a class="index-button" href="#gallery"><svg viewBox="0 0 20 20"><path d="M5 7h10v10H5zM8 7V4h4v3"/></svg><span>INDEX</span></a><button class="menu-toggle" aria-label="打开导航" aria-expanded="false" aria-controls="site-menu"><span></span><span></span></button></div>
   </header>
 
   <main id="experience">

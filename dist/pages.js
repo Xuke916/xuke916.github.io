@@ -298,6 +298,7 @@
       window.PortfolioHome.pause();document.body.classList.add('detail-mode');document.body.classList.toggle('detail-light',to==='life');document.body.dataset.page=info?'project':to;
       if(info)document.body.dataset.project=info.project.slug;else delete document.body.dataset.project;
       home.inert=true;root.hidden=false;if(info)buildProject(info);else build(to);root.inert=busy;
+      window.PortfolioLanguage?.refresh();measure();
       let destination=restore?(savedPositions.get(to)||0):0;
       if(to==='work'&&Number.isInteger(projectIndex))destination=metrics.sections.projects.start+Math.min(projectIndex*metrics.panelWidth,metrics.travel)/1.35;
       position=target=clamp(destination,0,metrics.max);written=position;write(position);render(position);
