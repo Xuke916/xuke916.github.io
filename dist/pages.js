@@ -302,7 +302,7 @@
       let destination=restore?(savedPositions.get(to)||0):0;
       if(to==='work'&&Number.isInteger(projectIndex))destination=metrics.sections.projects.start+Math.min(projectIndex*metrics.panelWidth,metrics.travel)/1.35;
       position=target=clamp(destination,0,metrics.max);written=position;write(position);render(position);
-      const title=info?(info.project.caseTitle||info.project.title):data.title.join('');
+      const title=info?(info.project.caseTitle||info.project.title):data.title.join(data.title.some(part=>/\p{Script=Han}/u.test(part))?'':' ');
       $('.skip-link').href='#detail-section-navigation';$('.live-status').textContent=title;
       document.title=title+' / Portfolio';window.PortfolioLanguage?.refresh($('.live-status'));
     }
