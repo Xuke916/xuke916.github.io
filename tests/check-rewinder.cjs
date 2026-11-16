@@ -7,7 +7,7 @@ w.matchMedia=query=>{if(!modes.has(query))modes.set(query,{matches:false,listene
 w.PortfolioHome={preview(src,caption){d.querySelector('.dialog-image').innerHTML=`<img src="${src}">`;d.querySelector('.dialog-label').textContent=caption;d.querySelector('dialog').open=true;}};
 w.eval(fs.readFileSync(path.join(root,'rewinder.js'),'utf8'));
 el.innerHTML=w.RewinderCaseStudy.render({pagination:'<section class="project-pagination" data-detail-section="projectNavigation"></section>'});
-const chapterIds=['projectHero','rwCore','rwCombat','rwStory','rwVisual','rwProduction'];
+const chapterIds=['projectHero','rwPreview','rwCore','rwCombat','rwStory','rwVisual','rwProduction'];
 assert.deepEqual([...el.querySelectorAll('.rw-section')].map(x=>x.dataset.detailSection),chapterIds);
 assert.deepEqual([...el.querySelectorAll('.rw-toc [data-section]')].map(x=>x.dataset.section),chapterIds);
 assert.equal(el.querySelector('h1').textContent,'Rewinder');
@@ -15,8 +15,12 @@ assert.match(el.querySelector('.rw-facts').textContent,/战斗策划 · 概念�
 assert.match(el.querySelector('.rw-facts').textContent,/Unreal Engine 5.6/);
 assert.match(el.querySelector('.rw-facts').textContent,/工作室 10 人/);
 assert.match(el.querySelector('.rw-facts').textContent,/已获得投资/);
-assert.deepEqual([...el.querySelectorAll('[data-rw-visual]')].map(x=>Number(x.dataset.rwVisual)).sort((a,b)=>a-b),Array.from({length:16},(_,i)=>i+1),'all sixteen supplied visuals have an inline representation');
-assert.equal(el.querySelectorAll('.rw-photo img').length,13);
+assert.deepEqual([...el.querySelectorAll('[data-rw-visual]')].map(x=>Number(x.dataset.rwVisual)).sort((a,b)=>a-b),Array.from({length:23},(_,i)=>i+1),'all original and newly supplied visuals appear once');
+assert.equal(el.querySelectorAll('.rw-photo img').length,20);
+assert.equal(el.querySelector('.rw-hero [data-rw-visual="1"]').nextElementSibling.className,'rw-hero-line','main concept art leads the introduction');
+assert.ok(el.querySelector('.rw-hero [data-rw-visual="17"]'),'the second supplied concept appears before the design chapters');
+assert.deepEqual([...el.querySelectorAll('[data-detail-section="rwPreview"] [data-rw-visual]')].map(x=>+x.dataset.rwVisual),[18,19]);
+assert.ok([...el.querySelectorAll('.rw-preview-grid figcaption')].every(x=>/开发中/.test(x.textContent)),'new captures are clearly labeled as work in progress');
 assert.equal(el.querySelectorAll('.rw-diagram').length,3);
 assert.equal(el.querySelectorAll('details,canvas,video').length,0,'static source material is directly readable without unnecessary animation or expansion');
 assert.deepEqual([...el.querySelectorAll('.rw-diagram .rw-flow')].map(flow=>flow.children.length),[3,3,2]);
@@ -32,13 +36,13 @@ assert.match(el.querySelector('[data-rw-visual="2"] figcaption').textContent,/00
 assert.match(el.querySelector('[data-rw-visual="3"] figcaption').textContent,/00:50.*开发过程/);
 for(const img of el.querySelectorAll('img')){
  assert.ok(img.alt&&img.width>0&&img.height>0);assert.ok(img.srcset.includes('-640.webp'));
- assert.ok(img.closest('.rw-brand')?img.getAttribute('fetchpriority')==='high':img.getAttribute('loading')==='lazy');
+ assert.ok(img.closest('.rw-opening-main')?img.getAttribute('fetchpriority')==='high':img.getAttribute('loading')==='lazy');
  for(const candidate of img.srcset.split(','))assert.ok(fs.statSync(path.join(root,candidate.trim().split(/\s+/)[0])).size>0);
 }
 const assetButtons=[...el.querySelectorAll('[data-rewinder-image]')];
-assert.equal(assetButtons.length,16);
+assert.equal(assetButtons.length,23);
 for(const button of assetButtons){const file=path.join(root,button.dataset.rewinderImage);assert.ok(fs.statSync(file).size>0);assert.equal(fs.readFileSync(file).includes(Buffer.from('EXIF')),false);}
-assert.ok(fs.readdirSync(path.join(root,'assets/rewinder')).reduce((bytes,name)=>bytes+fs.statSync(path.join(root,'assets/rewinder',name)).size,0)<3.5*1024*1024,'full-resolution and mobile images stay within the case study image budget');
+assert.ok(fs.readdirSync(path.join(root,'assets/rewinder')).reduce((bytes,name)=>bytes+fs.statSync(path.join(root,'assets/rewinder',name)).size,0)<4*1024*1024,'twenty-three full-resolution and mobile visuals stay below 4 MiB');
 const cleanup=w.RewinderCaseStudy.mount(el),compact=modes.get('(max-width:1100px)'),toggle=el.querySelector('.rw-toc-toggle'),toc=el.querySelector('.rw-toc');
 compact.matches=true;compact.listeners.forEach(fn=>fn());assert.equal(toc.inert,true);
 toggle.click();assert.equal(toggle.getAttribute('aria-expanded'),'true');assert.equal(toc.inert,false);
@@ -55,7 +59,7 @@ for(let i=0;i<2;i++){
 }
 cleanup();assert.equal(compact.listeners.size,0);toggle.click();assert.equal(toggle.getAttribute('aria-expanded'),'false');
 w.close();
-console.log('PASS Rewinder: six ordered chapters, all sixteen document visuals, readable native flows and two endings, accurate concept/demo labels, responsive images, compact directory, repeatable zoom and listener cleanup');
+console.log('PASS Rewinder: visual-first opening, seven chapters, twenty-three visuals, labeled development captures, responsive images, compact directory, repeatable zoom and listener cleanup');
 
 for(const [width,height,reduce] of [[1280,800,false],[390,844,false],[320,568,true]]){
  const page=new JSDOM(fs.readFileSync(path.join(root,'index.html'),'utf8'),{url:'https://portfolio.test/portfolio-scroll-study/#work/project-02',runScripts:'outside-only',pretendToBeVisual:true});

@@ -81,6 +81,8 @@
 .detail-mode .image-dialog{background:#111;border-color:#ffffff33}.detail-mode .dialog-image{background:#152a43}
 .route-transition{position:fixed;z-index:150;inset:0;transform:translate3d(0,100%,0);will-change:transform,opacity;pointer-events:auto}
 .route-transition>svg{width:100%;height:100%;display:block;overflow:visible}
+.route-transition[data-effect="fade"]{background:#111}
+.route-transition[data-effect="fade"]>svg,.route-transition[data-effect="fade"]>.route-transition-caption{display:none}
 .route-transition-caption{position:absolute;bottom:9%;left:50%;transform:translateX(-50%);color:#052b57;font-size:9px;font-weight:700;letter-spacing:.12em;white-space:nowrap}
 .is-routing .site-header,.is-routing #experience,.is-routing .detail-pages,.is-routing .chapter-navigation{pointer-events:none}
 .menu-content nav>a{font-size:clamp(30px,5vw,64px);padding:9px 0}

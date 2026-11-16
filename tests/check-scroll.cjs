@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../dist');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-function boot(width, height, reduce = false, initialHash = '') {
+function boot(width, height, reduce = false, initialHash = '', settle = true) {
   const dom = new JSDOM(html, { runScripts: 'outside-only', url: 'https://portfolio.test/' + initialHash, pretendToBeVisual: true });
   const w = dom.window, d = w.document;
   let y = 0, clock = 0, id = 0, queue = new Map();
@@ -25,7 +25,18 @@ function boot(width, height, reduce = false, initialHash = '') {
   function flush() { for (let i = 0; queue.size && i < 1500; i++) { const jobs = [...queue.values()]; queue.clear(); clock += 16.667; jobs.forEach(cb => cb(clock)); } assert.equal(queue.size, 0, 'animation converges'); }
   function scroll(t) { w.scrollTo(0, t * height / 1.5); flush(); }
   function advance(dt=16.667){const jobs=[...queue.values()];queue.clear();clock+=dt;jobs.forEach(cb=>cb(clock));}
+  if(settle)flush();
   return { w, d, scroll, flush, advance };
+}
+{
+ const {w,d,flush,advance}=boot(1600,900,false,'',false),overlay=d.querySelector('.route-transition'),cutout=d.querySelector('.route-cutout');
+ assert.equal(overlay.hidden,false);assert.equal(overlay.dataset.effect,'opening');assert.equal(d.querySelector('#experience').inert,true);
+ const before=cutout.getAttribute('transform');advance();advance(400);assert.notEqual(cutout.getAttribute('transform'),before,'blue X opens on the initial Home visit');flush();
+ assert.equal(overlay.hidden,true);assert.equal(d.querySelector('#experience').inert,false);assert.equal(w.scrollY,0);assert.equal(d.body.style.overflow,'');
+ w.PortfolioPages.open('work');assert.equal(overlay.dataset.effect,'fade','interior navigation uses a fade');flush();
+ d.querySelector('.project-art-main').click();assert.equal(overlay.dataset.effect,'fade','project entry uses the fade too');flush();w.close();
+ const reduced=boot(390,844,true,'',false);assert.equal(reduced.d.querySelector('.route-transition').hidden,true);reduced.w.close();
+ console.log('PASS initial Home X reveal, restored input, interior/project fades and reduced-motion bypass');
 }
 for (const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,true]]) {
  const {w,d,scroll,flush,advance}=boot(width,height,reduce),q=s=>d.querySelector(s);
@@ -96,7 +107,7 @@ for(const [width,height] of [[1600,900],[1200,1173],[390,844]]){
 for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,true]]){
  const {w,d,scroll,flush,advance}=boot(width,height,reduce);
  scroll(6.8);d.querySelector('.split-option').click();
- if(!reduce){assert.equal(d.querySelector('.route-transition').hidden,false,'blue transition begins before the page changes');advance();advance(200);assert.equal(d.body.classList.contains('is-routing'),true);}
+ if(!reduce){assert.equal(d.querySelector('.route-transition').hidden,false,'fade begins before the page changes');advance();advance(200);assert.equal(d.body.classList.contains('is-routing'),true);}
  flush();
  assert.equal(d.body.dataset.page,'work');assert.equal(w.location.hash,'#work');
  assert.equal(d.querySelector('.detail-hero-title').textContent,'专业作品');
@@ -155,7 +166,7 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
    const link=d.querySelectorAll('.project-art-main')[i];
    assert.equal(link.tagName,'A');assert.equal(link.getAttribute('href'),'#work/'+projects[i].slug);
    link.click();
-   if(i===2&&!reduce)assert.equal(d.querySelector('.route-transition').hidden,false,'Project 03 uses the shared blue transition');
+   if(i===2&&!reduce)assert.equal(d.querySelector('.route-transition').dataset.effect,'fade','Project 03 uses the shared fade');
    flush();
    assert.equal(d.body.dataset.page,'project');assert.equal(d.body.dataset.project,projects[i].slug);
    assert.equal(d.querySelector('.project-detail-title').textContent,projects[i].title);
