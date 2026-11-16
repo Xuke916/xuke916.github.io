@@ -1,6 +1,7 @@
 (() => {
  'use strict';
- const asset=n=>typeof n==='string'?`assets/moneyball/photos/${n}.webp`:n===14?'assets/moneyball/defense-flow-v3.webp':`assets/moneyball/image${n}.${[5,7,10,13,15,16].includes(n)?'webp':'jpeg'}`;
+ const diagrams=[5,7,10,13,14,15];
+ const asset=(n,english=window.PortfolioLanguage?.language==='en')=>english&&diagrams.includes(n)?`assets/moneyball/diagram-${n}-en.svg`:typeof n==='string'?`assets/moneyball/photos/${n}.webp`:n===14?'assets/moneyball/defense-flow-v3.webp':`assets/moneyball/image${n}.${[5,7,10,13,15,16].includes(n)?'webp':'jpeg'}`;
  const sizes={1:[1702,1276],2:[1702,1276],3:[1280,1707],4:[1280,1707],5:[3750,1850],6:[1280,1707],7:[3750,1975],8:[1280,1707],9:[960,1280],10:[3750,1850],11:[1280,1707],12:[960,1280],13:[3750,2225],14:[3750,1850],15:[3750,1975],16:[1461,1076],17:[1280,1707],18:[960,1280],19:[1280,1707],20:[1280,1707]};
  sizes[14]=[1536,1024];
  Object.assign(sizes,{"title": [1600, 1118], "hero": [1536, 1024], "components": [1600, 1067], "player": [1600, 2400], "lineup": [1600, 1067], "test-layout": [1600, 1067], "ui": [1600, 1067], "box": [1600, 1067], "manager": [1600, 1067], "player-set": [1600, 1067], "pitch": [1600, 1067], "hit": [1600, 1067], "pitch-play": [1600, 1067], "test-pov": [1600, 1067], "grid": [1600, 1067], "test": [1600, 1067], "tokens": [1600, 1067], "board": [1600, 1067]});
@@ -8,7 +9,9 @@
  function photo(n,alt,caption,cls=''){
   const [w,h]=sizes[n];
   const variants=[480,960].filter(width=>width<w).map(width=>`${typeof n==='string'?'assets/moneyball/photos/'+n:'assets/moneyball/image'+n}-${width}.webp ${width}w`);
-  return `<figure class="mb-photo ${cls}${typeof n==='string'?' mb-new-photo':''}"><button class="mb-image-button" data-money-image="${asset(n)}" data-caption="${caption}" aria-label="放大查看：${alt}"><img src="${asset(n)}" srcset="${[...variants,`${asset(n)} ${w}w`].join(', ')}" sizes="(max-width:600px) 86vw, (max-width:1100px) 88vw, 1040px" width="${w}" height="${h}" alt="${alt}" loading="lazy" decoding="async"><span class="mb-enlarge" aria-hidden="true">↗</span></button><figcaption>${caption}</figcaption></figure>`;
+  const chineseSrcset=[...variants,`${asset(n,false)} ${w}w`].join(', ');
+  const english=diagrams.includes(n)&&window.PortfolioLanguage?.language==='en';
+  return `<figure class="mb-photo ${cls}${typeof n==='string'?' mb-new-photo':''}"><button class="mb-image-button"${diagrams.includes(n)?` data-mb-diagram="${n}" data-chinese-srcset="${chineseSrcset}"`:''} data-money-image="${asset(n)}" data-caption="${caption}" aria-label="放大查看：${alt}"><img src="${asset(n)}"${english?'':` srcset="${chineseSrcset}"`} sizes="(max-width:600px) 86vw, (max-width:1100px) 88vw, 1040px" width="${w}" height="${h}" alt="${alt}" loading="lazy" decoding="async"><span class="mb-enlarge" aria-hidden="true">↗</span></button><figcaption>${caption}</figcaption></figure>`;
  }
  const pair=(a,b,altA,altB,captionA,captionB)=>`<div class="mb-pair">${photo(a,altA,captionA)}${photo(b,altB,captionB)}</div>`;
  const note=(label,text)=>`<aside class="mb-note"><span class="mono">${label}</span><p>${text}</p></aside>`;
@@ -94,6 +97,13 @@
    ${pagination}<footer class="mb-simple-footer" data-detail-section="footer"><span>XU KE / Money Ball</span><nav aria-label="页尾导航"><a href="#intro" data-footer-home>HOME</a><a href="#work" data-open-page="work">专业作品</a><a href="#life" data-open-page="life">日常生活</a></nav></footer></article>`;
  }
  function mount(root){
+  const onLanguage=()=>root.querySelectorAll('[data-mb-diagram]').forEach(button=>{
+   const img=button.querySelector('img'),n=Number(button.dataset.mbDiagram),english=window.PortfolioLanguage?.language==='en';
+   button.dataset.moneyImage=asset(n,english);
+   if(english)img.removeAttribute('srcset');else img.setAttribute('srcset',button.dataset.chineseSrcset);
+   img.src=asset(n,english);
+  });
+  document.addEventListener('portfolio:languagechange',onLanguage);onLanguage();
   const toc=root.querySelector('.mb-toc'),toggle=root.querySelector('.mb-toc-toggle');
   const compact=matchMedia('(max-width:1100px)');
   const setNav=open=>{const expanded=compact.matches&&open;toc.classList.toggle('is-open',expanded);toc.inert=compact.matches&&!expanded;toggle.setAttribute('aria-expanded',String(expanded));toggle.setAttribute('aria-label',expanded?'关闭项目目录':'打开项目目录');window.PortfolioLanguage?.refresh(toggle);};
@@ -120,16 +130,20 @@
   }
   demo.addEventListener('click',e=>{const b=e.target.closest('[data-mb-step]');if(b){step=Number(b.dataset.mbStep);update();}});
   demo.addEventListener('change',()=>{step=0;update();});update();
-  return ()=>{document.removeEventListener('keydown',onEscape);document.removeEventListener('portfolio:menu',onMenu);compact.removeEventListener('change',onMode);};
+  return ()=>{document.removeEventListener('portfolio:languagechange',onLanguage);document.removeEventListener('keydown',onEscape);document.removeEventListener('portfolio:menu',onMenu);compact.removeEventListener('change',onMode);};
  }
  function openImage(path,caption){
+  const diagram=diagrams.find(n=>path===asset(n,false)||path===asset(n,true));
+  if(diagram)path=asset(diagram);
   window.PortfolioHome.preview(path,caption);
   const dialog=document.querySelector('.image-dialog'),holder=dialog.querySelector('.dialog-image');
+  const onLanguage=()=>{const img=holder.querySelector('img');if(diagram&&img)img.src=asset(diagram);};
+  if(diagram)document.addEventListener('portfolio:languagechange',onLanguage);
   dialog.classList.add('moneyball-lightbox');
   const zoom=document.createElement('button');zoom.className='mb-zoom';zoom.textContent='放大细节 ＋';zoom.setAttribute('aria-pressed','false');
   zoom.addEventListener('click',()=>{const on=holder.classList.toggle('mb-zoomed');holder.scrollLeft=holder.scrollTop=0;zoom.textContent=on?'适应窗口 −':'放大细节 ＋';zoom.setAttribute('aria-pressed',String(on));window.PortfolioLanguage?.refresh(zoom);});
   dialog.querySelector('.dialog-footer').append(zoom);window.PortfolioLanguage?.refresh(zoom);
-  dialog.addEventListener('close',()=>{dialog.classList.remove('moneyball-lightbox');holder.classList.remove('mb-zoomed');zoom.remove();},{once:true});
+  dialog.addEventListener('close',()=>{document.removeEventListener('portfolio:languagechange',onLanguage);dialog.classList.remove('moneyball-lightbox');holder.classList.remove('mb-zoomed');zoom.remove();},{once:true});
  }
  window.MoneyBallCaseStudy={render,mount,openImage};
 })();

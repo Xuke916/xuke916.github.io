@@ -20,6 +20,11 @@ assert.match(el.querySelector('.mb-roster-example').textContent,/数值仅用于
 assert.match(el.querySelector('.mb-roster-example').textContent,/所有相关球员都失败/);
 assert.equal(el.querySelectorAll('.portrait-footer').length,0,'case study ends with compact reading navigation');
 const imgs=[...el.querySelectorAll('.mb-photo img')];assert.equal(imgs.length,21);
+const diagrams=[...el.querySelectorAll('[data-mb-diagram]')];assert.equal(diagrams.length,6);
+for(const language of ['en','zh','en','zh']){
+ w.PortfolioLanguage={language,refresh(){}};d.dispatchEvent(new w.CustomEvent('portfolio:languagechange',{detail:{language}}));
+ for(const button of diagrams){const img=button.querySelector('img');assert.equal(img.getAttribute('src'),button.dataset.moneyImage);assert.equal(img.hasAttribute('srcset'),language==='zh');if(language==='en'){assert.match(img.src,/-en\.svg$/);const svg=fs.readFileSync(path.join(root,img.getAttribute('src')),'utf8');assert.ok(!/\p{Script=Han}/u.test(svg),'English diagram contains no Chinese labels');assert.ok(svg.includes('<svg'));}}
+}
 assert.match(imgs[0].getAttribute('src'),/photos\/title\.webp$/,'new title graphic is the first image');
 assert.match(el.querySelector('[data-detail-section="moneyOrigin"] .mb-board img').getAttribute('src'),/image16\.webp$/,'illustrated field is retained');
 for(const img of imgs){assert.ok(img.alt&&img.width&&img.height);const local=fs.readFileSync(path.join(root,img.getAttribute('src')));assert.ok(local.length>0,'case-study photo exists in the deployed source');}
