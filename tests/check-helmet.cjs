@@ -22,7 +22,7 @@ assert.equal(highlight.querySelector('use').getAttribute('href'),svg.querySelect
 const lightScan=light.querySelector('animateTransform');
 for(const attr of ['values','keyTimes','keySplines','dur'])assert.equal(lightScan.getAttribute(attr),scan.getAttribute(attr),'the highlight follows the same scan without drifting');
 assert.equal(light.firstElementChild.getAttribute('stop-opacity'),'0');assert.equal(light.querySelector('stop:last-of-type').getAttribute('stop-opacity'),'0');
-assert.ok(+highlight.getAttribute('opacity')<.7,'head highlight stays restrained');
+assert.ok(+highlight.getAttribute('opacity')>.85&&+highlight.getAttribute('opacity')<=1,'scan highlights have stronger contrast on the dark head photograph');
 assert.equal(svg.querySelectorAll('svg>g use').length,2,'only scan-controlled ink and highlights are visible');
 const mesh=api.buildMesh(),compact=api.buildMesh(true);assert.ok(mesh.edges.length<=1800&&compact.edges.length<=800,'mesh work stays bounded');
 assert.ok(mesh.edges.every(e=>e.every(i=>i>=0&&i<mesh.points.length)));assert.ok(mesh.points.every(p=>p.every(Number.isFinite)));

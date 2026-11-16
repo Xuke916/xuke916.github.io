@@ -60,13 +60,13 @@
     <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
    </linearGradient>
    <linearGradient id="${id}-highlight" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="190">
-    <stop offset="0" stop-color="#e8eee9" stop-opacity="0"/>
-    <stop offset=".35" stop-color="#e8eee9" stop-opacity="0"/>
-    <stop offset=".5" stop-color="#e8eee9" stop-opacity=".55"/>
-    <stop offset=".55" stop-color="#e8eee9" stop-opacity=".8"/>
-    <stop offset=".68" stop-color="#e8eee9" stop-opacity=".15"/>
-    <stop offset=".8" stop-color="#e8eee9" stop-opacity="0"/>
-    <stop offset="1" stop-color="#e8eee9" stop-opacity="0"/>
+    <stop offset="0" stop-color="#f5f7f3" stop-opacity="0"/>
+    <stop offset=".3" stop-color="#f5f7f3" stop-opacity="0"/>
+    <stop offset=".45" stop-color="#f5f7f3" stop-opacity=".75"/>
+    <stop offset=".55" stop-color="#f5f7f3" stop-opacity="1"/>
+    <stop offset=".66" stop-color="#f5f7f3" stop-opacity=".6"/>
+    <stop offset=".85" stop-color="#f5f7f3" stop-opacity="0"/>
+    <stop offset="1" stop-color="#f5f7f3" stop-opacity="0"/>
     <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
    </linearGradient>
    <g id="${id}-drawing" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -92,8 +92,8 @@
      <path class="helmet-mesh" d="${meshPath}" clip-path="url(#${id}-surface)" stroke-width=".8" opacity=".52"/>
      <use href="#${id}-drawing"/>
     </g>
-    <g class="helmet-highlight" stroke="url(#${id}-highlight)" fill="none" clip-path="url(#${id}-surface)" opacity=".64">
-     <path class="helmet-highlight-mesh" d="${meshPath}" stroke-width=".65" opacity=".45"/>
+    <g class="helmet-highlight" stroke="url(#${id}-highlight)" fill="none" clip-path="url(#${id}-surface)" opacity=".95">
+     <path class="helmet-highlight-mesh" d="${meshPath}" stroke-width="1.05" opacity=".72"/>
      <use href="#${id}-drawing"/>
     </g>
    </g>`;
