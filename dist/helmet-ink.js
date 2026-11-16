@@ -52,12 +52,12 @@
   svg.innerHTML=`<defs>
    <clipPath id="${id}-surface"><path d="${shell} ${ear}" clip-rule="evenodd"/><path d="${shield}"/></clipPath>
    <linearGradient id="${id}-scan" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="190">
-    <stop offset="0" stop-color="#30322f" stop-opacity="0"/>
-    <stop offset=".25" stop-color="#30322f" stop-opacity=".14"/>
-    <stop offset=".55" stop-color="#30322f" stop-opacity=".82"/>
-    <stop offset=".78" stop-color="#30322f" stop-opacity=".22"/>
-    <stop offset="1" stop-color="#30322f" stop-opacity="0"/>
-    <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
+    <stop offset="0" stop-color="#171a18" stop-opacity="0"/>
+    <stop offset=".25" stop-color="#171a18" stop-opacity=".14"/>
+    <stop offset=".55" stop-color="#171a18" stop-opacity="1"/>
+    <stop offset=".78" stop-color="#171a18" stop-opacity=".22"/>
+    <stop offset="1" stop-color="#171a18" stop-opacity="0"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="0 150;0 885" keyTimes="0;1" calcMode="spline" keySplines=".33 .33 .67 .67" dur="2.2s" repeatCount="indefinite"/>
    </linearGradient>
    <linearGradient id="${id}-highlight" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="190">
     <stop offset="0" stop-color="#f5f7f3" stop-opacity="0"/>
@@ -67,7 +67,7 @@
     <stop offset=".66" stop-color="#f5f7f3" stop-opacity=".6"/>
     <stop offset=".85" stop-color="#f5f7f3" stop-opacity="0"/>
     <stop offset="1" stop-color="#f5f7f3" stop-opacity="0"/>
-    <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="0 150;0 885" keyTimes="0;1" calcMode="spline" keySplines=".33 .33 .67 .67" dur="2.2s" repeatCount="indefinite"/>
    </linearGradient>
    <g id="${id}-drawing" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path class="helmet-shell" d="${shell}" stroke-width="2"/>

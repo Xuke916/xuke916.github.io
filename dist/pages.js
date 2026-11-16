@@ -31,7 +31,9 @@
   }
 
   function footer() {
-    const config = window.PORTFOLIO_CONTENT.footer;
+    const content=window.PORTFOLIO_CONTENT,config=content.footer;
+    const footerImage=(route==='life'?content.heroImage:content.heroHelmetImage)||config.portrait;
+    const footerSmall=route==='life'?content.heroImageSmall:content.heroHelmetImageSmall;
     const socials = (config.socials || []).filter(item => /^https?:\/\//.test(item.url || ''));
     return `<footer class="portrait-footer" data-detail-section="footer" aria-label="网站页尾">
       <svg class="footer-shape" aria-hidden="true"><defs><clipPath id="portrait-footer-shape" clipPathUnits="objectBoundingBox"><path d="M.025 .045H.375C.414 .045 .407 0 .454 0H.546C.593 0 .586 .045 .625 .045H.975Q1 .045 1 .072V.935Q1 .965 .975 .965H.9C.875 .965 .885 1 .855 1H.145C.115 1 .125 .965 .1 .965H.025Q0 .965 0 .935V.072Q0 .045 .025 .045Z"/></clipPath></defs></svg>
@@ -40,7 +42,7 @@
         <svg class="footer-signature" viewBox="0 0 100 38" aria-hidden="true"><path d="m3 28 50-21-29 26L68 6 46 30l42-16-21 21M8 27l83-4"/></svg>
         <h2 class="footer-headline">${config.headline.map(line=>`<span><strong>${esc(line[0])}</strong> <em>${esc(line[1])}</em></span>`).join('')}</h2>
         <nav class="footer-pages" aria-label="页尾导航"><span class="mono">PAGES</span><a href="#intro" data-footer-home>HOME</a><a href="#work" data-open-page="work">专业作品</a><a href="#life" data-open-page="life">日常生活</a></nav>
-        <figure class="footer-portrait">${config.portrait ? `<img src="${esc(config.portrait)}" alt="个人照片" loading="lazy">` : `<svg viewBox="0 0 700 900" preserveAspectRatio="xMidYMax meet" role="img" aria-label="个人照片占位"><use href="#portrait-placeholder"/></svg><figcaption class="mono">YOUR PHOTO</figcaption>`}</figure>
+        <figure class="footer-portrait">${footerImage ? `<img src="${esc(footerImage)}"${footerSmall?` srcset="${esc(footerSmall)} 640w, ${esc(footerImage)} 1448w" sizes="(max-width:600px) 100vw, 48vw"`:''} width="1448" height="1086" alt="个人照片" loading="lazy" decoding="async">` : `<svg viewBox="0 0 700 900" preserveAspectRatio="xMidYMax meet" role="img" aria-label="个人照片占位"><use href="#portrait-placeholder"/></svg><figcaption class="mono">YOUR PHOTO</figcaption>`}</figure>
         <aside class="footer-socials"><span class="mono">FOLLOW ON</span>${socials.length?socials.map(item=>`<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.label)} ↗</a>`).join(''):'<div class="footer-social-placeholder" aria-label="社交链接占位"><i></i><i></i><i></i></div>'}</aside>
         <span class="footer-brand mono">${esc(window.PORTFOLIO_CONTENT.name.join(' '))} / PORTFOLIO</span>
       </div>

@@ -67,7 +67,7 @@
   const ui = {
     heroLight: $('.hero-light'), orbits: [$('.orbit-one'), $('.orbit-two')],
     shells: $$('.floating-shell'), heroCopy: $('.hero-bottom-copy'),
-    heroMeta: ['.hero-coordinate','.corner-card','.scroll-prompt','.portrait-label'].map(s => $(s)),
+    heroMeta: ['.corner-card','.scroll-prompt','.portrait-label'].map(s => $(s)),
     heroContours: $('.hero-contours'), messageContours: $('.message-contours'),
     marqueeGroup: $('.message-marquees'),
     messageEyebrow: $('.message-eyebrow'), messageFooter: $('.message-footer'),
@@ -99,6 +99,23 @@
     <path d="M-5 975c187-130 336-73 483-15s257 64 364 34M27-40c55 127 171 192 165 325s62 161 115 150M1463 1105c-38-183 202-241 176-416M784 5c-114 176-92 226-12 246s65-94 143-145"/>
   </g></svg>`;
   $$('.contours').forEach(el => el.innerHTML = contours);
+  function ripplePath(radius,phase){
+    const points=Array.from({length:24},(_,i)=>{const a=i*Math.PI/12,r=radius+18*Math.sin(3*a+phase)+9*Math.sin(5*a-phase);return [780+Math.cos(a)*r*1.22+28*Math.sin(phase),480+Math.sin(a)*r*.78+18*Math.cos(phase)];});
+    const fmt=p=>p.map(n=>n.toFixed(1)).join(' ');
+    let d='M'+fmt(points[0]);
+    for(let i=0;i<24;i++){const a=points[(i+23)%24],b=points[i],c=points[(i+1)%24],e=points[(i+2)%24];d+='C'+fmt(b.map((v,k)=>v+(c[k]-a[k])/6))+' '+fmt(c.map((v,k)=>v-(e[k]-b[k])/6))+' '+fmt(c);}
+    return d+'Z';
+  }
+  const ripplePaths=Array.from({length:9},(_,i)=>{const shapes=[0,.5,1,1.5,2].map(p=>ripplePath(125+i*132,p*Math.PI+i*.42));return `<path d="${shapes[0]}"><animate attributeName="d" values="${shapes.join(';')}" keyTimes="0;.25;.5;.75;1" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1;.42 0 .58 1;.42 0 .58 1" dur="8s" repeatCount="indefinite"/></path>`;}).join('');
+  ui.heroContours.innerHTML=`<svg class="water-ripples" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g>${ripplePaths}</g></svg>`;
+  const rippleSvg=$('svg',ui.heroContours);let ripplesRunning=false;
+  rippleSvg.pauseAnimations?.();rippleSvg.dataset.motion='paused';
+  function setOpeningMotion(active){
+    if(document.body.classList.contains('opening-motion')!==active)document.body.classList.toggle('opening-motion',active);
+    if(ripplesRunning===active)return;
+    ripplesRunning=active;rippleSvg.dataset.motion=active?'rippling':'paused';
+    if(active)rippleSvg.unpauseAnimations?.();else rippleSvg.pauseAnimations?.();
+  }
 
   function openPreview(path, caption) {
     navigation = null; target = current;
@@ -164,7 +181,7 @@
   function render(y) {
     const t = y / unit * TIMELINE_SCALE, mobile = innerWidth <= 600;
     const openingMotion=t<2&&!menuOpen&&!homeSuspended&&!document.hidden&&!reduced.matches;
-    if(document.body.classList.contains('opening-motion')!==openingMotion)document.body.classList.toggle('opening-motion',openingMotion);
+    setOpeningMotion(openingMotion);
     const px = reduced.matches ? 0 : mouseX, py = reduced.matches ? 0 : mouseY;
     const heroP = smooth(range(t, 0, 1.7));
     const thumb = smooth(range(t, 1.7, 3.05));
@@ -295,7 +312,7 @@
   }
   function requestTick(){if(!homeSuspended&&!frame)frame=requestAnimationFrame(tick);}
   document.addEventListener('visibilitychange',()=>{
-    if(document.hidden)document.body.classList.remove('opening-motion');else requestTick();
+    if(document.hidden)setOpeningMotion(false);else requestTick();
   });
   addEventListener('scroll',()=>{
     if (homeSuspended) return;
@@ -351,7 +368,7 @@
   window.PortfolioHome = {
     pause() {
       homeSuspended = true;
-      document.body.classList.remove('opening-motion');
+      setOpeningMotion(false);
       window.HeroFluid?.setActive(false);
       if (frame) cancelAnimationFrame(frame);
       frame = 0; navigation = null; target = current; lastTime = 0;

@@ -12,10 +12,10 @@ assert.equal(svg.querySelector('[stroke-dasharray]'),null);assert.equal(svg.quer
 const clips=svg.querySelectorAll('clipPath path');assert.equal(clips.length,2);assert.equal(clips[0].getAttribute('clip-rule'),'evenodd','mesh avoids the ear opening');
 const stops=[...svg.querySelectorAll('linearGradient stop')].map(s=>+s.getAttribute('stop-opacity'));
 assert.equal(stops[0],0);assert.equal(stops.at(-1),0);assert.ok(Math.max(...stops)>.7,'soft scan has transparent edges and a visible center');
-const scan=svg.querySelector('animateTransform');assert.equal(scan.getAttribute('type'),'translate');assert.match(scan.getAttribute('values'),/0 60;0 920/);assert.equal(scan.getAttribute('calcMode'),'spline');
+const scan=svg.querySelector('animateTransform');assert.equal(scan.getAttribute('type'),'translate');assert.equal(scan.getAttribute('values'),'0 150;0 885');assert.equal(scan.getAttribute('calcMode'),'spline');assert.equal(scan.getAttribute('keyTimes'),'0;1','restart as soon as the scan has cleared the drawing');assert.ok(parseFloat(scan.getAttribute('dur'))<2.5,'faster scan cycle');
 const breath=svg.querySelector('.helmet-breath>animate');assert.equal(breath.getAttribute('attributeName'),'opacity');assert.equal(breath.getAttribute('calcMode'),'spline');
 assert.equal(svg.querySelector('.helmet-base'),null,'no persistent outline outside the scan');assert.ok(svg.querySelector('.helmet-mesh'));
-assert.ok([...svg.querySelectorAll('linearGradient[id$="-scan"] stop')].every(s=>s.getAttribute('stop-color')==='#30322f'),'the original scan retains neutral charcoal ink');
+assert.ok([...svg.querySelectorAll('linearGradient[id$="-scan"] stop')].every(s=>s.getAttribute('stop-color')==='#171a18'),'exterior lines use darker neutral ink');
 const highlight=svg.querySelector('.helmet-highlight'),light=svg.querySelector('linearGradient[id$="-highlight"]');
 assert.equal(highlight.getAttribute('clip-path'),svg.querySelector('.helmet-mesh').getAttribute('clip-path'),'highlights stay within the helmet surface and avoid the ear opening');
 assert.equal(highlight.querySelector('use').getAttribute('href'),svg.querySelector('.helmet-scan use').getAttribute('href'),'highlight reuses the photo-aligned line drawing');

@@ -31,7 +31,8 @@ for (const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,
  const {w,d,scroll,flush,advance}=boot(width,height,reduce),q=s=>d.querySelector(s);
  assert.equal(q('.gallery-scene'),null);assert.equal(q('.gallery-card'),null);assert.equal(q('.gallery-quote'),null);
  assert.equal(d.querySelectorAll('.chapter-navigation a').length,3);
- assert.equal(q('.index-button'),null,'the removed INDEX button is absent from the shared header');
+ assert.equal(q('.index-button'),null,'the removed INDEX button is absent from the shared header');assert.equal(q('.hero-coordinate'),null,'remove the selected IMAGE / 01 label');
+ assert.equal(q('.water-ripples').querySelectorAll('animate[attributeName="d"]').length,9,'water rings deform rather than only translating as a flat drawing');
  const opening=q('.hero-portrait').style.transform;scroll(1.5);assert.notEqual(q('.hero-portrait').style.transform,opening);
  scroll(3.35);assert.equal(q('.message-scene').inert,false);assert.equal(q('.hero-scene').style.filter,'grayscale(1)');
  assert.equal(q('.message-signature path').style.strokeDashoffset,'0');
@@ -174,7 +175,7 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
  for(const family of ['work','life']){
    w.PortfolioPages.open(family);flush();
    assert.equal(d.querySelectorAll('.portrait-footer').length,1);
-   assert.equal(d.querySelectorAll('.footer-pages a').length,3);assert.ok(d.querySelector('.footer-portrait svg'),'photo has a replacement slot');
+   assert.equal(d.querySelectorAll('.footer-pages a').length,3);assert.equal(d.querySelector('.footer-portrait img').getAttribute('src'),family==='life'?w.PORTFOLIO_CONTENT.heroImage:w.PORTFOLIO_CONTENT.heroHelmetImage,'footer uses the matching cap or helmet portrait');
    assert.equal(d.body.classList.contains('detail-light'),family==='life');
    d.querySelector('[data-footer-home]').click();assert.equal(w.location.hash,'#intro');assert.equal(w.scrollY,0);flush();
  }
