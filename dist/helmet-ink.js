@@ -27,17 +27,39 @@
   'M486 724L506 729L522 756L538 776L565 789',
   'M493 748L508 753L519 774L506 769Z M578 789L596 800L603 817L590 828L577 815Z'
  ];
+ function buildMesh(compact=false){
+  const cols=compact?16:24,rows=compact?16:24,points=[],edges=[];
+  for(let j=0;j<=rows;j++)for(let i=0;i<=cols;i++){
+   const u=i/cols,v=j/rows;
+   points.push([350+610*u+18*Math.sin(v*Math.PI)*Math.sin(u*Math.PI),335+555*v+15*Math.sin(u*Math.PI)*Math.sin(v*Math.PI*2)]);
+  }
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+   const a=j*(cols+1)+i,b=a+1,c=a+cols+1,d=c+1;edges.push([a,b],[a,c],(i+j)%2?[a,d]:[b,c]);
+  }
+  return {points,edges};
+ }
  let serial=0;
  function mount(portrait){
   const existing=portrait.querySelector('.hero-helmet-ink');if(existing)return existing.inkController;
   const id='helmet-ink-'+(++serial),svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('viewBox','0 0 1448 1086');svg.setAttribute('aria-hidden','true');
   svg.classList.add('hero-helmet-ink');svg.dataset.structure='current-photo-contours';
-  // A vertical reveal, a full-drawing hold, then a fade before the next cycle.
-  // No generic triangular mesh or traveling perimeter stroke remains.
-  svg.innerHTML=`<defs><clipPath id="${id}-reveal"><rect x="350" y="335" width="610" height="0"><animate attributeName="height" values="0;0;560;560" keyTimes="0;.06;.62;1" dur="4.6s" repeatCount="indefinite"/></rect></clipPath></defs>
-   <g class="helmet-drawing" clip-path="url(#${id}-reveal)" fill="none" stroke="#263e52" stroke-linecap="round" stroke-linejoin="round" opacity="0">
-    <animate attributeName="opacity" values="0;.78;.78;0;0" keyTimes="0;.06;.74;.92;1" dur="4.6s" repeatCount="indefinite"/>
+  const compact=!!window.matchMedia?.('(max-width:600px),(pointer:coarse)').matches;
+  const mesh=buildMesh(compact),meshPath=mesh.edges.map(([a,b])=>`M${mesh.points[a].map(n=>n.toFixed(1)).join(' ')}L${mesh.points[b].map(n=>n.toFixed(1)).join(' ')}`).join('');
+  const ear=details[14];
+  // A soft band travels beyond both ends of the drawing before restarting.
+  // Geometry remains photo-aligned; only light and opacity breathe.
+  svg.innerHTML=`<defs>
+   <clipPath id="${id}-surface"><path d="${shell} ${ear}" clip-rule="evenodd"/><path d="${shield}"/></clipPath>
+   <linearGradient id="${id}-scan" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="260">
+    <stop offset="0" stop-color="#263e52" stop-opacity="0"/>
+    <stop offset=".25" stop-color="#263e52" stop-opacity=".14"/>
+    <stop offset=".55" stop-color="#263e52" stop-opacity=".82"/>
+    <stop offset=".78" stop-color="#263e52" stop-opacity=".22"/>
+    <stop offset="1" stop-color="#263e52" stop-opacity="0"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
+   </linearGradient>
+   <g id="${id}-drawing" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path class="helmet-shell" d="${shell}" stroke-width="2"/>
     <path class="helmet-guard" d="${shield}" stroke-width="1.8"/>
     <g class="helmet-details" stroke-width="1.35">${details.map(d=>`<path d="${d}"/>`).join('')}</g>
@@ -48,10 +70,18 @@
      <path d="M435 543L453 549L463 584L441 578Z M435 588L458 594L470 608L442 602Z M879 545L900 540L914 568L890 575Z"/>
      <circle cx="507" cy="644" r="3"/><circle cx="588" cy="808" r="3"/>
     </g>
-    <g fill="#263e52" stroke="none" font-family="Arial,sans-serif" font-style="italic" font-weight="700">
+    <g fill="none" stroke-width=".7" font-family="Arial,sans-serif" font-style="italic" font-weight="700">
      <text x="531" y="605" font-size="18" transform="rotate(-13 531 605)">RAWLINGS</text>
      <text x="863" y="615" font-size="12" transform="rotate(-15 863 615)">RAWLINGS</text>
      <text x="872" y="535" font-size="45" transform="rotate(-12 872 535)">23</text>
+    </g>
+   </g></defs>
+   <g class="helmet-breath" opacity=".55">
+    <animate attributeName="opacity" values=".42;.85;.42" keyTimes="0;.5;1" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" dur="4.8s" repeatCount="indefinite"/>
+    <use class="helmet-base" href="#${id}-drawing" stroke="#263e52" opacity=".16"/>
+    <g class="helmet-scan" stroke="url(#${id}-scan)" fill="none">
+     <path class="helmet-mesh" d="${meshPath}" clip-path="url(#${id}-surface)" stroke-width=".8" opacity=".52"/>
+     <use href="#${id}-drawing"/>
     </g>
    </g>`;
   portrait.append(svg);let active=true;
@@ -60,7 +90,7 @@
    setThumbnail(progress){svg.style.opacity=String(Math.max(0,1-progress)**1.5);},
    remove(){svg.remove();}
   };
-  svg.dataset.quality='contours';svg.dataset.motion='scanning';svg.inkController=controller;return controller;
+  svg.dataset.quality=compact?'compact':'fine';svg.dataset.segments=String(mesh.edges.length);svg.dataset.motion='scanning';svg.inkController=controller;return controller;
  }
- window.HelmetInk={mount,outline:{shell,shield,details}};
+ window.HelmetInk={mount,buildMesh,outline:{shell,shield,details}};
 })();
