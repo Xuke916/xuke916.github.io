@@ -6,6 +6,8 @@ w.PortfolioLanguage.setLanguage('zh');
 const api=w.OtherWorkCaseStudy,host=d.createElement('main');host.innerHTML=api.render();d.body.append(host);w.PortfolioLanguage.refresh(host);
 assert.equal(host.querySelectorAll('.ow-project').length,4);assert.deepEqual([...host.querySelectorAll('.ow-project')].map(el=>el.dataset.detailSection),['other-mercedes','other-drill','other-anchor','other-popmart']);
 assert.equal(host.querySelectorAll('iframe').length,0,'No provider iframe or third-party player loads before a click');
+assert.equal(host.querySelectorAll('.ow-poster').length,4,'all video buttons show real preview images before playback');
+for(const entry of api.entries){assert.ok(fs.statSync(path.join(dist,entry.poster)).size>1000,'video cover is included locally in the deployment');}
 assert.equal(host.querySelectorAll('.ow-overview').length,4);assert.equal(host.querySelectorAll('a.ow-external').length,4);
 const original=host.textContent;
 w.PortfolioLanguage.setLanguage('en');
