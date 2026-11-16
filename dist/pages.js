@@ -91,9 +91,9 @@
   }
   function lifeEditorial(profile){
     const photos=[...data.team.items,...data.projects].flatMap(group=>group.photos);
-    const selected=['assets/team/pitching-04.webp','assets/team/at-bat-01.webp','assets/team/singapore-02.webp','assets/life/snow-01.webp','assets/life/mocap-01.webp','assets/life/pets-01.webp','assets/team/portraits-02.webp'].map(path=>photos.find(photo=>photo.image===path));
+    const selected=['assets/team/pitching-04.webp','assets/team/at-bat-01.webp','assets/team/field-days-03.webp','assets/team/singapore-02.webp','assets/life/snow-01.webp','assets/life/mocap-01.webp','assets/life/pets-01.webp','assets/team/portraits-02.webp','assets/team/pitching-03.webp'].map(path=>photos.find(photo=>photo.image===path));
     const frames=[{image:profile.heroPhoto,thumbnail:profile.heroPhotoSmall,width:profile.heroPhotoWidth,height:profile.heroPhotoHeight,alt:profile.heroPhotoAlt},...selected];
-    return `<div class="life-editorial-meta"><span>${esc(profile.name)}</span><span class="mono">GAME DESIGN / BASEBALL</span></div><div class="life-sequence-statement" aria-hidden="true"><em>球场之外</em><strong>日常之中</strong></div><figure class="life-editorial-photo"><button type="button" data-life-photo="${esc(profile.heroPhoto)}" data-caption="${esc(profile.heroPhotoCaption)}" aria-label="放大当前照片">${frames.map((photo,i)=>`<img class="life-sequence-frame" data-full-image="${photo.image}" data-frame-caption="${esc(photo.alt)}" src="${i===0?photo.image:photo.thumbnail}"${i===0?` srcset="${photo.thumbnail} 640w, ${photo.image} ${photo.width}w" sizes="(max-width:600px) 84vw, 43vw" fetchpriority="high"`:' loading="lazy"'} alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}" style="opacity:${i===0?1:0}" decoding="async">`).join('')}</button><figcaption>${esc(profile.heroPhotoCaption)}</figcaption></figure><span class="life-sequence-count mono" aria-hidden="true">01 / 08</span><p class="life-editorial-note">球场之外，也记录宠物、收藏、速写与模型。<span class="mono">XU KE / EVERYDAY LIFE</span></p>`;
+    return `<div class="life-editorial-meta"><span>${esc(profile.name)}</span><span class="mono">GAME DESIGN / BASEBALL</span></div><div class="life-sequence-statement" aria-hidden="true"><em>球场之外</em><strong>日常之中</strong></div><figure class="life-editorial-photo"><button type="button" data-life-photo="${esc(profile.heroPhoto)}" data-caption="${esc(profile.heroPhotoCaption)}" aria-label="放大当前照片">${frames.map((photo,i)=>`<img class="life-sequence-frame" data-full-image="${photo.image}" data-frame-caption="${esc(photo.alt)}" src="${i===0?photo.image:photo.thumbnail}"${i===0?` srcset="${photo.thumbnail} 640w, ${photo.image} ${photo.width}w" sizes="(max-width:600px) 84vw, 43vw" fetchpriority="high"`:' loading="eager"'} alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}" style="opacity:${i===0?1:0}" decoding="async">`).join('')}</button><figcaption>${esc(profile.heroPhotoCaption)}</figcaption></figure><span class="life-sequence-count mono" aria-hidden="true">01 / ${String(frames.length).padStart(2,'0')}</span><p class="life-editorial-note">球场之外，也记录宠物、收藏、速写与模型。<span class="mono">XU KE / EVERYDAY LIFE</span></p>`;
   }
   function lifePhotoSection(collection,number){
     const isTeam=collection.id==='team',heading=isTeam?['我与','我的球队']:['生活','片段'];
@@ -243,21 +243,24 @@
       // The resume is a normal reading layout, with no pointer or scroll transforms.
     }else if(ui.editorial&&ui.heroProgress!==hp){
       const p=reduced.matches?0:hp,seq=ui.sequence,box=seq.box;
-      const shrink=smooth(clamp(p/.22)),freeze=smooth(clamp((p-.65)/.15));
-      const middleScale=Math.min(w*(w<=600?.58:.25)/box.width,h*.5/box.height);
-      const scale=mix(1,mix(middleScale,Math.min(w*.20/box.width,h*.22/box.height),freeze),shrink);
-      const dx=(w*.5-box.left-box.width*scale/2)*shrink,dy=(h*.57-box.top-box.height*scale/2)*shrink;
+      const shrink=smooth(clamp(p/.82));
+      const finalScale=Math.min(w*(w<=600?.26:.14)/box.width,h*.20/box.height);
+      const scale=Math.exp(Math.log(finalScale)*shrink);
+      const centerX=mix(box.left+box.width/2,w*.5,shrink),centerY=mix(box.top+box.height/2,h*.57,shrink);
+      const dx=centerX-box.left-box.width*scale/2,dy=centerY-box.top-box.height*scale/2;
       ui.heroPhoto.style.transform=`translate3d(${dx}px,${dy}px,0) scale(${scale})`;
       const fade=1-smooth(clamp((p-.03)/.19));
       ui.heroTitle.style.transform=`translate3d(0,${-shrink*h*.22}px,0)`;ui.heroTitle.style.opacity=fade;
       ui.heroCopy.style.opacity=fade;seq.extras.forEach(el=>el.style.opacity=fade);seq.caption.style.opacity=fade;
       seq.statement.style.opacity=smooth(clamp((p-.3)/.24));seq.counter.style.opacity=smooth(clamp((p-.2)/.08));
-      const at=clamp((p-.22)/.43)*(seq.frames.length-1),index=Math.min(seq.frames.length-1,Math.floor(at)),fraction=at-index,blend=smooth(clamp((fraction-.82)/.18));
-      seq.frames.forEach((img,i)=>{const opacity=i===index?1-blend:i===index+1?blend:0;if(img.style.opacity!==String(opacity))img.style.opacity=opacity;});
+      const at=clamp((p-.035)/.745)*(seq.frames.length-1),index=Math.min(seq.frames.length-1,Math.floor(at)),fraction=at-index,blend=smooth(clamp((fraction-.15)/.7));
+      // Keep the outgoing frame opaque under the incoming one: no pale flash
+      // from two half-transparent photos revealing the background together.
+      seq.frames.forEach((img,i)=>{const opacity=i===index?1:i===index+1?blend:0;if(img.style.opacity!==String(opacity))img.style.opacity=opacity;});
       const active=blend>=.5?Math.min(index+1,seq.frames.length-1):index;
       if(seq.active!==active){seq.active=active;const img=seq.frames[active];seq.button.dataset.lifePhoto=img.dataset.fullImage;seq.button.dataset.caption=img.dataset.frameCaption;seq.counter.textContent=`${String(active+1).padStart(2,'0')} / ${String(seq.frames.length).padStart(2,'0')}`;}
-      seq.counter.style.top=`${h*.57+box.height*scale/2+20}px`;
-      ui.heroView.dataset.sequencePhase=p<.22?'shrink':p<.65?'sequence':'hold';
+      seq.counter.style.top=`${centerY+box.height*scale/2+20}px`;
+      ui.heroView.dataset.sequencePhase=p<.035?'shrink':p<.82?'sequence':'hold';
       ui.heroProgress=hp;
     }else if(!ui.editorial){
     ui.heroTitle.style.transform=`translate3d(${-mouseX*9}px,${-hp*70-mouseY*6}px,0)`;

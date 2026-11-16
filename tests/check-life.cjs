@@ -28,14 +28,17 @@ assert.equal(gallery.querySelectorAll('.life-photo-group').length,5);assert.equa
 assert.equal(d.querySelector('.life-editorial h1').textContent,'OFFDESIGN');assert.equal(d.querySelector('.life-editorial-photo img').getAttribute('fetchpriority'),'high');
 assert.equal(d.querySelector('.life-editorial-photo img').getAttribute('src'),'assets/life/xu-ke-portrait.webp');assert.equal(d.querySelector('.life-editorial-photo img').width,1344);assert.equal(d.querySelector('.life-editorial-photo img').height,2400);
 const sequence=d.querySelector('.life-editorial'),photoFrames=[...d.querySelectorAll('.life-sequence-frame')],photo=d.querySelector('.life-editorial-photo');
-assert.equal(photoFrames.length,8);assert.ok(photoFrames.every(img=>fs.existsSync(path.join(root,img.getAttribute('src')))));
+assert.equal(photoFrames.length,10);assert.ok(photoFrames.every(img=>fs.existsSync(path.join(root,img.getAttribute('src')))));
+assert.equal(photoFrames.at(-1).dataset.fullImage,'assets/team/pitching-03.webp','finish on the supplied raised-knee pitching photograph');
 const heroTravel=parseFloat(d.querySelector('[data-detail-section="hero"]').style.height)-844;
 const seek=p=>{w.scrollTo(0,p*heroTravel);flush();};
-seek(.1);assert.equal(sequence.dataset.sequencePhase,'shrink');const large=photo.style.transform;
+seek(.02);assert.equal(sequence.dataset.sequencePhase,'shrink');const large=photo.style.transform;
+let previousScale=1;
+for(const p of [.1,.25,.4,.55,.7,.78,.82]){seek(p);const scale=Number(photo.style.transform.match(/scale\(([^)]+)\)/)[1]);assert.ok(scale<previousScale,'the frame keeps shrinking throughout photo changes');previousScale=scale;}
 seek(.4);assert.equal(sequence.dataset.sequencePhase,'sequence');assert.notEqual(photo.style.transform,large);const midway=[photo.style.transform,photoFrames.map(img=>img.style.opacity).join(',')];
 seek(.85);assert.equal(sequence.dataset.sequencePhase,'hold');const held=photo.style.transform;assert.equal(photoFrames.at(-1).style.opacity,'1');
 assert.equal(photo.querySelector('button').dataset.lifePhoto,photoFrames.at(-1).dataset.fullImage,'enlarge opens the displayed frame');
-seek(.95);assert.equal(photo.style.transform,held,'last photo holds still before the sticky stage releases');
+for(const p of [.9,.95]){seek(p);assert.equal(photo.style.transform,held,'last photo holds still before the sticky stage releases');assert.equal(photoFrames.at(-1).style.opacity,'1');assert.ok(photoFrames.slice(0,-1).every(img=>img.style.opacity==='0'),'no further photo changes after reaching minimum size');}
 seek(.4);assert.deepEqual([photo.style.transform,photoFrames.map(img=>img.style.opacity).join(',')],midway,'reverse scroll restores the exact photo and scale');seek(0);
 assert.match(d.querySelector('.life-hero-intro').textContent,/中国传媒大学/);
 assert.equal(team.querySelectorAll('.project-panel').length,17,'the separate team collection remains before life photos');
