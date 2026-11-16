@@ -63,6 +63,20 @@
 .life-editorial-note{position:absolute;left:29%;bottom:10%;width:16%;font-size:12px;line-height:1.6;color:#4a657d;margin:0;z-index:4}
 .life-editorial-note .mono{display:block;margin-top:12px;color:#1e90ff;font-size:8px;line-height:1.8}
 .life-editorial .detail-scroll{left:10%;right:auto;bottom:4%;font-size:9px}
+.life-editorial-signature{display:block;width:8vw;max-width:210px;min-width:95px;height:auto;margin:12px 0 0;overflow:visible;fill:none;stroke:currentColor;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round;color:#4b5964}
+@media(min-width:901px) and (min-height:501px){
+ .life-editorial .detail-hero-title{left:10%;top:11%;font-size:min(14.8vw,31svh);line-height:.9;letter-spacing:-.075em;gap:.4vw}
+ .life-editorial .detail-hero-title em{font-family:'Bodoni MT',Didot,'Times New Roman',serif;letter-spacing:-.09em}
+ .life-editorial .detail-hero-title strong{font-family:Arial,Helvetica,sans-serif;font-weight:800;letter-spacing:-.075em}
+ .life-editorial-meta{left:13.4%;top:37%;width:28%;font-size:clamp(17px,1.05vw,40px)}
+ .life-editorial-meta .mono{font:inherit;color:inherit;letter-spacing:-.035em}
+ .life-editorial .detail-hero-copy{left:13.4%;top:52.5%;width:28%;max-width:none}
+ .life-editorial .detail-copy-kicker{font:600 clamp(8px,.43vw,16px)/1.2 Arial,Helvetica,sans-serif;letter-spacing:0;color:#8d9ba5}
+ .life-editorial .life-hero-intro{font:400 clamp(17px,1.55vw,64px)/1.18 Arial,Helvetica,sans-serif;letter-spacing:-.045em;margin-top:14px}
+ .life-editorial .life-editorial-photo{left:50.3%;top:24.4%;width:min(36.2vw,66.15svh)}
+ .life-editorial-note{left:31%;bottom:14%;width:12%;font-size:clamp(10px,.72vw,27px);line-height:1.3;letter-spacing:-.025em}
+ .life-editorial .detail-scroll{left:13.4%}
+}
 
 /* Continuous photo compositions with unequal sizes and paired vertical images. */
 .life-moments .project-viewport{touch-action:pan-x pan-y pinch-zoom}
@@ -118,4 +132,13 @@
  .life-moments .projects-heading{top:27%}.life-moments .projects-heading h2{font-size:28px}.life-photo-group{top:27%}.life-photo-group h3{font-size:20px}.life-photo-group>.mono{display:none}.life-photo-caption{top:calc(var(--photo-y)*100svh + 55px);font-size:7px}.life-photo-button{top:calc(var(--photo-y)*100svh + 75px);height:calc(var(--photo-height)*68svh);--life-photo-height:calc(var(--photo-height)*68svh)}.life-photo-group p{display:none}.life-moments .projects-wheel-hint{display:none}
  .life-photo-lower .life-photo-button{top:66svh;height:18svh;--life-photo-height:18svh}.life-photo-lower .life-photo-caption{top:calc(66svh - 20px)}
  .life-photo-paired .life-photo-button{top:40svh;height:19svh;--life-photo-height:19svh}.life-photo-paired .life-photo-caption{top:calc(40svh - 20px)}
+}
+@media(max-width:900px){.life-editorial-signature{width:100px;min-width:0;margin-top:8px}}
+@media(max-width:600px){
+ .life-editorial .detail-hero-title{font-size:15.2vw;gap:.4vw;letter-spacing:-.07em}
+ .life-editorial-meta{top:27%}
+ .life-editorial .detail-hero-copy{top:33%}
+ .life-editorial .life-hero-intro{font-size:14px;line-height:1.45}
+ .life-editorial-signature{width:78px}
+ .life-editorial .life-editorial-photo{top:60%;width:min(84vw,29.75svh);left:calc(50% - min(42vw,14.875svh))}
 }
