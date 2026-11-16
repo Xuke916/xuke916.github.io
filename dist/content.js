@@ -47,7 +47,7 @@ window.PORTFOLIO_CONTENT = {
         tools: ['Unreal Engine 5', 'Blender', 'Procreate', 'Photoshop', '3DCoat', 'ZBrush']
       },
       heroImage: "", statementImage: "", statement: ["日常", "片段", "记录"],
-      showGallery: false,
+      showStatement: false, showGallery: false,
       galleryTitle: "日常记录", projectsTitle: "生活片段",
       team: {
         "title": "我与我的球队",

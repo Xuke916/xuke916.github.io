@@ -50,13 +50,14 @@
 .life-editorial-photo{transform-origin:0 0;will-change:transform}
 .life-editorial-photo button{position:relative;overflow:hidden}
 .life-editorial-photo .life-sequence-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:none}
-.life-editorial .life-editorial-photo{height:auto;aspect-ratio:3/2}
+.life-editorial .life-editorial-photo{width:min(43vw,65.625svh);height:auto;aspect-ratio:7/8}
 .life-editorial-photo .life-sequence-frame{object-fit:cover;object-position:50% 40%}
 .life-sequence-statement{position:absolute;z-index:2;left:50%;top:31%;transform:translateX(-50%);width:82%;text-align:center;line-height:1.02;font-size:clamp(40px,6.5vw,100px);letter-spacing:-.045em;opacity:0;pointer-events:none}
 .life-sequence-statement em,.life-sequence-statement strong{display:block}.life-sequence-statement em{font-family:Georgia,'Songti SC',serif;font-style:normal;font-weight:400}
 .life-sequence-count{position:absolute;left:50%;top:74%;transform:translateX(-50%);font-size:10px;letter-spacing:.1em;color:#536b89;opacity:0}
 @media(max-width:600px){.life-sequence-statement{top:35%;font-size:clamp(30px,8vw,46px)}.life-sequence-count{top:73%;font-size:9px}}
 @media(prefers-reduced-motion:reduce){.life-editorial-photo{will-change:auto}}
+@media(max-width:600px){.life-editorial .life-editorial-photo{width:min(84vw,35.875svh);left:calc(50% - min(42vw,17.9375svh))}}
 .life-editorial-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 40%}
 .life-editorial-photo figcaption{position:absolute;bottom:18px;left:20px;color:#fff;font-size:10px;letter-spacing:.06em;text-shadow:0 1px 4px #0008;pointer-events:none}
 .life-editorial-note{position:absolute;left:29%;bottom:10%;width:16%;font-size:12px;line-height:1.6;color:#4a657d;margin:0;z-index:4}

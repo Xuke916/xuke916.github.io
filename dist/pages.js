@@ -216,11 +216,12 @@
       if(units){const travel=Math.max(0,units*w-w),anchors=(mobile?attributes.editorialMobileAnchors:attributes.editorialAnchors).split(',').map(x=>Math.min(Number(x)*w,travel));return [collection.id,{panelWidth:w,travel,anchors}];}
       return [collection.id,{panelWidth,travel:Math.max(0,panelWidth*collection.panels.length-w)}];
     })),travel=collections.projects.travel;
-    const spans={hero:h*(ui.editorial&&!reduced.matches?5:1.45),story:h*1.85,collage:h*1.4,projects:h+travel/1.35,footer:h*1.05};
+    const spans={hero:h*(ui.editorial&&!reduced.matches?3.8:1.45),story:h*1.85,collage:h*1.4,projects:h+travel/1.35,footer:h*1.05};
     if(ui.sequence){const photo=ui.heroPhoto;ui.sequence.box={width:photo.offsetWidth||w*(mobile?.84:.43),height:photo.offsetHeight||h*(mobile?.41:.75),left:photo.offsetLeft||w*(mobile?.08:.51),top:photo.offsetTop||h*(mobile?.53:.25)};}
     let offset=0;metrics={h,w,mobile,panelWidth,travel,collections,sections:{}};
     for(const el of ui.sections){
       const name=el.dataset.detailSection;
+      if(name==='team'&&ui.editorial){const overlap=reduced.matches?0:h*.5;el.style.marginTop=-overlap+'px';offset-=overlap;}
       const length=collections[name]?.vertical?collections[name].length:collections[name]?h+collections[name].travel/1.35:name==='hero'?Math.max(spans.hero,ui.heroView.offsetHeight):name==='profile'?el.offsetHeight:name==='footer'?Math.max(spans[name],parseFloat(getComputedStyle(el).minHeight)||0):spans[name];
       metrics.sections[name]={start:offset,length};if(name!=='profile'&&!collections[name]?.vertical)el.style.height=length+'px';offset+=length;
     }
@@ -243,24 +244,25 @@
       // The resume is a normal reading layout, with no pointer or scroll transforms.
     }else if(ui.editorial&&ui.heroProgress!==hp){
       const p=reduced.matches?0:hp,seq=ui.sequence,box=seq.box;
-      const shrink=smooth(clamp(p/.82));
+      const shrink=smooth(p),handoff=clamp((p-.78)/.22),exit=smooth(handoff);
       const finalScale=Math.min(w*(w<=600?.26:.14)/box.width,h*.20/box.height);
       const scale=Math.exp(Math.log(finalScale)*shrink);
-      const centerX=mix(box.left+box.width/2,w*.5,shrink),centerY=mix(box.top+box.height/2,h*.57,shrink);
+      // Match the upward scroll velocity when the sticky photo releases.
+      const centerX=mix(box.left+box.width/2,w*.5,shrink),centerY=mix(box.top+box.height/2,h*.57,shrink)-(s.hero.length-h)*.11*handoff*handoff;
       const dx=centerX-box.left-box.width*scale/2,dy=centerY-box.top-box.height*scale/2;
       ui.heroPhoto.style.transform=`translate3d(${dx}px,${dy}px,0) scale(${scale})`;
       const fade=1-smooth(clamp((p-.03)/.19));
       ui.heroTitle.style.transform=`translate3d(0,${-shrink*h*.22}px,0)`;ui.heroTitle.style.opacity=fade;
       ui.heroCopy.style.opacity=fade;seq.extras.forEach(el=>el.style.opacity=fade);seq.caption.style.opacity=fade;
-      seq.statement.style.opacity=smooth(clamp((p-.3)/.24));seq.counter.style.opacity=smooth(clamp((p-.2)/.08));
-      const at=clamp((p-.035)/.745)*(seq.frames.length-1),index=Math.min(seq.frames.length-1,Math.floor(at)),fraction=at-index,blend=smooth(clamp((fraction-.15)/.7));
+      seq.statement.style.opacity=smooth(clamp((p-.3)/.24))*(1-exit);seq.statement.style.transform=`translate(-50%,${-h*.18*exit}px)`;seq.counter.style.opacity=smooth(clamp((p-.2)/.08))*(1-exit);
+      const at=clamp((p-.035)/.925)*(seq.frames.length-1),index=Math.min(seq.frames.length-1,Math.floor(at)),fraction=at-index,blend=smooth(clamp((fraction-.15)/.7));
       // Keep the outgoing frame opaque under the incoming one: no pale flash
       // from two half-transparent photos revealing the background together.
       seq.frames.forEach((img,i)=>{const opacity=i===index?1:i===index+1?blend:0;if(img.style.opacity!==String(opacity))img.style.opacity=opacity;});
       const active=blend>=.5?Math.min(index+1,seq.frames.length-1):index;
       if(seq.active!==active){seq.active=active;const img=seq.frames[active];seq.button.dataset.lifePhoto=img.dataset.fullImage;seq.button.dataset.caption=img.dataset.frameCaption;seq.counter.textContent=`${String(active+1).padStart(2,'0')} / ${String(seq.frames.length).padStart(2,'0')}`;}
       seq.counter.style.top=`${centerY+box.height*scale/2+20}px`;
-      ui.heroView.dataset.sequencePhase=p<.035?'shrink':p<.82?'sequence':'hold';
+      ui.heroView.dataset.sequencePhase=p<.035?'shrink':p<.96?'sequence':'handoff';
       ui.heroProgress=hp;
     }else if(!ui.editorial){
     ui.heroTitle.style.transform=`translate3d(${-mouseX*9}px,${-hp*70-mouseY*6}px,0)`;

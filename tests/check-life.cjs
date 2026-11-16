@@ -30,15 +30,18 @@ assert.equal(d.querySelector('.life-editorial-photo img').getAttribute('src'),'a
 const sequence=d.querySelector('.life-editorial'),photoFrames=[...d.querySelectorAll('.life-sequence-frame')],photo=d.querySelector('.life-editorial-photo');
 assert.equal(photoFrames.length,10);assert.ok(photoFrames.every(img=>fs.existsSync(path.join(root,img.getAttribute('src')))));
 assert.equal(photoFrames.at(-1).dataset.fullImage,'assets/team/pitching-03.webp','finish on the supplied raised-knee pitching photograph');
+assert.equal(d.querySelector('.detail-story'),null,'remove the Daily Moments Journal interstitial and its scroll spacer');
+const heroSection=d.querySelector('[data-detail-section="hero"]');
+assert.ok(parseFloat(team.style.marginTop)<0,'the team chapter enters before the photo stage completely leaves');
 const heroTravel=parseFloat(d.querySelector('[data-detail-section="hero"]').style.height)-844;
 const seek=p=>{w.scrollTo(0,p*heroTravel);flush();};
 seek(.02);assert.equal(sequence.dataset.sequencePhase,'shrink');const large=photo.style.transform;
 let previousScale=1;
 for(const p of [.1,.25,.4,.55,.7,.78,.82]){seek(p);const scale=Number(photo.style.transform.match(/scale\(([^)]+)\)/)[1]);assert.ok(scale<previousScale,'the frame keeps shrinking throughout photo changes');previousScale=scale;}
 seek(.4);assert.equal(sequence.dataset.sequencePhase,'sequence');assert.notEqual(photo.style.transform,large);const midway=[photo.style.transform,photoFrames.map(img=>img.style.opacity).join(',')];
-seek(.85);assert.equal(sequence.dataset.sequencePhase,'hold');const held=photo.style.transform;assert.equal(photoFrames.at(-1).style.opacity,'1');
+seek(.98);assert.equal(sequence.dataset.sequencePhase,'handoff');const lastTransform=photo.style.transform;assert.equal(photoFrames.at(-1).style.opacity,'1');
 assert.equal(photo.querySelector('button').dataset.lifePhoto,photoFrames.at(-1).dataset.fullImage,'enlarge opens the displayed frame');
-for(const p of [.9,.95]){seek(p);assert.equal(photo.style.transform,held,'last photo holds still before the sticky stage releases');assert.equal(photoFrames.at(-1).style.opacity,'1');assert.ok(photoFrames.slice(0,-1).every(img=>img.style.opacity==='0'),'no further photo changes after reaching minimum size');}
+seek(1);assert.notEqual(photo.style.transform,lastTransform,'the last photo keeps moving into the team chapter without a frozen scroll interval');assert.equal(photoFrames.at(-1).style.opacity,'1');assert.ok(photoFrames.slice(0,-1).every(img=>img.style.opacity==='0'),'the selected final photo stays visible during handoff');
 seek(.4);assert.deepEqual([photo.style.transform,photoFrames.map(img=>img.style.opacity).join(',')],midway,'reverse scroll restores the exact photo and scale');seek(0);
 assert.match(d.querySelector('.life-hero-intro').textContent,/中国传媒大学/);
 assert.equal(team.querySelectorAll('.project-panel').length,17,'the separate team collection remains before life photos');
