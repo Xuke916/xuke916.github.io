@@ -1,5 +1,5 @@
 /* Masked entrances and staggered letter rolls, with a fixed portrait. */
-.footer-signature{top:5%;left:42.5%;width:15%;height:auto;stroke-width:3.1;pointer-events:none}
+.footer-signature{top:9%;left:42.5%;width:15%;height:auto;stroke-width:4.4;z-index:4;pointer-events:none}
 .footer-signature path{stroke-dasharray:1;stroke-dashoffset:1}
 .footer-headline{top:19%;font-size:clamp(30px,4.9vw,100px);line-height:.99}
 .footer-title-line{white-space:nowrap}
@@ -7,7 +7,7 @@
 .footer-reveal-word{display:inline-block;position:relative;clip-path:inset(0 100% 0 0)}
 .footer-reveal-word::after,.footer-item::after{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left;pointer-events:none}
 .footer-portrait{left:25%;width:50%;height:80%;will-change:auto}
-.footer-portrait>img{position:absolute;bottom:0;height:121%;filter:brightness(.9) saturate(.85);mask-image:linear-gradient(to bottom,#000 0%,#000 81%,transparent 100%)}
+.footer-portrait>img{position:absolute;bottom:0;height:121%;filter:brightness(.9) saturate(.85);mask-image:linear-gradient(to bottom,#000 0%,#000 96%,transparent 100%),linear-gradient(to right,transparent 0%,#000 7%,#000 93%,transparent 100%);mask-composite:intersect}
 .footer-pages,.footer-socials{top:53%;align-items:center;text-align:center;gap:4px}
 .footer-pages{left:10%;width:20%}.footer-socials{right:9%;width:20%}
 .footer-pages>.mono,.footer-socials>.mono{margin-bottom:12px;font:600 clamp(8px,.65vw,14px)/1.2 Arial,sans-serif;letter-spacing:0}
@@ -20,10 +20,10 @@
 .footer-glyph-track>span{display:block;height:1.06em}.footer-glyph-track>span+span{color:var(--accent)}
 .footer-item:is(:hover,:focus-visible) .footer-glyph-track{transform:translateY(-50%)}
 .footer-item:focus-visible{outline:1px solid var(--accent);outline-offset:5px}
-.footer-marquee{position:absolute;left:0;bottom:5%;width:100%;z-index:4;overflow:hidden;pointer-events:none;color:var(--accent)}
+.footer-marquee{position:absolute;left:0;bottom:5%;width:100%;z-index:1;overflow:hidden;pointer-events:none;color:var(--accent)}
 .footer-marquee-track{display:flex;width:max-content;animation:footer-marquee-slide 22s linear infinite;animation-play-state:paused}
 .is-visible .footer-marquee-track{animation-play-state:running}
-.footer-marquee-group{display:flex;flex-shrink:0;gap:3vw;padding-right:3vw;font:800 clamp(26px,3.2vw,70px)/1.1 Arial,sans-serif;letter-spacing:-.035em}
+.footer-marquee-group{display:flex;flex-shrink:0;gap:3vw;padding-right:3vw;font:400 clamp(26px,3.2vw,70px)/1.1 Arial,sans-serif;letter-spacing:-.035em}
 .footer-brand{bottom:2%;font-size:6px}
 .is-revealed .footer-signature path{animation:footer-sign-on .8s .1s both}
 .is-revealed .footer-reveal-word{animation:footer-word-on .75s cubic-bezier(.22,.7,.2,1) calc(var(--word-index)*65ms) both}
@@ -35,7 +35,7 @@
 @keyframes footer-wipe{0%{transform:scaleX(0);transform-origin:left}38%{transform:scaleX(1);transform-origin:left}39%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
 @keyframes footer-marquee-slide{to{transform:translateX(-50%)}}
 @media(max-width:600px){
- .footer-signature{top:5%;left:37%;width:26%}.footer-headline{top:18%;left:4%;width:92%;font-size:clamp(27px,7.6vw,44px)}
+ .footer-signature{top:13%;left:37%;width:26%}.footer-headline{top:18%;left:4%;width:92%;font-size:clamp(27px,7.6vw,44px)}
  .footer-pages,.footer-socials{top:39%;width:35%;gap:8px}.footer-pages{left:4%}.footer-socials{right:4%}
  .footer-pages>a.footer-item,.footer-socials>a.footer-item,.footer-item{font-size:clamp(15px,4.4vw,24px);line-height:1.06}
  .footer-portrait{left:5%;width:90%;height:60%}.footer-portrait>img{height:100%;filter:brightness(.78) saturate(.82)}

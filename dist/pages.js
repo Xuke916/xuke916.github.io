@@ -55,7 +55,7 @@
         <nav class="footer-pages" aria-label="页尾导航"><span class="mono">PAGES</span>${footerItem('HOME','#intro','data-footer-home',0)}${footerItem('ON DESIGN','#work','data-open-page="work"',1)}${footerItem('OFF DESIGN','#life','data-open-page="life"',2)}</nav>
         <figure class="footer-portrait">${footerImage ? `<img src="${esc(footerImage)}"${footerSmall?` srcset="${esc(footerSmall)} 640w, ${esc(footerImage)} 1448w" sizes="(max-width:600px) 100vw, 48vw"`:''} width="1448" height="1086" alt="个人照片" loading="lazy" decoding="async">` : `<svg viewBox="0 0 700 900" preserveAspectRatio="xMidYMax meet" role="img" aria-label="个人照片占位"><use href="#portrait-placeholder"/></svg><figcaption class="mono">YOUR PHOTO</figcaption>`}</figure>
         <aside class="footer-socials"><span class="mono">FOLLOW ON</span>${socials.map((item,i)=>footerItem(item.label,/^https?:\/\//.test(item.url||'')?item.url:null,'target="_blank" rel="noopener noreferrer"',i)).join('')}</aside>
-        <div class="footer-marquee" role="img" aria-label="BE THE BEST OF THE BEST"><div class="footer-marquee-track" aria-hidden="true">${[0,1].map(()=>`<span class="footer-marquee-group">${[0,1].map(()=>'<span>BE THE BEST OF THE BEST</span>').join('')}</span>`).join('')}</div></div>
+        <div class="footer-marquee" role="img" aria-label="BE THE BEST OF THE BEST"><div class="footer-marquee-track" aria-hidden="true">${[0,1].map(()=>`<span class="footer-marquee-group">${[0,1,2,3].map(()=>'<span>BE THE BEST OF THE BEST</span>').join('')}</span>`).join('')}</div></div>
         <span class="footer-brand mono">${esc(window.PORTFOLIO_CONTENT.name.join(' '))} / PORTFOLIO</span>
       </div>
       <span class="footer-legal mono">© 2026 ${esc(window.PORTFOLIO_CONTENT.name.join(' '))}</span>
