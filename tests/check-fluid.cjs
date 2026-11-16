@@ -86,7 +86,7 @@ async function boot({reduce=false, detail=false, fail=false, pauseDuringLoad=fal
     a.step(155);
     assert.equal(c.dataset.ribbons,random<.5?'1':'2','each cycle chooses one or two independently driven ribbons');
     assert.equal(c.dataset.origins,random<.5?'left':'left,right');
-    assert.ok(+c.dataset.progress>.23&&+c.dataset.progress<.27,'the pass is slightly faster, with a 2.3-second round trip');
+    assert.ok(+c.dataset.progress>.37&&+c.dataset.progress<.41,'the faster pass completes a round trip in 1.5 seconds');
     if(random>.5){
       const f=a.field,split=Math.floor(f.h*.53)*f.w;
       const upper=[...f.x.slice(0,split)].reduce((sum,v)=>sum+v,0);

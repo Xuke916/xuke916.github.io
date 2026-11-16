@@ -199,6 +199,8 @@
   // Scroll and pointer movement share one reversible, frame-rate-independent timeline.
   function render(y) {
     const t = y / unit * TIMELINE_SCALE, mobile = innerWidth <= 600;
+    const openingMotion=t<2&&!menuOpen&&!homeSuspended&&!document.hidden&&!reduced.matches;
+    if(document.body.classList.contains('opening-motion')!==openingMotion)document.body.classList.toggle('opening-motion',openingMotion);
     const px = reduced.matches ? 0 : mouseX, py = reduced.matches ? 0 : mouseY;
     const heroP = smooth(range(t, 0, 1.7));
     const thumb = smooth(range(t, 1.7, 3.05));
@@ -344,6 +346,9 @@
     if(navigation||current!==target||mouseX!==aimX||mouseY!==aimY)frame=requestAnimationFrame(tick);else lastTime=0;
   }
   function requestTick(){if(!homeSuspended&&!frame)frame=requestAnimationFrame(tick);}
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)document.body.classList.remove('opening-motion');else requestTick();
+  });
   addEventListener('scroll',()=>{
     if (homeSuspended) return;
     const actual=scrollY;
@@ -397,6 +402,7 @@
   window.PortfolioHome = {
     pause() {
       homeSuspended = true;
+      document.body.classList.remove('opening-motion');
       window.HeroFluid?.setActive(false);
       if (frame) cancelAnimationFrame(frame);
       frame = 0; navigation = null; target = current; lastTime = 0;

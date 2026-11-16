@@ -22,7 +22,7 @@
     'M740 330C755 333 771 343 781 354L782 360C768 348 754 340 741 337Z'
   ];
   function buildMesh(light=false){
-    const cols=light?24:56,rows=light?22:50,points=[],edges=[];
+    const cols=light?24:40,rows=light?22:36,points=[],edges=[];
     const noise=(i,j)=>Math.sin(i*71.73+j*39.19)*Math.cos(i*19.41-j*53.12);
     for(let j=0;j<=rows;j++)for(let i=0;i<=cols;i++){
       const u=i/cols,v=j/rows;
@@ -49,18 +49,19 @@
     svg.innerHTML=`<defs>
       <clipPath id="${id}-clip"><path d="${shell}"/><path d="${shield}"/></clipPath>
       <linearGradient id="${id}-scan" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="130" spreadMethod="repeat">
-        <stop offset="0" stop-color="#343936" stop-opacity=".008"/>
-        <stop offset=".60" stop-color="#343936" stop-opacity=".013"/>
-        <stop offset=".85" stop-color="#343936" stop-opacity=".05"/>
-        <stop offset="1" stop-color="#343936" stop-opacity=".105"/>
-        ${light?'':'<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="0 130" dur="3.8s" repeatCount="indefinite"/>'}
+        <stop offset="0" stop-color="#343936" stop-opacity=".018"/>
+        <stop offset=".60" stop-color="#343936" stop-opacity=".035"/>
+        <stop offset=".85" stop-color="#343936" stop-opacity=".16"/>
+        <stop offset="1" stop-color="#343936" stop-opacity=".32"/>
+        ${light?'':'<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="0 130" dur="1.9s" repeatCount="indefinite"/>'}
       </linearGradient>
     </defs>
     <g fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path d="${mesh.edges.map(line).join('')}" clip-path="url(#${id}-clip)" stroke="url(#${id}-scan)" stroke-width=".7"/>
-      <path d="${shell}" stroke="#343936" stroke-opacity=".075" stroke-width="1.55"/>
-      <path d="${shield}" stroke="#343936" stroke-opacity=".065" stroke-width="1.35"/>
-      ${details.map(d=>`<path d="${d}" stroke="#343936" stroke-opacity=".085" stroke-width="1.1"/>`).join('')}
+      <path d="${shell}" stroke="#343936" stroke-opacity=".19" stroke-width="1.8"/>
+      <path d="${shield}" stroke="#343936" stroke-opacity=".17" stroke-width="1.6"/>
+      ${details.map(d=>`<path d="${d}" stroke="#343936" stroke-opacity=".20" stroke-width="1.3"/>`).join('')}
+      ${light?'':`<path class="helmet-trace" d="${shell}" pathLength="1" stroke="#343936" stroke-opacity=".42" stroke-width="2.4" stroke-dasharray=".18 .82"><animate attributeName="stroke-dashoffset" from="1" to="0" dur="2.6s" repeatCount="indefinite"/></path>`}
     </g>`;
     portrait.append(svg);let active=true;
     const controller={

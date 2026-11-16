@@ -25,7 +25,7 @@
   let pending = [], field, width = 1, height = 1;
   let surfaceSize = '';
   let scrolling=false,scrollTimer=0,geometry=null;
-  const IDLE_GAP = 2000, SWEEP_DURATION = 2300, HANDOFF_DURATION = 220;
+  const IDLE_GAP = 2000, SWEEP_DURATION = 1500, HANDOFF_DURATION = 220;
   let idleTimer = 0, cycle = null, cycles = 0, driver = 'none', currentFade = 0;
   let handoff = null, pointerBlend = 1;
 
@@ -91,7 +91,7 @@
     }
     step(ms, strokes) {
       const {w, h, x, y, nextX, nextY, div} = this;
-      const dt = Math.max(w, h) * .014 * ms / 16.667;
+      const dt = Math.max(w, h) * .0175 * ms / 16.667;
       const damping = Math.pow(.96, ms / 16.667);
       // Back-and-forth error compensation preserves the thin folded edges that
       // ordinary advection would blur away after a few frames.
