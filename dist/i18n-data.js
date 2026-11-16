@@ -1,5 +1,8 @@
 // English copy for the Chinese source text.
 window.PORTFOLIO_EN = {
+  "放大当前照片": "Enlarge the current photo",
+  "球场之外": "BEYOND THE FIELD",
+  "日常之中": "IN EVERYDAY LIFE",
   "跳转至章节导航": "Skip to chapter navigation",
   "向上滑动 · 开始探索": "Swipe up · Explore",
   "专业": "Selected",

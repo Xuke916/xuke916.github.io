@@ -90,7 +90,10 @@
     return `<svg viewBox="0 0 620 720" role="img" aria-label="主视觉图片占位"><defs><radialGradient id="object-blue" cx=".32" cy=".18" r=".87"><stop stop-color="#366ba6"/><stop offset=".42" stop-color="#183858"/><stop offset=".8" stop-color="#0c1929"/><stop offset="1" stop-color="#060b12"/></radialGradient><linearGradient id="object-edge" x1="0" x2="1"><stop stop-color="#1e90ff"/><stop offset="1" stop-color="#1e90ff" stop-opacity="0"/></linearGradient></defs><path d="M55 430C28 220 110 65 286 53c173-13 273 120 264 295l-5 233-150 87-222-34-102-95Z" fill="url(#object-blue)" stroke="#6287af" stroke-opacity=".3"/><path d="M76 360c83-44 194-66 315-39l139 65-9 86-146-40-286 7Z" fill="#080f1b" stroke="#2579cf" stroke-opacity=".7"/><path d="M57 428c137 25 300-25 492 103M81 538c103 6 205 5 312 129M134 109c-55 167-6 367 103 537M240 58c-83 215-12 418 70 595M377 67c-45 130 12 316 126 547M477 155c-43 133-15 297 61 389M74 268c100-57 276-66 445 26M66 206c108-74 250-92 415 19M69 493c97 33 308 14 475 97" fill="none" stroke="#6b9bd1" stroke-width="1" opacity=".28"/><path d="M61 431c-29-208 52-359 225-372" fill="none" stroke="url(#object-edge)" stroke-width="3"/><path d="m174 526 164 7 56 44-169-18Z" fill="#102b4b" stroke="#3e6c9c"/><circle cx="408" cy="490" r="19" fill="#05090f" stroke="#34597e"/><circle cx="408" cy="490" r="9" fill="none" stroke="#71a9dc"/><path d="m114 587 88 24m12 4 88 24m13 4 38 11" stroke="#1e90ff" stroke-width="3" opacity=".55"/><text x="280" y="258" text-anchor="middle" fill="#7197be" font-family="monospace" font-size="12" letter-spacing="3">IMAGE / 01</text><path d="M280 160v30m-15-15h30" stroke="#8fb9e3" opacity=".6"/></svg>`;
   }
   function lifeEditorial(profile){
-    return `<div class="life-editorial-meta"><span>${esc(profile.name)}</span><span class="mono">GAME DESIGN / BASEBALL</span></div><figure class="life-editorial-photo"><button type="button" data-life-photo="${esc(profile.heroPhoto)}" data-caption="${esc(profile.heroPhotoCaption)}" aria-label="放大个人介绍照片"><img src="${esc(profile.heroPhoto)}" srcset="${esc(profile.heroPhotoSmall)} 640w, ${esc(profile.heroPhoto)} ${profile.heroPhotoWidth}w" sizes="(max-width:600px) 84vw, 43vw" alt="${esc(profile.heroPhotoAlt)}" width="${profile.heroPhotoWidth}" height="${profile.heroPhotoHeight}" fetchpriority="high" decoding="async"></button><figcaption>${esc(profile.heroPhotoCaption)}</figcaption></figure><p class="life-editorial-note">球场之外，也记录宠物、收藏、速写与模型。<span class="mono">XU KE / EVERYDAY LIFE</span></p>`;
+    const photos=[...data.team.items,...data.projects].flatMap(group=>group.photos);
+    const selected=['assets/team/pitching-04.webp','assets/team/at-bat-01.webp','assets/team/singapore-02.webp','assets/life/snow-01.webp','assets/life/mocap-01.webp','assets/life/pets-01.webp','assets/team/portraits-02.webp'].map(path=>photos.find(photo=>photo.image===path));
+    const frames=[{image:profile.heroPhoto,thumbnail:profile.heroPhotoSmall,width:profile.heroPhotoWidth,height:profile.heroPhotoHeight,alt:profile.heroPhotoAlt},...selected];
+    return `<div class="life-editorial-meta"><span>${esc(profile.name)}</span><span class="mono">GAME DESIGN / BASEBALL</span></div><div class="life-sequence-statement" aria-hidden="true"><em>球场之外</em><strong>日常之中</strong></div><figure class="life-editorial-photo"><button type="button" data-life-photo="${esc(profile.heroPhoto)}" data-caption="${esc(profile.heroPhotoCaption)}" aria-label="放大当前照片">${frames.map((photo,i)=>`<img class="life-sequence-frame" data-full-image="${photo.image}" data-frame-caption="${esc(photo.alt)}" src="${i===0?photo.image:photo.thumbnail}"${i===0?` srcset="${photo.thumbnail} 640w, ${photo.image} ${photo.width}w" sizes="(max-width:600px) 84vw, 43vw" fetchpriority="high"`:' loading="lazy"'} alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}" style="opacity:${i===0?1:0}" decoding="async">`).join('')}</button><figcaption>${esc(profile.heroPhotoCaption)}</figcaption></figure><span class="life-sequence-count mono" aria-hidden="true">01 / 08</span><p class="life-editorial-note">球场之外，也记录宠物、收藏、速写与模型。<span class="mono">XU KE / EVERYDAY LIFE</span></p>`;
   }
   function lifePhotoSection(collection,number){
     const isTeam=collection.id==='team',heading=isTeam?['我与','我的球队']:['生活','片段'];
@@ -176,6 +179,7 @@
       projectDots: $$('.project-dots button',root), miniProgress: $('.projects-mini-progress i',root),
       sectionButtons: $$('.detail-section-nav button',root), viewport: $('.project-viewport',root),footerPhoto:$('.footer-portrait',root)
     };
+    if(profile)ui.sequence={frames:$$('.life-sequence-frame',root),button:$('.life-editorial-photo button',root),caption:$('.life-editorial-photo figcaption',root),statement:$('.life-sequence-statement',root),counter:$('.life-sequence-count',root),extras:$$('.life-editorial-meta,.life-editorial-note,.life-editorial .detail-scroll',root)};
     ui.collections=collections.map(collection=>{const el=$(`[data-horizontal-id="${collection.id}"],[data-vertical-id="${collection.id}"]`,root);return {...collection,vertical:el.hasAttribute('data-vertical-id'),el,track:$('.project-track',el),panels:$$('.project-panel',el),current:$('.project-current',el),dots:$$('.project-dots button',el),progress:$('.projects-mini-progress i',el),viewport:$('.project-viewport',el)};});
     // Keep the primary collection references for project routes and existing consumers.
     const primary=ui.collections.find(collection=>collection.id==='projects');Object.assign(ui,{track:primary.track,panels:primary.panels,projectCurrent:primary.current,projectDots:primary.dots,miniProgress:primary.progress,viewport:primary.viewport});
@@ -212,7 +216,8 @@
       if(units){const travel=Math.max(0,units*w-w),anchors=(mobile?attributes.editorialMobileAnchors:attributes.editorialAnchors).split(',').map(x=>Math.min(Number(x)*w,travel));return [collection.id,{panelWidth:w,travel,anchors}];}
       return [collection.id,{panelWidth,travel:Math.max(0,panelWidth*collection.panels.length-w)}];
     })),travel=collections.projects.travel;
-    const spans={hero:h*1.45,story:h*1.85,collage:h*1.4,projects:h+travel/1.35,footer:h*1.05};
+    const spans={hero:h*(ui.editorial&&!reduced.matches?5:1.45),story:h*1.85,collage:h*1.4,projects:h+travel/1.35,footer:h*1.05};
+    if(ui.sequence){const photo=ui.heroPhoto;ui.sequence.box={width:photo.offsetWidth||w*(mobile?.84:.43),height:photo.offsetHeight||h*(mobile?.41:.75),left:photo.offsetLeft||w*(mobile?.08:.51),top:photo.offsetTop||h*(mobile?.53:.25)};}
     let offset=0;metrics={h,w,mobile,panelWidth,travel,collections,sections:{}};
     for(const el of ui.sections){
       const name=el.dataset.detailSection;
@@ -237,9 +242,22 @@
     if(ui.resume){
       // The resume is a normal reading layout, with no pointer or scroll transforms.
     }else if(ui.editorial&&ui.heroProgress!==hp){
-      ui.heroTitle.style.transform=`translate3d(0,${-hp*28}px,0)`;
-      ui.heroCopy.style.transform=`translate3d(0,${-hp*12}px,0)`;
-      ui.heroPhoto.style.transform=`translate3d(0,${hp*12}px,0)`;
+      const p=reduced.matches?0:hp,seq=ui.sequence,box=seq.box;
+      const shrink=smooth(clamp(p/.22)),freeze=smooth(clamp((p-.65)/.15));
+      const middleScale=Math.min(w*(w<=600?.58:.25)/box.width,h*.5/box.height);
+      const scale=mix(1,mix(middleScale,Math.min(w*.20/box.width,h*.22/box.height),freeze),shrink);
+      const dx=(w*.5-box.left-box.width*scale/2)*shrink,dy=(h*.57-box.top-box.height*scale/2)*shrink;
+      ui.heroPhoto.style.transform=`translate3d(${dx}px,${dy}px,0) scale(${scale})`;
+      const fade=1-smooth(clamp((p-.03)/.19));
+      ui.heroTitle.style.transform=`translate3d(0,${-shrink*h*.22}px,0)`;ui.heroTitle.style.opacity=fade;
+      ui.heroCopy.style.opacity=fade;seq.extras.forEach(el=>el.style.opacity=fade);seq.caption.style.opacity=fade;
+      seq.statement.style.opacity=smooth(clamp((p-.3)/.24));seq.counter.style.opacity=smooth(clamp((p-.2)/.08));
+      const at=clamp((p-.22)/.43)*(seq.frames.length-1),index=Math.min(seq.frames.length-1,Math.floor(at)),fraction=at-index,blend=smooth(clamp((fraction-.82)/.18));
+      seq.frames.forEach((img,i)=>{const opacity=i===index?1-blend:i===index+1?blend:0;if(img.style.opacity!==String(opacity))img.style.opacity=opacity;});
+      const active=blend>=.5?Math.min(index+1,seq.frames.length-1):index;
+      if(seq.active!==active){seq.active=active;const img=seq.frames[active];seq.button.dataset.lifePhoto=img.dataset.fullImage;seq.button.dataset.caption=img.dataset.frameCaption;seq.counter.textContent=`${String(active+1).padStart(2,'0')} / ${String(seq.frames.length).padStart(2,'0')}`;}
+      seq.counter.style.top=`${h*.57+box.height*scale/2+20}px`;
+      ui.heroView.dataset.sequencePhase=p<.22?'shrink':p<.65?'sequence':'hold';
       ui.heroProgress=hp;
     }else if(!ui.editorial){
     ui.heroTitle.style.transform=`translate3d(${-mouseX*9}px,${-hp*70-mouseY*6}px,0)`;
