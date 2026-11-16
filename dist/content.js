@@ -9,7 +9,12 @@ window.PORTFOLIO_CONTENT = {
   message: {
     lines: ["GREAT OF ALL TIME", "BE THE BEST OF THE BEST"]
   },
-  footer: { portrait: "", headline: [["YOUR", "STORY"], ["GOES", "HERE"]], socials: [] },
+  footer: { portrait: "", headline: [["BE THE", "BEST OF"], ["THE", "BEST"]], socials: [
+    {label:'TIKTOK',url:'https://v.douyin.com/H9c7BXmgyzI/'},
+    {label:'INSTAGRAM',url:'https://www.instagram.com/xk_0916?obrf=MWxvdHcwbmUxazZn&utm_source=qr'},
+    {label:'YOUTUBE',url:'https://youtube.com/@coco_xu?si=SxxTe1ieL5C-TKuX'},
+    {label:'BILIBILI',url:'https://space.bilibili.com/509851058?spm_id_from=333.1007.0.0'}
+  ] },
   pages: {
     work: {
       title: ["专业", "作品"], english: "ON DESIGN", mark: "WORK",

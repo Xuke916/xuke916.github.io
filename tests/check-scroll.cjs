@@ -176,6 +176,10 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
    w.PortfolioPages.open(family);flush();
    assert.equal(d.querySelectorAll('.portrait-footer').length,1);
    assert.equal(d.querySelectorAll('.footer-pages a').length,3);assert.equal(d.querySelector('.footer-portrait img').getAttribute('src'),family==='life'?w.PORTFOLIO_CONTENT.heroImage:w.PORTFOLIO_CONTENT.heroHelmetImage,'footer uses the matching cap or helmet portrait');
+   assert.deepEqual([...d.querySelectorAll('.footer-title-line')].map(line=>[line.querySelector('strong').textContent,line.querySelector('em').textContent]),[['BE THE','BEST OF'],['THE','BEST']]);
+   assert.deepEqual([...d.querySelectorAll('.footer-socials .footer-item')].map(item=>item.getAttribute('aria-label')),['TIKTOK','INSTAGRAM','YOUTUBE','BILIBILI']);
+   assert.equal(d.querySelector('.footer-signature path').getAttribute('d'),d.querySelector('.message-signature path').getAttribute('d'),'footer uses the supplied signature');
+   const footerPortrait=d.querySelector('.footer-portrait'),fixed=footerPortrait.style.transform;w.scrollTo(0,Number(d.querySelector('.detail-route').dataset.scrollHeight)-height);flush();d.dispatchEvent(new w.MouseEvent('pointermove',{clientX:width,clientY:height,bubbles:true}));flush();assert.equal(footerPortrait.style.transform,fixed,'the footer portrait stays fixed under pointer movement');
    assert.equal(d.body.classList.contains('detail-light'),family==='life');
    d.querySelector('[data-footer-home]').click();assert.equal(w.location.hash,'#intro');assert.equal(w.scrollY,0);flush();
  }

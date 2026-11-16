@@ -17,7 +17,7 @@
   let ui = null, metrics = null, data = null, savedHome = null, queuedPop = null;
   const savedPositions = new Map();
   let touchGesture = null, suppressCoverClickUntil = 0;
-  let projectObserver = null, caseCleanup = null;
+  let projectObserver = null, caseCleanup = null, footerObserver = null;
 
   function projectRoute(project) { return 'work/' + project.slug; }
   function projectInfo(key) {
@@ -30,20 +30,32 @@
     return projectInfo(key)?.project.title || window.PORTFOLIO_CONTENT.pages[key]?.english || '';
   }
 
+  function footerItem(label,href,attributes='',index=0){
+    const glyphs=Array.from(label,(letter,i)=>`<span class="footer-glyph" style="--glyph-index:${i}"><span class="footer-glyph-track"><span>${letter===' '?'&nbsp;':esc(letter)}</span><span>${letter===' '?'&nbsp;':esc(letter)}</span></span></span>`).join('');
+    const body=`<span class="footer-item-label" aria-hidden="true">${glyphs}</span>`;
+    return href?`<a class="footer-item" href="${esc(href)}" ${attributes} aria-label="${esc(label)}" style="--item-index:${index}">${body}</a>`:`<span class="footer-item" role="img" aria-label="${esc(label)}" style="--item-index:${index}">${body}</span>`;
+  }
+  function setupFooter(){
+    const el=$('.portrait-footer',root);if(!el)return;
+    if(typeof IntersectionObserver==='undefined'){el.classList.add('is-revealed','is-visible');return;}
+    footerObserver=new IntersectionObserver(entries=>{for(const entry of entries){el.classList.toggle('is-visible',entry.isIntersecting);if(entry.isIntersecting)el.classList.add('is-revealed');}},{threshold:.18});
+    footerObserver.observe(el);
+  }
   function footer() {
     const content=window.PORTFOLIO_CONTENT,config=content.footer;
     const footerImage=(route==='life'?content.heroImage:content.heroHelmetImage)||config.portrait;
     const footerSmall=route==='life'?content.heroImageSmall:content.heroHelmetImageSmall;
-    const socials = (config.socials || []).filter(item => /^https?:\/\//.test(item.url || ''));
+    const socials = config.socials || [];
     return `<footer class="portrait-footer" data-detail-section="footer" aria-label="网站页尾">
       <svg class="footer-shape" aria-hidden="true"><defs><clipPath id="portrait-footer-shape" clipPathUnits="objectBoundingBox"><path d="M.025 .045H.375C.414 .045 .407 0 .454 0H.546C.593 0 .586 .045 .625 .045H.975Q1 .045 1 .072V.935Q1 .965 .975 .965H.9C.875 .965 .885 1 .855 1H.145C.115 1 .125 .965 .1 .965H.025Q0 .965 0 .935V.072Q0 .045 .025 .045Z"/></clipPath></defs></svg>
       <div class="footer-card">
         <div class="footer-contours" aria-hidden="true"><svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice"><path d="M-100 100C120 260 320-80 510 75S580 390 770 290 1000-50 1500 200M-100 170C170 370 340 0 490 145S590 480 810 350 1060 90 1500 270M-100 300C210 450 300 120 460 210S640 580 900 440 1100 200 1500 350M-100 560C100 360 400 670 540 540S580 100 820 650 1080 500 1500 570M-100 650C160 470 360 800 570 630S650 250 860 740 1100 570 1500 650M-100 740C150 580 380 900 600 720S700 370 900 830 1180 650 1500 760"/></svg></div>
-        <svg class="footer-signature" viewBox="0 0 100 38" aria-hidden="true"><path d="m3 28 50-21-29 26L68 6 46 30l42-16-21 21M8 27l83-4"/></svg>
-        <h2 class="footer-headline">${config.headline.map(line=>`<span><strong>${esc(line[0])}</strong> <em>${esc(line[1])}</em></span>`).join('')}</h2>
-        <nav class="footer-pages" aria-label="页尾导航"><span class="mono">PAGES</span><a href="#intro" data-footer-home>HOME</a><a href="#work" data-open-page="work">专业作品</a><a href="#life" data-open-page="life">日常生活</a></nav>
+        ${lifeSignature('footer-signature')}
+        <h2 class="footer-headline" aria-label="BE THE BEST OF THE BEST">${config.headline.map((line,i)=>`<span class="footer-title-line"><strong class="footer-reveal-word" style="--word-index:${i*2}">${esc(line[0])}</strong> <em class="footer-reveal-word" style="--word-index:${i*2+1}">${esc(line[1])}</em></span>`).join('')}</h2>
+        <nav class="footer-pages" aria-label="页尾导航"><span class="mono">PAGES</span>${footerItem('HOME','#intro','data-footer-home',0)}${footerItem('ON DESIGN','#work','data-open-page="work"',1)}${footerItem('OFF DESIGN','#life','data-open-page="life"',2)}</nav>
         <figure class="footer-portrait">${footerImage ? `<img src="${esc(footerImage)}"${footerSmall?` srcset="${esc(footerSmall)} 640w, ${esc(footerImage)} 1448w" sizes="(max-width:600px) 100vw, 48vw"`:''} width="1448" height="1086" alt="个人照片" loading="lazy" decoding="async">` : `<svg viewBox="0 0 700 900" preserveAspectRatio="xMidYMax meet" role="img" aria-label="个人照片占位"><use href="#portrait-placeholder"/></svg><figcaption class="mono">YOUR PHOTO</figcaption>`}</figure>
-        <aside class="footer-socials"><span class="mono">FOLLOW ON</span>${socials.length?socials.map(item=>`<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.label)} ↗</a>`).join(''):'<div class="footer-social-placeholder" aria-label="社交链接占位"><i></i><i></i><i></i></div>'}</aside>
+        <aside class="footer-socials"><span class="mono">FOLLOW ON</span>${socials.map((item,i)=>footerItem(item.label,/^https?:\/\//.test(item.url||'')?item.url:null,'target="_blank" rel="noopener noreferrer"',i)).join('')}</aside>
+        <div class="footer-marquee" role="img" aria-label="BE THE BEST OF THE BEST"><div class="footer-marquee-track" aria-hidden="true">${[0,1].map(()=>`<span class="footer-marquee-group">${[0,1].map(()=>'<span>BE THE BEST OF THE BEST</span>').join('')}</span>`).join('')}</div></div>
         <span class="footer-brand mono">${esc(window.PORTFOLIO_CONTENT.name.join(' '))} / PORTFOLIO</span>
       </div>
       <span class="footer-legal mono">© 2026 ${esc(window.PORTFOLIO_CONTENT.name.join(' '))}</span>
@@ -92,9 +104,9 @@
   function sculpture() {
     return `<svg viewBox="0 0 620 720" role="img" aria-label="主视觉图片占位"><defs><radialGradient id="object-blue" cx=".32" cy=".18" r=".87"><stop stop-color="#366ba6"/><stop offset=".42" stop-color="#183858"/><stop offset=".8" stop-color="#0c1929"/><stop offset="1" stop-color="#060b12"/></radialGradient><linearGradient id="object-edge" x1="0" x2="1"><stop stop-color="#1e90ff"/><stop offset="1" stop-color="#1e90ff" stop-opacity="0"/></linearGradient></defs><path d="M55 430C28 220 110 65 286 53c173-13 273 120 264 295l-5 233-150 87-222-34-102-95Z" fill="url(#object-blue)" stroke="#6287af" stroke-opacity=".3"/><path d="M76 360c83-44 194-66 315-39l139 65-9 86-146-40-286 7Z" fill="#080f1b" stroke="#2579cf" stroke-opacity=".7"/><path d="M57 428c137 25 300-25 492 103M81 538c103 6 205 5 312 129M134 109c-55 167-6 367 103 537M240 58c-83 215-12 418 70 595M377 67c-45 130 12 316 126 547M477 155c-43 133-15 297 61 389M74 268c100-57 276-66 445 26M66 206c108-74 250-92 415 19M69 493c97 33 308 14 475 97" fill="none" stroke="#6b9bd1" stroke-width="1" opacity=".28"/><path d="M61 431c-29-208 52-359 225-372" fill="none" stroke="url(#object-edge)" stroke-width="3"/><path d="m174 526 164 7 56 44-169-18Z" fill="#102b4b" stroke="#3e6c9c"/><circle cx="408" cy="490" r="19" fill="#05090f" stroke="#34597e"/><circle cx="408" cy="490" r="9" fill="none" stroke="#71a9dc"/><path d="m114 587 88 24m12 4 88 24m13 4 38 11" stroke="#1e90ff" stroke-width="3" opacity=".55"/><text x="280" y="258" text-anchor="middle" fill="#7197be" font-family="monospace" font-size="12" letter-spacing="3">IMAGE / 01</text><path d="M280 160v30m-15-15h30" stroke="#8fb9e3" opacity=".6"/></svg>`;
   }
-  function lifeSignature(){
+  function lifeSignature(className='life-editorial-signature'){
     const source=$('.message-signature svg');
-    return source?`<svg class="life-editorial-signature" viewBox="${esc(source.getAttribute('viewBox'))}" role="img" aria-label="XU KE signature"><path d="${esc($('path',source).getAttribute('d'))}"/></svg>`:'';
+    return source?`<svg class="${esc(className)}" viewBox="${esc(source.getAttribute('viewBox'))}" role="img" aria-label="XU KE signature"><path pathLength="1" d="${esc($('path',source).getAttribute('d'))}"/></svg>`:'';
   }
   function lifeEditorial(profile){
     const photos=[...data.team.items,...data.projects].flatMap(group=>group.photos);
@@ -240,7 +252,6 @@
     if(!metrics||route==='home')return;
     const {h,w,sections:s}=metrics;
     document.documentElement.style.setProperty('--header-color',menuPaused?'#f3f3eb':ui.caseStudy?ui.headerColor:route==='life'?'#0a2447':'#f3f3eb');
-    if(ui.footerPhoto&&!ui.caseStudy&&y+h>s.footer.start)ui.footerPhoto.style.transform=`translate3d(${mouseX*8}px,${mouseY*5}px,0)`;
     if(ui.kind==='project'){
       if(!ui.caseStudy)ui.projectCover.style.transform=`translate3d(0,${clamp(y/h)*22}px,0)`;
       ui.sectionButtons.forEach((button,i)=>{const section=s[button.dataset.section],next=ui.sectionButtons[i+1];const active=ui.caseStudy?(y>=section.anchor-2||i===0)&&(!next||y<s[next.dataset.section].anchor-2):y>=section.start-h*.2&&y<section.start+section.length-h*.2;if(button.classList.contains('active')!==active){button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');}if(active&&ui.caseStudy&&ui.activeToc!==button.dataset.section){ui.activeToc=button.dataset.section;ui.toc.scrollTop=Math.max(0,button.offsetTop-ui.toc.clientHeight/2+button.offsetHeight/2);}});
@@ -323,6 +334,7 @@
   }
   function applyRoute(to,{chapter='explore',restore=false,projectIndex}={}){
     projectObserver?.disconnect();projectObserver=null;
+    footerObserver?.disconnect();footerObserver=null;
     caseCleanup?.();caseCleanup=null;
     stop();route=to;mouseX=mouseY=aimX=aimY=0;
     if(to==='home'){
@@ -335,7 +347,7 @@
       window.PortfolioHome.pause();document.body.classList.add('detail-mode');document.body.classList.toggle('detail-light',to==='life');document.body.dataset.page=info?'project':to;
       if(info)document.body.dataset.project=info.project.slug;else delete document.body.dataset.project;
       home.inert=true;root.hidden=false;if(info)buildProject(info);else build(to);root.inert=busy;
-      window.PortfolioLanguage?.refresh();measure();
+      setupFooter();window.PortfolioLanguage?.refresh();measure();
       let destination=restore?(savedPositions.get(to)||0):0;
       if(to==='work'&&Number.isInteger(projectIndex))destination=metrics.sections.projects.start+(metrics.collections.projects.anchors?.[projectIndex]??Math.min(projectIndex*metrics.panelWidth,metrics.travel))/1.35;
       position=target=clamp(destination,0,metrics.max);written=position;write(position);render(position);
@@ -483,7 +495,7 @@
     touchGesture=null;
   },{passive:true});
   addEventListener('touchcancel',()=>{touchGesture=null;},{passive:true});
-  document.addEventListener('pointermove',e=>{if(route==='home'||ui?.caseStudy||busy||menuPaused||reduced.matches||e.pointerType==='touch'||(route==='life'&&(!metrics||position+metrics.h<=metrics.sections.footer.start)))return;aimX=clamp(e.clientX/innerWidth*2-1,-1,1);aimY=clamp(e.clientY/innerHeight*2-1,-1,1);request();},{passive:true});
+  document.addEventListener('pointermove',e=>{if(route==='home'||ui?.caseStudy||busy||menuPaused||reduced.matches||e.pointerType==='touch'||(metrics?.sections.footer&&position+metrics.h>metrics.sections.footer.start)||(route==='life'&&(!metrics||position+metrics.h<=metrics.sections.footer.start)))return;aimX=clamp(e.clientX/innerWidth*2-1,-1,1);aimY=clamp(e.clientY/innerHeight*2-1,-1,1);request();},{passive:true});
   document.addEventListener('pointerleave',()=>{if(!aimX&&!aimY)return;aimX=aimY=0;request();});
   document.addEventListener('portfolio:menu',e=>{menuPaused=e.detail.open;if(menuPaused){stop();if(route!=='home')document.documentElement.style.setProperty('--header-color','#f3f3eb');}else request();});
   document.addEventListener('keydown',e=>{
