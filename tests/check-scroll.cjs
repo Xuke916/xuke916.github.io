@@ -11,8 +11,8 @@ function boot(width, height, reduce = false, initialHash = '') {
   Object.defineProperty(w, 'innerWidth', { value: width, writable: true });
   Object.defineProperty(w, 'innerHeight', { value: height, writable: true });
   Object.defineProperty(w, 'scrollY', { get: () => y });
-  Object.defineProperty(d.documentElement, 'scrollHeight', { get: () => d.body.classList.contains('detail-mode') ? Number(d.querySelector('.detail-route')?.dataset.scrollHeight || height) : height * 8.2 });
-  Object.defineProperty(w.HTMLElement.prototype, 'offsetHeight', { get() { const c=this.classList;return this.id==='viewport-metric'?height:c.contains('scroll-space') ? height * 8.2 : c.contains('hero-portrait') ? height * (width<=600?.9:1.08) : c.contains('project-detail-hero')?height*1.4:c.contains('project-detail-overview')?height*.8:c.contains('project-detail-gallery')?height*1.6:c.contains('project-pagination')?height*.6:c.contains('portrait-footer')?height*1.05:100; } });
+  Object.defineProperty(d.documentElement, 'scrollHeight', { get: () => d.body.classList.contains('detail-mode') ? Number(d.querySelector('.detail-route')?.dataset.scrollHeight || height) : height * 5.6 });
+  Object.defineProperty(w.HTMLElement.prototype, 'offsetHeight', { get() { const c=this.classList;return this.id==='viewport-metric'?height:c.contains('scroll-space') ? height * 5.6 : c.contains('hero-portrait') ? height * (width<=600?.9:1.08) : c.contains('project-detail-hero')?height*1.4:c.contains('project-detail-overview')?height*.8:c.contains('project-detail-gallery')?height*1.6:c.contains('project-pagination')?height*.6:c.contains('portrait-footer')?height*1.05:100; } });
   w.matchMedia = q => ({ matches: q.includes('reduced-motion') ? reduce : true, addEventListener() {} });
   w.requestAnimationFrame = cb => { queue.set(++id, cb); return id; };
   w.cancelAnimationFrame = n => queue.delete(n);
@@ -27,113 +27,29 @@ function boot(width, height, reduce = false, initialHash = '') {
   function advance(dt=16.667){const jobs=[...queue.values()];queue.clear();clock+=dt;jobs.forEach(cb=>cb(clock));}
   return { w, d, scroll, flush, advance };
 }
-for (const [width, height, reduce] of [[1600, 900, false], [390, 844, false], [1600, 900, true]]) {
-  const { w, d, scroll, flush, advance } = boot(width, height, reduce);
-  const q = s => d.querySelector(s);
-  assert.equal(d.querySelectorAll('.gallery-card').length, 8);
-  assert.equal(q('.hero-scene').inert, false);
-  const opening = q('.hero-portrait').style.transform;
-  scroll(1.5);
-  assert.notEqual(q('.hero-portrait').style.transform, opening, 'scroll changes hero scale');
-  assert.ok(+q('.floating-shell').style.opacity > .5, 'floating placeholders enter');
-  scroll(3.35);
-  assert.equal(q('.hero-scene').style.filter,'grayscale(1)','the finished thumbnail is fully gray');
-  assert.equal(q('.message-scene').inert, false);
-  assert.equal(q('.message-signature path').style.strokeDashoffset, '0', 'signature finishes drawing in thumbnail scene');
-  assert.ok(parseFloat(q('.hero-scene').style.clipPath.slice(6)) > 20, 'hero is cropped into a central thumbnail');
-  const messageFrame=q('.hero-scene').style.clipPath;
-  assert.match(q('.message-marquee.serif').textContent,/GREAT OF ALL TIME/);
-  assert.deepEqual([...d.querySelectorAll('.square-arrow')].map(el=>el.textContent),['←','→']);
-  if(!reduce){
-    const grayPortrait=q('.hero-portrait').style.transform,graySignature=q('.message-signature').style.transform,grayContours=q('.hero-contours').style.transform;
-    for(const [x,y] of [[0,0],[width,height],[0,height],[width,0]]){
-      d.dispatchEvent(new w.MouseEvent('pointermove',{clientX:x,clientY:y,bubbles:true}));flush();
-      assert.equal(q('.hero-portrait').style.transform,grayPortrait,'the gray portrait stays fixed across pointer extremes');
-      assert.equal(q('.message-signature').style.transform,graySignature,'signature stays registered to the gray card');
-      assert.equal(q('.hero-contours').style.transform,grayContours,'contours inside the gray card remain still');
-    }
-    d.dispatchEvent(new w.MouseEvent('pointerleave'));flush();
-  }
-  assert.equal(d.documentElement.style.getPropertyValue('--header-color'), '#f3f3eb');
-  scroll(5.4);
-  assert.equal(q('.gallery-scene').style.transform, 'scale(1) rotate(0deg)');
-  assert.equal(q('.gallery-scene').inert, false);
-  assert.equal(d.documentElement.style.getPropertyValue('--header-color'), '#f3f3eb');
-  assert.equal(q('.hero-scene').inert, true);
-  assert.equal(q('.chapter-navigation .active').getAttribute('href'), '#gallery');
-  const first = q('.gallery-card').style.transform;
-  scroll(7.2);
-  assert.notEqual(q('.gallery-card').style.transform, first, 'gallery moves with scroll');
-  const a = parseFloat(q('.gallery-card').style.transform.split(',')[1]);
-  const b = parseFloat(d.querySelectorAll('.gallery-card')[1].style.transform.split(',')[1]);
-  assert.notEqual(a, b, 'gallery layers travel at different speeds');
-  scroll(5.4);
-  assert.equal(q('.gallery-card').style.transform, first, 'reverse scroll restores exact frame');
-  q('.image-slot').click();
-  assert.equal(q('dialog').open, false, 'gallery image navigates without opening a dialog');
-  assert.equal(w.location.hash, '#explore');
-  if(!reduce){
-    const before=w.scrollY;advance();advance(450);
-    assert.ok(w.scrollY>before&&w.scrollY<10*height/1.5,'gallery click has a continuous transition');
-    assert.ok(+q('.split-scene').style.opacity>0&&+q('.split-scene').style.opacity<1,'white crossfade has an intermediate frame');
-  }
-  flush();
-  assert.equal(w.scrollY,10*height/1.5,'gallery click arrives at the dual entry section');
-  assert.equal(q('.split-scene').inert,false);
-  assert.equal(d.activeElement,q('.split-option'),'keyboard focus follows the destination');
-  assert.ok([...d.querySelectorAll('.image-slot')].every(a=>a.tagName==='A'&&a.getAttribute('href')==='#explore'),'all gallery frames link to the same destination');
-  assert.equal(d.body.style.overflow, '');
-  scroll(5.4);
-  q('.menu-toggle').click(); flush();
-  assert.equal(q('.menu-toggle').getAttribute('aria-expanded'), 'true');
-  assert.equal(q('.site-menu').inert, false);
-  assert.equal(q('.stage').inert, true);
-  w.document.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); flush();
-  assert.equal(q('.menu-toggle').getAttribute('aria-expanded'), 'false');
-  assert.equal(q('.stage').inert, false);
-  q('.chapter-navigation a[href="#explore"]').click(); flush();
-  assert.equal(w.scrollY, 10 * height / 1.5, 'chapter navigation reaches intended position');
-  scroll(9.1);
-  const fade=q('.split-scene').style.opacity;
-  assert.ok(+fade>0&&+fade<1,'the entire white scene fades in progressively');
-  scroll(9.6);assert.ok(+q('.split-scene').style.opacity>+fade,'forward scroll increases the white layer opacity');scroll(9.1);
-  assert.equal(q('.split-scene').style.opacity,fade,'white transition reverses exactly');
-  scroll(10.8);
-  assert.equal(q('.split-scene').style.opacity, '1');
-  assert.equal(q('.split-scene').inert, false);
-  assert.equal(q('.gallery-scene').inert, true);
-  assert.ok(Math.abs(parseFloat(q('.scroll-progress>span').style.transform.slice(7)) - 1) < 1e-9, 'progress reaches the end');
-  q('.split-option').click();flush();assert.equal(d.body.dataset.page,'work');assert.equal(q('dialog').open,false);w.PortfolioPages.home('explore');flush();assert.equal(d.body.classList.contains('detail-mode'),false);
-  scroll(0);
-  assert.equal(q('.hero-scene').style.filter,'grayscale(0)','reverse scrolling restores the color portrait');
-  assert.equal(q('.hero-portrait').style.transform, opening, 'full backwards scroll restores opening');
-  if(!reduce){
-   d.dispatchEvent(new w.MouseEvent('pointermove',{clientX:width*.9,clientY:height*.2,bubbles:true}));flush();
-   assert.notEqual(q('.hero-portrait').style.transform,opening,'mouse movement tilts and moves the hero');
-   assert.equal(w.scrollY,0,'mouse movement does not advance scroll');
-   d.dispatchEvent(new w.MouseEvent('pointerleave'));flush();
-   assert.equal(q('.hero-portrait').style.transform,opening,'pointer exit restores resting position');
-   const wheel=new w.WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true});w.dispatchEvent(wheel);
-   assert.equal(w.scrollY,0,'wheel target does not jump ahead of the visible frame');
-   advance();
-   assert.ok(w.scrollY>0&&w.scrollY<162,'first frame begins easing immediately');
-   const rendered=parseFloat(q('.scroll-progress>span').style.transform.slice(7));
-   assert.ok(Math.abs(rendered-w.scrollY/(height*7.2))<1e-9,'native position and rendered progress agree');
-   flush();
-   assert.ok(w.scrollY>150,'wheel input advances the timeline');
-   assert.equal(wheel.defaultPrevented,true,'wheel handled by smooth scrolling');
-   scroll(0);
-  }
-  scroll(3.35);assert.equal(q('.hero-scene').style.clipPath,messageFrame,'thumbnail restores on reverse scroll');scroll(0);
-  assert.equal(q('.hero-scene').inert, false);
-  assert.equal(q('.gallery-scene').style.visibility, 'hidden');
-  console.log(`PASS ${width}×${height}, reduced-motion=${reduce}: gallery-to-entries transition and focus, reversible timeline, wheel input, menu, professional entry and return`);
-  w.close();
+for (const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,true]]) {
+ const {w,d,scroll,flush,advance}=boot(width,height,reduce),q=s=>d.querySelector(s);
+ assert.equal(q('.gallery-scene'),null);assert.equal(q('.gallery-card'),null);assert.equal(q('.gallery-quote'),null);
+ assert.equal(d.querySelectorAll('.chapter-navigation a').length,3);
+ assert.equal(q('.index-button').getAttribute('href'),'#explore');
+ const opening=q('.hero-portrait').style.transform;scroll(1.5);assert.notEqual(q('.hero-portrait').style.transform,opening);
+ scroll(3.35);assert.equal(q('.message-scene').inert,false);assert.equal(q('.hero-scene').style.filter,'grayscale(1)');
+ assert.equal(q('.message-signature path').style.strokeDashoffset,'0');
+ assert.match(q('.message-marquee.serif').textContent,/GREAT OF ALL TIME/);
+ for(const t of [4.3,4.7,5.1,5.5]){scroll(t);assert.ok(+q('.message-signature').style.opacity>0||+q('.split-scene').style.opacity>0,'signature goes straight into the entry without an empty gallery interval');}
+ scroll(5.1);const fade=q('.split-scene').style.opacity;scroll(5.6);assert.ok(+q('.split-scene').style.opacity>+fade);scroll(5.1);assert.equal(q('.split-scene').style.opacity,fade,'transition reverses exactly');
+ q('.menu-toggle').click();flush();assert.equal(q('.site-menu').inert,false);d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));flush();assert.equal(q('.menu-toggle').getAttribute('aria-expanded'),'false');
+ q('.index-button').click();flush();assert.equal(w.scrollY,6*height/1.5);assert.equal(q('.split-scene').inert,false);assert.equal(d.activeElement,q('.split-option'));
+ assert.equal(q('.chapter-navigation .active').getAttribute('href'),'#explore');assert.equal(q('.split-scene').style.opacity,'1');
+ q('.split-option').click();flush();assert.equal(d.body.dataset.page,'work');w.PortfolioPages.home('explore');flush();assert.equal(d.body.classList.contains('detail-mode'),false);
+ scroll(0);assert.equal(q('.hero-scene').inert,false);assert.equal(q('.split-scene').style.visibility,'hidden');
+ if(!reduce){const e=new w.WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true});w.dispatchEvent(e);advance();assert.ok(w.scrollY>0&&w.scrollY<162);flush();assert.equal(w.scrollY,162);}
+ w.close();console.log('PASS '+width+'x'+height+': gallery removed, direct signature-to-entry transition, menu, INDEX focus, reversible motion and project return');
 }
 {
  const {w,d,scroll,flush,advance}=boot(1600,900);
  const wheel=(deltaY,extra={})=>{const event=new w.WheelEvent('wheel',{deltaY,bubbles:true,cancelable:true,...extra});w.dispatchEvent(event);return event;};
- scroll(5.4);
+ scroll(3.8);
  wheel(120);wheel(120);advance();
  const forward=w.scrollY;
  wheel(-120);advance();
@@ -146,18 +62,11 @@ for (const [width, height, reduce] of [[1600, 900, false], [390, 844, false], [1
  assert.equal(wheel(30,{deltaX:120}).defaultPrevented,false,'horizontal gestures stay native');
  scroll(0);wheel(1200);flush();
  assert.equal(w.scrollY,1620,'fast wheel impulses are not discarded by a one-screen cap');
- for(const link of d.querySelectorAll('.image-slot')){
-   scroll(5.4);link.click();flush();
-   assert.equal(w.scrollY,6000,'each of the eight gallery frames reaches the dual entry section');
-   assert.equal(d.querySelector('dialog').open,false);
- }
- scroll(5.4);d.querySelector('.image-slot').focus();d.querySelector('.image-slot').click();advance();advance(100);
- wheel(-120);advance();flush();
- assert.notEqual(d.activeElement,d.querySelector('.split-option'),'interrupting gallery navigation does not steal focus');
+ scroll(3.35);
  d.querySelector('.chapter-navigation a[href="#explore"]').click();advance();advance(80);
  const duringNavigation=w.scrollY;wheel(-120);advance();
  assert.ok(w.scrollY<duringNavigation,'wheel input immediately interrupts a chapter jump');flush();
- assert.ok(w.scrollY<6000,'interrupted navigation does not resume');
+ assert.ok(w.scrollY<3600,'interrupted navigation does not resume');
  w.close();
  console.log('PASS immediate reversal, trackpad precision, zoom/horizontal gestures, fast impulses, navigation interruption');
 }
@@ -185,7 +94,7 @@ for(const [width,height] of [[1600,900],[1200,1173],[390,844]]){
 }
 for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,true]]){
  const {w,d,scroll,flush,advance}=boot(width,height,reduce);
- scroll(10.8);d.querySelector('.split-option').click();
+ scroll(6.8);d.querySelector('.split-option').click();
  if(!reduce){assert.equal(d.querySelector('.route-transition').hidden,false,'blue transition begins before the page changes');advance();advance(200);assert.equal(d.body.classList.contains('is-routing'),true);}
  flush();
  assert.equal(d.body.dataset.page,'work');assert.equal(w.location.hash,'#work');
@@ -286,7 +195,7 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
  assert.equal(d.body.classList.contains('detail-mode'),false,'HOME immediately leaves the interior');
  assert.equal(w.scrollY,0,'HOME goes straight to the opening, not the entry section');
  assert.equal(w.location.hash,'#intro');closed();flush();
- scroll(5.4);openMenu();nav.querySelector('[data-menu-home]').click();
+ scroll(3.8);openMenu();nav.querySelector('[data-menu-home]').click();
  assert.equal(w.scrollY,0,'HOME immediately returns from a scrolled home chapter');closed();flush();
  openMenu();nav.querySelector('[data-open-page="work"]').click();flush();
  assert.equal(d.body.dataset.page,'work');closed();
@@ -314,9 +223,9 @@ console.log('PASS local assets and self-contained runtime');
 {
  const {w,d,scroll}=boot(1600,900);
  const title=d.querySelector('.split-heading em'),arrow=d.querySelector('.square-arrow');
- scroll(8.7);assert.ok(+title.style.opacity>+arrow.style.opacity,'Entry headings lead the button reveal');
- const before=[title.style.opacity,title.style.translate];scroll(9.4);scroll(8.7);
+ scroll(4.7);assert.ok(+title.style.opacity>+arrow.style.opacity,'Entry headings lead the button reveal');
+ const before=[title.style.opacity,title.style.translate];scroll(5.4);scroll(4.7);
  assert.deepEqual([title.style.opacity,title.style.translate],before,'Layered entrance reverses without a jump');
- scroll(10);assert.equal(title.style.opacity,'1');assert.equal(arrow.style.opacity,'1');
+ scroll(6);assert.equal(title.style.opacity,'1');assert.equal(arrow.style.opacity,'1');
  w.close();console.log('PASS staged entry headings/buttons, complete reveal and reversible scrolling');
 }

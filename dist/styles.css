@@ -39,8 +39,8 @@
 .gallery-contours{--line:rgba(30,144,255,.2)}
 .image-slot{transform-style:preserve-3d;will-change:transform;transition:transform .3s ease-out}
 .split-scene{z-index:6;transform:none;opacity:0;clip-path:none;will-change:opacity}
-.scroll-space{height:820vh;height:820svh}
-#message{top:223.3333vh;top:223.3333svh}#gallery{top:353.3333vh;top:353.3333svh}#explore{top:666.6667vh;top:666.6667svh}
+.scroll-space{height:560vh;height:560svh}
+#message{top:223.3333vh;top:223.3333svh}#explore{top:400vh;top:400svh}
 @media(max-width:600px){
  .message-eyebrow{top:16%;gap:12px}.message-eyebrow svg{width:27px;height:31px}.message-eyebrow .mono{font-size:8px}
  .message-marquees{top:41%}.message-marquee{font-size:19vw;line-height:1}.message-marquee.sans{margin-top:2px}

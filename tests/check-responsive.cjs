@@ -8,8 +8,8 @@ function boot(width,height,hash=''){
  const w=dom.window,d=w.document;let viewHeight=height,y=0,clock=0,id=0,frames=new Map();const layoutObservers=new Set();
  w.ResizeObserver=class{constructor(callback){this.callback=callback;}observe(){layoutObservers.add(this);}disconnect(){layoutObservers.delete(this);}};
  Object.defineProperties(w,{innerWidth:{value:width,writable:true},innerHeight:{value:height,writable:true},scrollY:{get:()=>y}});
- Object.defineProperty(d.documentElement,'scrollHeight',{get:()=>d.body.classList.contains('detail-mode')?Number(d.querySelector('.detail-route')?.dataset.scrollHeight||viewHeight):viewHeight*8.2});
- Object.defineProperty(w.HTMLElement.prototype,'offsetHeight',{get(){const c=this.classList;return this.id==='viewport-metric'?viewHeight:c.contains('scroll-space')?viewHeight*8.2:c.contains('hero-portrait')?Math.min(viewHeight*1.28,w.innerWidth*2.4)*.75:c.contains('portrait-footer')?viewHeight*1.05:c.contains('project-detail-hero')?viewHeight*1.4:c.contains('project-detail-overview')?viewHeight*.8:c.contains('project-detail-gallery')?viewHeight*1.6:c.contains('project-pagination')?viewHeight*.6:100;}});
+ Object.defineProperty(d.documentElement,'scrollHeight',{get:()=>d.body.classList.contains('detail-mode')?Number(d.querySelector('.detail-route')?.dataset.scrollHeight||viewHeight):viewHeight*5.6});
+ Object.defineProperty(w.HTMLElement.prototype,'offsetHeight',{get(){const c=this.classList;return this.id==='viewport-metric'?viewHeight:c.contains('scroll-space')?viewHeight*5.6:c.contains('hero-portrait')?Math.min(viewHeight*1.28,w.innerWidth*2.4)*.75:c.contains('portrait-footer')?viewHeight*1.05:c.contains('project-detail-hero')?viewHeight*1.4:c.contains('project-detail-overview')?viewHeight*.8:c.contains('project-detail-gallery')?viewHeight*1.6:c.contains('project-pagination')?viewHeight*.6:100;}});
  w.matchMedia=q=>({matches:q.includes('reduced-motion')?false:q.includes('fine')?false:q.includes('600')?width<=600:true,addEventListener(){}});
  w.performance.now=()=>clock;
  w.requestAnimationFrame=cb=>(frames.set(++id,cb),id);w.cancelAnimationFrame=i=>frames.delete(i);

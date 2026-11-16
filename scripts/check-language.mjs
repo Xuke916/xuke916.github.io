@@ -59,12 +59,12 @@ host.innerHTML='<p>关闭导航</p>';await settle();
 d.querySelector('[data-site-language="zh"]').click();assert.equal(host.textContent,'关闭导航');
 // Animation counters and SVG updates must not rewrite language controls or
 // perform document-wide selector work on every frame, in either language.
+const counter=d.createElement('span');host.append(counter);
 for(const selected of ['zh','en']){
   language.setLanguage(selected);await settle();
   let globalQueries=0;
   const query=d.querySelectorAll.bind(d);
   d.querySelectorAll=(...args)=>{globalQueries++;return query(...args);};
-  const counter=d.querySelector('#moment-counter');
   for(let frame=0;frame<20;frame++){counter.textContent=String(frame%8+1).padStart(2,'0');counter.style.transform=`translateX(${frame}px)`;await new Promise(resolve=>w.setTimeout(resolve,0));}
   d.querySelectorAll=query;
   assert.equal(globalQueries,0,selected+': unrelated animation frames must bypass language refresh');

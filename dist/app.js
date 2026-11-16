@@ -13,8 +13,7 @@
   const finePointer = matchMedia('(pointer: fine)');
   window.PortfolioViewport = () => $('#viewport-metric')?.offsetHeight || innerHeight;
   const stage = $('.stage'), hero = $('.hero-scene'), portrait = $('.hero-portrait');
-  const message = $('.message-scene'), gallery = $('.gallery-scene'), split = $('.split-scene');
-  const world = $('.gallery-world'), quote = $('.gallery-quote');
+  const message = $('.message-scene'), split = $('.split-scene');
   const signature = $('.message-signature'), signaturePath = $('path', signature);
   const header = $('.site-header'), progress = $('.scroll-progress>span');
   const menu = $('.site-menu'), toggle = $('.menu-toggle');
@@ -22,7 +21,7 @@
   let unit = innerHeight, portraitHeight = 0, current = scrollY, target = scrollY, frame = 0, lastTime = 0;
   let menuOpen = false, activeChapter = -1, cursorActive = false;
   let mouseX = 0, mouseY = 0, aimX = 0, aimY = 0;
-  const TOTAL_HEIGHT = 8.2;
+  const TOTAL_HEIGHT = 5.6;
   const TIMELINE_SCALE = 1.5;
   const SCROLL_DAMPING_MS = 70;
   const POINTER_DAMPING_MS = 90;
@@ -31,18 +30,7 @@
 
   // Each section's distance is expressed in viewport heights, not wheel events.
   // Native scrolling also supports trackpads, touch, keyboard, and scrollbars.
-  const CHAPTERS = { intro: 0, message: 3.35, gallery: 5.3, explore: 10 };
-  const layout = [
-    { x:31,y:17,w:14,r:.8,speed:.72,c:'#476b99',mx:16 },
-    { x:38,y:65,w:15,r:1,speed:1.02,c:'#214d83',mx:27 },
-    { x:61,y:44,w:32,r:.91,speed:.83,c:'#587ca9',mx:60 },
-    { x:6,y:112,w:22,r:1.2,speed:1.04,c:'#1b477f',mx:-10 },
-    { x:45,y:160,w:21,r:.78,speed:.88,c:'#6c8bb3',mx:44 },
-    { x:76,y:230,w:18,r:1.1,speed:.95,c:'#2c5b91',mx:80 },
-    { x:19,y:285,w:26,r:1.2,speed:.96,c:'#406ca1',mx:4 },
-    { x:60,y:330,w:24,r:.8,speed:1.01,c:'#6384ad',mx:55 }
-  ];
-
+  const CHAPTERS = { intro: 0, message: 3.35, gallery: 6, explore: 6 };
   function addImage(parent, path, alt, options = {}) {
     if (!path) return;
     const img = document.createElement('img');
@@ -75,25 +63,6 @@
   $('.message-marquees').setAttribute('aria-label', content.message.lines.join(' / '));
   if(!/^#(?:work|life)(?:\/|$)/.test(location.hash))fillUserImage(portrait, content.heroImage);
   if (content.heroImage) $('.portrait-label').hidden = true;
-  layout.forEach((l, i) => {
-    const data = content.gallery[i] || { image: '', caption: `IMAGE / ${i + 2}` };
-    const figure = document.createElement('figure'); figure.className = 'gallery-card';
-    figure.style.cssText = `--x:${l.x}%;--mobile-x:${l.mx}%;--y:${l.y}%;--w:${l.w}%;--ratio:${l.r};--slot-color:${l.c}`;
-    const caption = document.createElement('figcaption'); caption.textContent = data.caption;
-    const link = document.createElement('a'); link.className = 'image-slot';
-    if(data.fit) link.style.setProperty('--image-fit', data.fit);
-    if(data.background) link.style.background = data.background;
-    link.href = '#explore';
-    link.setAttribute('aria-label', `${data.caption}：前往专业作品与日常生活`);
-    link.innerHTML = data.image ? '' : `<span class="slot-grid"></span><span class="slot-cross"></span><span class="slot-corner">↗</span><span class="slot-number">${String(i + 2).padStart(2, '0')} / IMAGE PLACEHOLDER</span>`;
-    addImage(link, data.image, data.caption, {
-      lazy: true,
-      srcset: data.thumbnail ? `${data.thumbnail} ${data.smallWidth}w, ${data.image} ${data.width}w` : '',
-      sizes: `(max-width:600px) ${l.w * 1.65}vw, ${l.w}vw`
-    });
-    figure.append(caption, link); world.append(figure);
-  });
-  const cards = $$('.gallery-card');
   // Keep stable element references out of the animation loop.
   const ui = {
     heroLight: $('.hero-light'), orbits: [$('.orbit-one'), $('.orbit-two')],
@@ -102,7 +71,6 @@
     heroContours: $('.hero-contours'), messageContours: $('.message-contours'),
     marqueeGroup: $('.message-marquees'),
     messageEyebrow: $('.message-eyebrow'), messageFooter: $('.message-footer'),
-    galleryContours: $('.gallery-contours'), counter: $('#moment-counter'),
     splitPortraits: $$('.split-portrait'), splitOptions: $('.split-options'),
     splitParts: $$('.split-option').map(option=>['.option-index','.split-heading em','.split-heading strong','.description-skeleton','.square-arrow'].map(selector=>$(selector,option))),
     splitContours: $('.split-contours'), centerMark: $('.center-mark', header),
@@ -187,11 +155,7 @@
     const id = a.getAttribute('href').slice(1);
     if (id in CHAPTERS) {
       e.preventDefault();
-      const fromGallery = a.classList.contains('image-slot');
-      if (fromGallery) {
-        aimX = aimY = 0; cursorActive = false; cursor.classList.remove('visible');
-      }
-      go(id, fromGallery ? { duration: 850, focusDestination: true } : { immediate: a.hasAttribute('data-menu-home') });
+      go(id, { focusDestination: id==='explore', immediate: a.hasAttribute('data-menu-home') });
     }
   }));
   $$('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
@@ -206,8 +170,7 @@
     const thumb = smooth(range(t, 1.7, 3.05));
     const heroPX = px * (1-thumb), heroPY = py * (1-thumb);
     const messageOut = smooth(range(t, 4.25, 5.1));
-    const galleryEnter=smooth(range(t,4.3,5.2));
-    const splitEnter=smooth(range(t,8,10));
+    const splitEnter=smooth(range(t,4.25,6));
     split.style.opacity=splitEnter;
     const marqueeVisible=t>1.65&&t<5.3;
     if(document.body.classList.contains('message-visible')!==marqueeVisible)document.body.classList.toggle('message-visible',marqueeVisible);
@@ -252,7 +215,7 @@
     ui.heroMeta.forEach(el=>el.style.opacity=1-thumb);
     ui.heroContours.style.transform=`translate3d(${-heroPX*24}px,${-t*1.8-heroPY*1.5}%,0) rotate(${t*.5}deg)`;
     message.style.opacity=smooth(range(t,1.65,2.3));
-    message.style.visibility=t>5.3?'hidden':'visible';
+    message.style.visibility=t>6?'hidden':'visible';
     ui.messageContours.style.transform=`translate3d(${-px*18}px,${py*-12}px,0) rotate(${(t-3)*.8}deg)`;
     const messageText=smooth(range(t,2.1,2.9))*(1-messageOut);
     ui.marqueeGroup.style.opacity=messageText;
@@ -264,32 +227,18 @@
     signature.style.transform=`translate3d(calc(-50% + ${-heroPX*22}px),calc(-50% + ${-heroPY*14}px),0) rotate(${heroPX*3}deg) scale(${mix(.92,1,draw)})`;
 
     }
-    if(t>4.2&&t<10.1){
-    gallery.style.opacity=galleryEnter;
-    gallery.style.transform=`scale(${mix(1.13,1,galleryEnter)}) rotate(0deg)`;
-    const gp=Math.max(0,t-5.25);
-    cards.forEach((card,i)=>{
-      card.style.transform=`translate3d(${-px*(9+i*3)}px,${((1-galleryEnter)*.65-gp*layout[i].speed)*unit-py*(7+i*2)}px,0)`;
-      card.style.opacity=galleryEnter;
-    });
-    quote.style.opacity=galleryEnter*(1-splitEnter);
-    quote.style.transform=`translate3d(${px*15}px,${-gp*.68*unit-py*11}px,0)`;
-    ui.galleryContours.style.transform=`translate3d(${-px*16}px,${-gp*2.8-py}%,0)`;
-    const count=String(clamp(Math.floor(gp*2.3)+1,1,8)).padStart(2,'0');if(ui.counter.textContent!==count)ui.counter.textContent=count;
-
-    }
-    if(t>7.95){
-    // Fade the whole white scene in over the blue gallery, without a spatial wipe.
+    if(t>4.2){
+    // Fade the whole white scene in over the signature scene, without a spatial wipe.
     split.style.transform='none';
-    const endP=smooth(range(t,8.15,9.65));
+    const endP=smooth(range(t,4.25,5.65));
     const dist=mobile?28:32;
     ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)-px*2}%,${py*-1}%,0) scaleX(-1)`;
     ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)+px*2}%,${py}%,0)`;
-    ui.splitOptions.style.opacity=smooth(range(t,8.3,8.8));
+    ui.splitOptions.style.opacity=smooth(range(t,4.3,4.8));
     ui.splitOptions.style.transform=`translate(calc(-50% + ${px*6}px),-48%)`;
     ui.splitParts.forEach((parts,column)=>parts.forEach((part,index)=>{
       if(!part)return;
-      const start=8.35+index*.14+column*.08;
+      const start=4.35+index*.14+column*.08;
       const reveal=reduced.matches?1:smooth(range(t,start,start+.65));
       part.style.opacity=reveal;
       // Stagger whole lines rather than creating per-letter animation work.
@@ -300,20 +249,19 @@
     const isDark=menuOpen||thumb>.12&&splitEnter<.7;
     document.documentElement.style.setProperty('--header-color',isDark?'#f3f3eb':'#0a2447');
     ui.centerMark.style.opacity=1-smooth(range(t,1.4,2.2));
-    const chapter=t<2.2?0:t<4.65?1:t<9.25?2:3;
+    const chapter=t<2.2?0:t<5.25?1:2;
     if(chapter!==activeChapter){
       activeChapter=chapter;
       ui.chapterLinks.forEach((a,i)=>{a.classList.toggle('active',i===chapter);if(i===chapter)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current');});
-      [hero,message,gallery,split].forEach((scene,i)=>{scene.inert=chapter!==i;scene.setAttribute('aria-hidden',String(chapter!==i));});
-      ui.liveStatus.textContent=['01 / 开场','02 / 缩小画面','03 / 图片叙事','04 / 双栏入口'][chapter];window.PortfolioLanguage?.refresh(ui.liveStatus);
+      [hero,message,split].forEach((scene,i)=>{scene.inert=chapter!==i;scene.setAttribute('aria-hidden',String(chapter!==i));});
+      ui.liveStatus.textContent=['01 / 开场','02 / 缩小画面','03 / 双栏入口'][chapter];window.PortfolioLanguage?.refresh(ui.liveStatus);
     }
     const max=Math.max(1,unit*TOTAL_HEIGHT-innerHeight);
     progress.style.transform=`scaleX(${clamp(y/max)})`;
     hero.style.visibility=t>5.2?'hidden':'visible';
-    message.style.visibility=t>5.3?'hidden':'visible';
+    message.style.visibility=t>6?'hidden':'visible';
     signature.style.visibility=t>5.2?'hidden':'visible';
-    gallery.style.visibility=t>10||t<4.29?'hidden':'visible';
-    split.style.visibility=t<8?'hidden':'visible';
+    split.style.visibility=t<4.2?'hidden':'visible';
     window.HeroFluid?.setActive(t<5.2&&!menuOpen&&!homeSuspended);
   }
   function writeScroll(value){
@@ -358,7 +306,7 @@
   addEventListener('resize',()=>{
     if(homeSuspended)return;
     const previousUnit=unit;
-    unit=$('.scroll-space').offsetHeight/TOTAL_HEIGHT;
+    unit=window.PortfolioViewport();
     portraitHeight=portrait.offsetHeight;
     // Keep the same story frame across rotation and browser toolbar changes.
     current=current/previousUnit*unit;target=current;navigation=null;
@@ -394,9 +342,10 @@
     target=clamp(target+clamp(delta,-unit*2.5,unit*2.5)*gain,0,max);
     requestTick();
   },{passive:false});
-  unit=$('.scroll-space').offsetHeight/TOTAL_HEIGHT;
+  unit=window.PortfolioViewport();
   portraitHeight=portrait.offsetHeight;
   const initial=location.hash.slice(1);
+  if(initial==='gallery')history.replaceState(null,'','#explore');
   if(initial in CHAPTERS)writeScroll(CHAPTERS[initial]*unit/TIMELINE_SCALE);
   current=target=scrollY;render(current);
   window.PortfolioHome = {
@@ -414,7 +363,7 @@
     resume(chapter = 'explore', savedScroll) {
       homeSuspended = false;
       if(!$('.user-image',portrait).getAttribute('src'))fillUserImage(portrait,content.heroImage);
-      unit = $('.scroll-space').offsetHeight / TOTAL_HEIGHT;
+      unit = window.PortfolioViewport();
       portraitHeight = portrait.offsetHeight;
       current = target = savedScroll ?? (CHAPTERS[chapter] ?? CHAPTERS.explore) * unit / TIMELINE_SCALE;
       activeChapter = -1; lastTime = 0; writeScroll(current); render(current);
