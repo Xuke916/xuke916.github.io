@@ -184,7 +184,7 @@
  .project-pagination{padding:45px 6vw;grid-template-columns:1fr 1fr;gap:35px 20px}.project-pagination>button{grid-column:1/-1;grid-row:2;text-align:center}.project-pagination strong{font-size:25px}.project-pagination .mono{font-size:6px}
 }
 @media(prefers-reduced-motion:reduce){.footer-portrait,.project-detail-cover{will-change:auto}}
-.project-art[href="#work/project-02"] img,.project-art[href="#work/project-03"] img{object-fit:contain}
+.project-art[href="#work/project-02"] img,.project-art[href="#work/project-03"] img{object-fit:cover;object-position:center}
 .project-art[href="#work/project-02"] .detail-image{background:#000}
 /* ON DESIGN projects follow the document's native vertical reading flow. */
 .detail-route[data-project-layout="covers"] .work-project-list{height:auto;padding:100px max(7vw,24px) 140px;overflow:visible}

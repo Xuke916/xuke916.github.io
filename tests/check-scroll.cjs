@@ -31,7 +31,7 @@ for (const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,
  const {w,d,scroll,flush,advance}=boot(width,height,reduce),q=s=>d.querySelector(s);
  assert.equal(q('.gallery-scene'),null);assert.equal(q('.gallery-card'),null);assert.equal(q('.gallery-quote'),null);
  assert.equal(d.querySelectorAll('.chapter-navigation a').length,3);
- assert.equal(q('.index-button').getAttribute('href'),'#explore');
+ assert.equal(q('.index-button'),null,'the removed INDEX button is absent from the shared header');
  const opening=q('.hero-portrait').style.transform;scroll(1.5);assert.notEqual(q('.hero-portrait').style.transform,opening);
  scroll(3.35);assert.equal(q('.message-scene').inert,false);assert.equal(q('.hero-scene').style.filter,'grayscale(1)');
  assert.equal(q('.message-signature path').style.strokeDashoffset,'0');
@@ -39,12 +39,12 @@ for (const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,
  for(const t of [4.3,4.7,5.1,5.5]){scroll(t);assert.ok(+q('.message-signature').style.opacity>0||+q('.split-scene').style.opacity>0,'signature goes straight into the entry without an empty gallery interval');}
  scroll(5.1);const fade=q('.split-scene').style.opacity;scroll(5.6);assert.ok(+q('.split-scene').style.opacity>+fade);scroll(5.1);assert.equal(q('.split-scene').style.opacity,fade,'transition reverses exactly');
  q('.menu-toggle').click();flush();assert.equal(q('.site-menu').inert,false);d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));flush();assert.equal(q('.menu-toggle').getAttribute('aria-expanded'),'false');
- q('.index-button').click();flush();assert.equal(w.scrollY,6*height/1.5);assert.equal(q('.split-scene').inert,false);assert.equal(d.activeElement,q('.split-option'));
+ q('.chapter-navigation a[href="#explore"]').click();flush();assert.equal(w.scrollY,6*height/1.5);assert.equal(q('.split-scene').inert,false);assert.equal(d.activeElement,q('.split-option'));
  assert.equal(q('.chapter-navigation .active').getAttribute('href'),'#explore');assert.equal(q('.split-scene').style.opacity,'1');
  q('.split-option').click();flush();assert.equal(d.body.dataset.page,'work');w.PortfolioPages.home('explore');flush();assert.equal(d.body.classList.contains('detail-mode'),false);
  scroll(0);assert.equal(q('.hero-scene').inert,false);assert.equal(q('.split-scene').style.visibility,'hidden');
  if(!reduce){const e=new w.WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true});w.dispatchEvent(e);advance();assert.ok(w.scrollY>0&&w.scrollY<162);flush();assert.equal(w.scrollY,162);}
- w.close();console.log('PASS '+width+'x'+height+': gallery removed, direct signature-to-entry transition, menu, INDEX focus, reversible motion and project return');
+ w.close();console.log('PASS '+width+'x'+height+': gallery and INDEX removed, direct signature-to-entry transition, menu, destination focus, reversible motion and project return');
 }
 {
  const {w,d,scroll,flush,advance}=boot(1600,900);
