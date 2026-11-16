@@ -99,17 +99,17 @@
   function lifePhotoSection(collection,number){
     const isTeam=collection.id==='team',heading=isTeam?['我与','我的球队']:['生活','片段'];
     // Each chapter is a continuous composition; paired smaller photos share a column.
-    const desktop=[[.07,.40,.22,.44],[.42,.14,.335,.60],[.81,.28,.19,.34],[.81,.67,.19,.21],[1.06,.14,.335,.62],[1.45,.30,.19,.33],[1.45,.67,.19,.21],[1.70,.14,.335,.62]];
-    const mobile=[[.08,.44,.62,.41],[.75,.24,.70,.52],[1.50,.44,.54,.37],[1.50,.18,.54,.22],[2.10,.24,.70,.52],[2.85,.44,.54,.37],[2.85,.18,.54,.22],[3.45,.24,.70,.52]];
+    const desktop=[[.07,.36,.25,.48],[.42,.14,.36,.66],[.81,.25,.22,.36],[.81,.65,.22,.23],[1.06,.14,.36,.66],[1.45,.25,.22,.36],[1.45,.65,.22,.23],[1.70,.14,.36,.66]];
+    const mobile=[[.08,.42,.62,.43],[.73,.24,.70,.54],[1.46,.43,.56,.39],[1.46,.17,.56,.23],[2.05,.24,.70,.54],[2.78,.43,.56,.39],[2.78,.17,.56,.23],[3.37,.24,.70,.54]];
     let width=0,mobileWidth=0;
     const groups=collection.items.map((group,index)=>{
       const start=width,mobileStart=mobileWidth;
       const photos=group.photos.map((photo,i)=>{
-        const d=group.photos.length===1?[.42,.14,.335,.60]:desktop[i],m=group.photos.length===1?[.08,.34,.70,.52]:mobile[i];
+        const d=group.photos.length===1?[.36,.14,.36,.66]:desktop[i],m=group.photos.length===1?[.08,.32,.70,.54]:mobile[i];
         return {...photo,localIndex:i+1,total:group.photos.length,d:[start+d[0],...d.slice(1)],m:[mobileStart+m[0],...m.slice(1)]};
       });
-      width+=Math.max(.83,...photos.map(p=>p.d[0]-start+p.d[2]+.06));
-      mobileWidth+=Math.max(.90,...photos.map(p=>p.m[0]-mobileStart+p.m[2]+.06));
+      width+=Math.max(.75,...photos.map(p=>p.d[0]-start+p.d[2]+.025));
+      mobileWidth+=Math.max(.83,...photos.map(p=>p.m[0]-mobileStart+p.m[2]+.03));
       return {...group,index,start,mobileStart,photos};
     });
     const anchors=groups.map(g=>g.start.toFixed(3)).join(','),mobileAnchors=groups.map(g=>g.mobileStart.toFixed(3)).join(',');
