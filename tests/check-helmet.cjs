@@ -15,8 +15,15 @@ assert.equal(stops[0],0);assert.equal(stops.at(-1),0);assert.ok(Math.max(...stop
 const scan=svg.querySelector('animateTransform');assert.equal(scan.getAttribute('type'),'translate');assert.match(scan.getAttribute('values'),/0 60;0 920/);assert.equal(scan.getAttribute('calcMode'),'spline');
 const breath=svg.querySelector('.helmet-breath>animate');assert.equal(breath.getAttribute('attributeName'),'opacity');assert.equal(breath.getAttribute('calcMode'),'spline');
 assert.equal(svg.querySelector('.helmet-base'),null,'no persistent outline outside the scan');assert.ok(svg.querySelector('.helmet-mesh'));
-assert.ok([...svg.querySelectorAll('linearGradient stop')].every(s=>s.getAttribute('stop-color')==='#30322f'),'scan uses neutral charcoal ink');
-assert.equal(svg.querySelectorAll('svg>g use').length,1,'only the gradient-controlled drawing is visible');
+assert.ok([...svg.querySelectorAll('linearGradient[id$="-scan"] stop')].every(s=>s.getAttribute('stop-color')==='#30322f'),'the original scan retains neutral charcoal ink');
+const highlight=svg.querySelector('.helmet-highlight'),light=svg.querySelector('linearGradient[id$="-highlight"]');
+assert.equal(highlight.getAttribute('clip-path'),svg.querySelector('.helmet-mesh').getAttribute('clip-path'),'highlights stay within the helmet surface and avoid the ear opening');
+assert.equal(highlight.querySelector('use').getAttribute('href'),svg.querySelector('.helmet-scan use').getAttribute('href'),'highlight reuses the photo-aligned line drawing');
+const lightScan=light.querySelector('animateTransform');
+for(const attr of ['values','keyTimes','keySplines','dur'])assert.equal(lightScan.getAttribute(attr),scan.getAttribute(attr),'the highlight follows the same scan without drifting');
+assert.equal(light.firstElementChild.getAttribute('stop-opacity'),'0');assert.equal(light.querySelector('stop:last-of-type').getAttribute('stop-opacity'),'0');
+assert.ok(+highlight.getAttribute('opacity')<.7,'head highlight stays restrained');
+assert.equal(svg.querySelectorAll('svg>g use').length,2,'only scan-controlled ink and highlights are visible');
 const mesh=api.buildMesh(),compact=api.buildMesh(true);assert.ok(mesh.edges.length<=1800&&compact.edges.length<=800,'mesh work stays bounded');
 assert.ok(mesh.edges.every(e=>e.every(i=>i>=0&&i<mesh.points.length)));assert.ok(mesh.points.every(p=>p.every(Number.isFinite)));
 assert.ok(fs.existsSync(path.join(root,'assets/hero-helmet-v2.png')));

@@ -59,6 +59,16 @@
     <stop offset="1" stop-color="#30322f" stop-opacity="0"/>
     <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
    </linearGradient>
+   <linearGradient id="${id}-highlight" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="190">
+    <stop offset="0" stop-color="#e8eee9" stop-opacity="0"/>
+    <stop offset=".35" stop-color="#e8eee9" stop-opacity="0"/>
+    <stop offset=".5" stop-color="#e8eee9" stop-opacity=".55"/>
+    <stop offset=".55" stop-color="#e8eee9" stop-opacity=".8"/>
+    <stop offset=".68" stop-color="#e8eee9" stop-opacity=".15"/>
+    <stop offset=".8" stop-color="#e8eee9" stop-opacity="0"/>
+    <stop offset="1" stop-color="#e8eee9" stop-opacity="0"/>
+    <animateTransform attributeName="gradientTransform" type="translate" values="0 60;0 920;0 920" keyTimes="0;.94;1" calcMode="spline" keySplines=".32 0 .55 1;0 0 1 1" dur="3.4s" repeatCount="indefinite"/>
+   </linearGradient>
    <g id="${id}-drawing" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path class="helmet-shell" d="${shell}" stroke-width="2"/>
     <path class="helmet-guard" d="${shield}" stroke-width="1.8"/>
@@ -80,6 +90,10 @@
     <animate attributeName="opacity" values=".42;.85;.42" keyTimes="0;.5;1" calcMode="spline" keySplines=".42 0 .58 1;.42 0 .58 1" dur="4.8s" repeatCount="indefinite"/>
     <g class="helmet-scan" stroke="url(#${id}-scan)" fill="none">
      <path class="helmet-mesh" d="${meshPath}" clip-path="url(#${id}-surface)" stroke-width=".8" opacity=".52"/>
+     <use href="#${id}-drawing"/>
+    </g>
+    <g class="helmet-highlight" stroke="url(#${id}-highlight)" fill="none" clip-path="url(#${id}-surface)" opacity=".64">
+     <path class="helmet-highlight-mesh" d="${meshPath}" stroke-width=".65" opacity=".45"/>
      <use href="#${id}-drawing"/>
     </g>
    </g>`;
