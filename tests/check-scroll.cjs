@@ -105,7 +105,7 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,t
  assert.ok([...d.querySelectorAll('.work-project-list .project-panel')].every(el=>el.querySelector('.project-summary').textContent&&el.querySelectorAll('.project-tags li').length===3),'every named project has a summary and three tags');
  assert.ok([...d.querySelectorAll('.project-panel')].every(el=>el.querySelectorAll('.detail-image').length===1&&el.querySelectorAll('.project-art').length===1),'each professional project contains exactly one cover');
  assert.equal(d.querySelector('.detail-story'),null,'professional creative statement has no markup or scroll spacer');
- assert.equal(d.querySelectorAll('.detail-section-nav button').length,2,'section navigation follows the removed chapters');
+ assert.equal(d.querySelectorAll('.detail-section-nav button').length,3,'section navigation includes the new social photographs');
  assert.equal(d.querySelector('.detail-section-nav [data-section="projects"] span').textContent,'02');
  assert.equal(d.querySelector('.detail-scroll').dataset.section,'projects','hero scroll skips the removed statement');
  assert.equal(d.querySelector('.route-transition').hidden,true);assert.equal(w.scrollY,0);
@@ -175,6 +175,17 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
  for(const family of ['work','life']){
    w.PortfolioPages.open(family);flush();
    assert.equal(d.querySelectorAll('.portrait-footer').length,1);
+   const social=d.querySelector('.socials-section'),cards=[...social.querySelectorAll('.social-card')];
+   assert.equal(social.nextElementSibling,d.querySelector('.portrait-footer'),'social photographs lead directly into the footer');
+   assert.equal(cards.length,7);assert.equal(new Set(cards.map(card=>card.dataset.socialPhoto)).size,7);
+   for(const card of cards)assert.ok(fs.existsSync(path.join(root,card.dataset.socialPhoto)),'each social photograph has a published asset');
+   assert.equal(social.querySelector('.socials-title').textContent,"WHAT'S UPON SOCIALS");
+   assert.equal(social.querySelector('.socials-follow>p').textContent,'Follow XuKe on social media');
+   const socialStart=Number(d.querySelector('.detail-route').dataset.scrollHeight)-parseFloat(social.style.height)-parseFloat(d.querySelector('.portrait-footer').style.height);
+   w.scrollTo(0,socialStart-height);flush();assert.equal(+social.style.getPropertyValue('--spread'),reduce?1:0);
+   w.scrollTo(0,socialStart);flush();assert.equal(+social.style.getPropertyValue('--spread'),1);
+   w.scrollTo(0,socialStart-height);flush();assert.equal(+social.style.getPropertyValue('--spread'),reduce?1:0,'scrolling back restores the initial stack');
+   cards[3].click();assert.equal(d.querySelector('dialog').open,true,'social cards open the full photograph');d.querySelector('dialog').close();flush();assert.equal(w.location.hash,'#'+family);
    assert.equal(d.querySelectorAll('.footer-pages a').length,3);assert.equal(d.querySelector('.footer-portrait img').getAttribute('src'),family==='life'?w.PORTFOLIO_CONTENT.heroImage:w.PORTFOLIO_CONTENT.heroHelmetImage,'footer uses the matching cap or helmet portrait');
    assert.deepEqual([...d.querySelectorAll('.footer-title-line')].map(line=>[line.querySelector('strong').textContent,line.querySelector('em').textContent]),[['BE THE','BEST OF'],['THE','BEST']]);
    assert.deepEqual([...d.querySelectorAll('.footer-socials .footer-item')].map(item=>item.getAttribute('aria-label')),['TIKTOK','INSTAGRAM','YOUTUBE','BILIBILI']);

@@ -15,6 +15,7 @@ window.PORTFOLIO_CONTENT = {
     {label:'YOUTUBE',url:'https://youtube.com/@coco_xu?si=SxxTe1ieL5C-TKuX'},
     {label:'BILIBILI',url:'https://space.bilibili.com/509851058?spm_id_from=333.1007.0.0'}
   ] },
+  socialPhotos: ['assets/life/pets-01.webp','assets/life/snow-01.webp','assets/team/at-bat-01.webp','assets/life/xu-ke-portrait.webp','assets/team/singapore-02.webp','assets/life/mocap-01.webp','assets/team/pitching-03.webp'],
   pages: {
     work: {
       title: ["专业", "作品"], english: "ON DESIGN", mark: "WORK",

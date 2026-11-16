@@ -36,17 +36,29 @@
     return href?`<a class="footer-item" href="${esc(href)}" ${attributes} aria-label="${esc(label)}" style="--item-index:${index}">${body}</a>`:`<span class="footer-item" role="img" aria-label="${esc(label)}" style="--item-index:${index}">${body}</span>`;
   }
   function setupFooter(){
-    const el=$('.portrait-footer',root);if(!el)return;
-    if(typeof IntersectionObserver==='undefined'){el.classList.add('is-revealed','is-visible');return;}
-    footerObserver=new IntersectionObserver(entries=>{for(const entry of entries){el.classList.toggle('is-visible',entry.isIntersecting);if(entry.isIntersecting)el.classList.add('is-revealed');}},{threshold:.18});
-    footerObserver.observe(el);
+    const sections=$$('.portrait-footer,.socials-section',root);if(!sections.length)return;
+    if(typeof IntersectionObserver==='undefined'){sections.forEach(el=>el.classList.add('is-revealed','is-visible'));return;}
+    footerObserver=new IntersectionObserver(entries=>{for(const entry of entries){const el=entry.target;el.classList.toggle('is-visible',entry.isIntersecting);if(entry.isIntersecting)el.classList.add('is-revealed');}},{threshold:.18});
+    sections.forEach(el=>footerObserver.observe(el));
+  }
+  function socialSection(){
+    const content=window.PORTFOLIO_CONTENT,life=content.pages.life,profile=life.profile;
+    const library=[...life.team.items,...life.projects].flatMap(group=>group.photos);
+    library.push({image:profile.heroPhoto,thumbnail:profile.heroPhotoSmall,width:profile.heroPhotoWidth,height:profile.heroPhotoHeight,alt:profile.heroPhotoAlt});
+    const photos=content.socialPhotos.map(image=>library.find(photo=>photo.image===image));
+    return `<section class="detail-section socials-section" data-detail-section="socials" aria-label="WHAT'S UP ON SOCIALS"><div class="socials-inner">
+      <svg class="socials-emblem" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17"/><path d="M11 6c16 9-2 19 13 30M22 3c-7 16 19 17 9 30"/></svg>
+      <h2 class="socials-title"><strong class="footer-reveal-word" style="--word-index:0">WHAT'S UP</strong><em class="footer-reveal-word" style="--word-index:1">ON SOCIALS</em></h2>
+      <div class="socials-fan" aria-label="照片">${photos.map((photo,index)=>{const i=index-3,scale=1-Math.abs(i)*.07;return `<button class="social-card" type="button" style="--fan-x:${i*.49};--fan-y:${i*i*.025};--fan-r:${i*8}deg;--fan-scale:${scale};--fan-z:${10-Math.abs(i)};--hover-scale:${1.07/scale};--counter-r:${-i*5.6}deg" data-social-photo="${esc(photo.image)}" data-caption="${esc(photo.alt)}" aria-label="放大查看：${esc(photo.alt)}"><span class="social-card-surface"><img src="${esc(photo.thumbnail)}" srcset="${esc(photo.thumbnail)} 640w, ${esc(photo.image)} ${photo.width}w" sizes="(max-width:600px) 23vw, 14vw" width="${photo.width}" height="${photo.height}" alt="${esc(photo.alt)}" loading="lazy" decoding="async"></span></button>`;}).join('')}</div>
+      <div class="socials-follow"><p>Follow XuKe on social media</p><nav class="socials-links" aria-label="FOLLOW ON">${content.footer.socials.map((item,i)=>footerItem(item.label,item.url,'target="_blank" rel="noopener noreferrer"',i)).join('')}</nav></div>
+    </div></section>`;
   }
   function footer() {
     const content=window.PORTFOLIO_CONTENT,config=content.footer;
     const footerImage=(route==='life'?content.heroImage:content.heroHelmetImage)||config.portrait;
     const footerSmall=route==='life'?content.heroImageSmall:content.heroHelmetImageSmall;
     const socials = config.socials || [];
-    return `<footer class="portrait-footer" data-detail-section="footer" aria-label="网站页尾">
+    return `${route==='work'||route==='life'?socialSection():''}<footer class="portrait-footer" data-detail-section="footer" aria-label="网站页尾">
       <svg class="footer-shape" aria-hidden="true"><defs><clipPath id="portrait-footer-shape" clipPathUnits="objectBoundingBox"><path d="M.025 .045H.375C.414 .045 .407 0 .454 0H.546C.593 0 .586 .045 .625 .045H.975Q1 .045 1 .072V.935Q1 .965 .975 .965H.9C.875 .965 .885 1 .855 1H.145C.115 1 .125 .965 .1 .965H.025Q0 .965 0 .935V.072Q0 .045 .025 .045Z"/></clipPath></defs></svg>
       <div class="footer-card">
         <div class="footer-contours" aria-hidden="true"><svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice"><path d="M-100 100C120 260 320-80 510 75S580 390 770 290 1000-50 1500 200M-100 170C170 370 340 0 490 145S590 480 810 350 1060 90 1500 270M-100 300C210 450 300 120 460 210S640 580 900 440 1100 200 1500 350M-100 560C100 360 400 670 540 540S580 100 820 650 1080 500 1500 570M-100 650C160 470 360 800 570 630S650 250 860 740 1100 570 1500 650M-100 740C150 580 380 900 600 720S700 370 900 830 1180 650 1500 760"/></svg></div>
@@ -154,7 +166,7 @@
     const sections = [
       ['hero', '开场'], ...(hasStatement ? [['story', '创作介绍']] : []),
       ...(hasCollage ? [['collage', data.galleryTitle]] : []),
-      ...collections.map(collection=>[collection.id,collection.title])
+      ...collections.map(collection=>[collection.id,collection.title]), ['socials','Socials']
     ];
     root.innerHTML = `
       <button class="detail-back mono" data-return>↖ 返回入口</button>
@@ -189,7 +201,7 @@
     $$('img', root).forEach(img => img.addEventListener('error',()=>img.remove()));
     ui = {
       kind:'collection',article: $('.detail-route',root), heroTitle: $('.detail-hero-title',root), object: $('.detail-object',root),
-      resume:!!resume,editorial:!!profile,heroView:$('.detail-hero-view',root),heroPhoto:$('.life-editorial-photo',root),
+      resume:!!resume,editorial:!!profile,heroView:$('.detail-hero-view',root),heroPhoto:$('.life-editorial-photo',root),socials:$('.socials-section',root),
       scribble: $('.detail-hero-scribble',root), heroCopy: $('.detail-hero-copy',root),
       storyLines: $$('.story-line',root), statement: $('.detail-statement-media',root),
       collageCards: $$('.detail-collage-card',root), collageTitle: $('.detail-collage-heading',root),
@@ -235,7 +247,7 @@
       if(units){const travel=Math.max(0,units*w-w),anchors=(mobile?attributes.editorialMobileAnchors:attributes.editorialAnchors).split(',').map(x=>Math.min(Number(x)*w,travel));return [collection.id,{panelWidth:w,travel,anchors}];}
       return [collection.id,{panelWidth,travel:Math.max(0,panelWidth*collection.panels.length-w)}];
     })),travel=collections.projects.travel;
-    const spans={hero:h*(ui.editorial&&!reduced.matches?3.8:1.45),story:h*1.85,collage:h*1.4,projects:h+travel/1.35,footer:h*1.05};
+    const spans={hero:h*(ui.editorial&&!reduced.matches?3.8:1.45),story:h*1.85,collage:h*1.4,projects:h+travel/1.35,socials:Math.max(mobile?600:760,h*(mobile?.75:1.05)),footer:h*1.05};
     if(ui.sequence){const photo=ui.heroPhoto;ui.sequence.box={width:photo.offsetWidth||w*(mobile?.84:.43),height:photo.offsetHeight||h*(mobile?.41:.75),left:photo.offsetLeft||w*(mobile?.08:.51),top:photo.offsetTop||h*(mobile?.53:.25)};}
     let offset=0;metrics={h,w,mobile,panelWidth,travel,collections,sections:{}};
     for(const el of ui.sections){
@@ -251,7 +263,9 @@
   function render(y){
     if(!metrics||route==='home')return;
     const {h,w,sections:s}=metrics;
-    document.documentElement.style.setProperty('--header-color',menuPaused?'#f3f3eb':ui.caseStudy?ui.headerColor:route==='life'?'#0a2447':'#f3f3eb');
+    const overSocials=s.socials&&y>=s.socials.start-h*.06&&y<s.footer.start+h*.1;
+    document.documentElement.style.setProperty('--header-color',menuPaused?'#f3f3eb':overSocials?'#0a2447':ui.caseStudy?ui.headerColor:route==='life'?'#0a2447':'#f3f3eb');
+    if(ui.socials){const p=reduced.matches?1:smooth((y+h*.9-s.socials.start)/(h*.55));if(p!==ui.socialProgress){ui.socialProgress=p;ui.socials.style.setProperty('--spread',p);}}
     if(ui.kind==='project'){
       if(!ui.caseStudy)ui.projectCover.style.transform=`translate3d(0,${clamp(y/h)*22}px,0)`;
       ui.sectionButtons.forEach((button,i)=>{const section=s[button.dataset.section],next=ui.sectionButtons[i+1];const active=ui.caseStudy?(y>=section.anchor-2||i===0)&&(!next||y<s[next.dataset.section].anchor-2):y>=section.start-h*.2&&y<section.start+section.length-h*.2;if(button.classList.contains('active')!==active){button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');}if(active&&ui.caseStudy&&ui.activeToc!==button.dataset.section){ui.activeToc=button.dataset.section;ui.toc.scrollTop=Math.max(0,button.offsetTop-ui.toc.clientHeight/2+button.offsetHeight/2);}});
@@ -400,6 +414,7 @@
     if(performance.now()<suppressCoverClickUntil&&e.target.closest?.('.project-art,.life-photo-button')){e.preventDefault();return;}
     const language=e.target.closest?.('[data-resume-language]');if(language&&route==='work'&&!busy){window.WorkProfile.apply(root,language.dataset.resumeLanguage);measure();render(position);return;}
     const lifePhoto=e.target.closest?.('[data-life-photo]');if(lifePhoto&&route==='life'&&!busy){stop();window.PortfolioHome.preview(lifePhoto.dataset.lifePhoto,lifePhoto.dataset.caption);return;}
+    const socialPhoto=e.target.closest?.('[data-social-photo]');if(socialPhoto&&route!=='home'&&!busy){stop();window.PortfolioHome.preview(socialPhoto.dataset.socialPhoto,socialPhoto.dataset.caption);return;}
     const rewinderImage=e.target.closest?.('[data-rewinder-image]');
     if(rewinderImage&&route==='work/project-02'&&!busy){stop();window.RewinderCaseStudy.openImage(rewinderImage.dataset.rewinderImage,rewinderImage.dataset.caption);return;}
     const poroImage=e.target.closest?.('[data-poro-image]');
