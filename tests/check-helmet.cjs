@@ -14,7 +14,9 @@ const stops=[...svg.querySelectorAll('linearGradient stop')].map(s=>+s.getAttrib
 assert.equal(stops[0],0);assert.equal(stops.at(-1),0);assert.ok(Math.max(...stops)>.7,'soft scan has transparent edges and a visible center');
 const scan=svg.querySelector('animateTransform');assert.equal(scan.getAttribute('type'),'translate');assert.match(scan.getAttribute('values'),/0 60;0 920/);assert.equal(scan.getAttribute('calcMode'),'spline');
 const breath=svg.querySelector('.helmet-breath>animate');assert.equal(breath.getAttribute('attributeName'),'opacity');assert.equal(breath.getAttribute('calcMode'),'spline');
-assert.ok(svg.querySelector('.helmet-base'));assert.ok(svg.querySelector('.helmet-mesh'));
+assert.equal(svg.querySelector('.helmet-base'),null,'no persistent outline outside the scan');assert.ok(svg.querySelector('.helmet-mesh'));
+assert.ok([...svg.querySelectorAll('linearGradient stop')].every(s=>s.getAttribute('stop-color')==='#30322f'),'scan uses neutral charcoal ink');
+assert.equal(svg.querySelectorAll('svg>g use').length,1,'only the gradient-controlled drawing is visible');
 const mesh=api.buildMesh(),compact=api.buildMesh(true);assert.ok(mesh.edges.length<=1800&&compact.edges.length<=800,'mesh work stays bounded');
 assert.ok(mesh.edges.every(e=>e.every(i=>i>=0&&i<mesh.points.length)));assert.ok(mesh.points.every(p=>p.every(Number.isFinite)));
 assert.ok(fs.existsSync(path.join(root,'assets/hero-helmet-v2.png')));
