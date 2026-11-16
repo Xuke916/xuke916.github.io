@@ -1,79 +1,66 @@
 (() => {
-  'use strict';
-  // Traced in the coordinate system of the supplied 1448 × 1086 helmet photo.
-  // Only helmet parts are included: no hair, face, shoulders or invented shell.
-  const shell='M324 652C344 632 376 610 398 584C397 505 417 438 460 386C507 331 573 301 649 294C737 280 816 309 874 361C935 416 968 495 966 581L958 653C944 667 911 674 872 686C832 726 783 764 734 790C686 815 630 834 579 832L508 826C466 815 436 795 420 762L410 740C404 722 416 701 438 680C450 669 456 651 449 642L385 663C351 674 329 669 323 663Q319 658 324 652Z';
-  const shield='M481 701C455 712 426 732 413 755C399 779 421 815 450 844L493 881C514 898 537 902 554 885L606 829C565 830 526 814 497 790C477 770 467 736 481 701Z';
-  const details=[
-    'M326 653C370 668 420 652 468 632C528 608 598 589 675 579',
-    'M335 660C377 672 428 655 473 638',
-    'M810 339C895 418 921 516 893 628C857 721 759 789 653 820',
-    'M419 738C435 774 479 805 517 814C571 837 634 832 690 809',
-    'M532 733C518 714 531 685 554 669L607 645C618 661 629 693 614 715C593 738 555 757 532 733Z',
-    'M610 646L627 642C639 665 649 692 641 707L626 715',
-    'M476 709C465 743 476 773 499 792L540 824L567 810',
-    'M421 756C426 787 452 813 480 836L514 867C525 876 538 877 548 868L589 826',
-    'M414 782C428 817 463 851 500 878C521 892 538 894 552 883',
-    'M410 493C414 509 424 522 435 528C438 526 435 516 429 508L417 491Q412 486 410 493Z',
-    'M432 473C435 489 447 504 455 508C462 508 455 493 450 485L441 472Q434 465 432 473Z',
-    'M454 459C459 475 467 485 476 491C483 493 480 482 473 472L463 457Q456 452 454 459Z',
-    'M552 319C561 314 574 311 587 311L590 315C577 315 563 318 555 322Z',
-    'M633 312C649 307 679 307 698 310L703 316C679 313 651 313 636 317Z',
-    'M740 330C755 333 771 343 781 354L782 360C768 348 754 340 741 337Z'
-  ];
-  function buildMesh(light=false){
-    const cols=light?24:40,rows=light?22:36,points=[],edges=[];
-    const noise=(i,j)=>Math.sin(i*71.73+j*39.19)*Math.cos(i*19.41-j*53.12);
-    for(let j=0;j<=rows;j++)for(let i=0;i<=cols;i++){
-      const u=i/cols,v=j/rows;
-      points.push([
-        300+u*710+25*Math.sin(v*Math.PI)*Math.sin(u*Math.PI)+noise(i,j)*3,
-        278+v*640+23*Math.sin(u*Math.PI)*Math.sin(v*2.8)+noise(j,i)*2.6
-      ]);
-    }
-    for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
-      const a=i+j*(cols+1),b=a+1,c=a+cols+1,d=c+1;
-      edges.push([a,b],[a,c],(i+j)%2?[a,d]:[b,c]);
-      if(j===rows-1)edges.push([c,d]);if(i===cols-1)edges.push([b,d]);
-    }
-    return {points,edges};
-  }
-  let serial=0;
-  function mount(portrait){
-    const existing=portrait.querySelector('.hero-helmet-ink');if(existing)return existing.inkController;
-    const id='helmet-ink-'+(++serial),svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    const light=!!window.matchMedia?.('(max-width: 600px), (pointer: coarse)').matches || (navigator.hardwareConcurrency>0&&navigator.hardwareConcurrency<=4);
-    const mesh=buildMesh(light),line=([a,b])=>`M${mesh.points[a].map(n=>n.toFixed(1)).join(' ')}L${mesh.points[b].map(n=>n.toFixed(1)).join(' ')}`;
-    svg.setAttribute('viewBox','0 0 1448 1086');svg.setAttribute('aria-hidden','true');
-    svg.classList.add('hero-helmet-ink');svg.dataset.structure='photo-traced-wireframe';
-    svg.innerHTML=`<defs>
-      <clipPath id="${id}-clip"><path d="${shell}"/><path d="${shield}"/></clipPath>
-      <linearGradient id="${id}-scan" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="130" spreadMethod="repeat">
-        <stop offset="0" stop-color="#343936" stop-opacity=".018"/>
-        <stop offset=".60" stop-color="#343936" stop-opacity=".035"/>
-        <stop offset=".85" stop-color="#343936" stop-opacity=".16"/>
-        <stop offset="1" stop-color="#343936" stop-opacity=".32"/>
-        ${light?'':'<animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="0 130" dur="1.9s" repeatCount="indefinite"/>'}
-      </linearGradient>
-    </defs>
-    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="${mesh.edges.map(line).join('')}" clip-path="url(#${id}-clip)" stroke="url(#${id}-scan)" stroke-width=".7"/>
-      <path d="${shell}" stroke="#343936" stroke-opacity=".19" stroke-width="1.8"/>
-      <path d="${shield}" stroke="#343936" stroke-opacity=".17" stroke-width="1.6"/>
-      ${details.map(d=>`<path d="${d}" stroke="#343936" stroke-opacity=".20" stroke-width="1.3"/>`).join('')}
-      ${light?'':`<path class="helmet-trace" d="${shell}" pathLength="1" stroke="#343936" stroke-opacity=".42" stroke-width="2.4" stroke-dasharray=".18 .82"><animate attributeName="stroke-dashoffset" from="1" to="0" dur="2.6s" repeatCount="indefinite"/></path>`}
-    </g>`;
-    portrait.append(svg);let active=true;
-    const controller={
-      setActive(value){
-        value=!!value;if(value===active)return;active=value;
-        if(active)svg.unpauseAnimations?.();else svg.pauseAnimations?.();
-        svg.dataset.motion=active?(light?'static':'scanning'):'paused';
-      },
-      setThumbnail(progress){svg.style.opacity=String(Math.max(0,1-progress)**1.5);},
-      remove(){svg.remove();}
-    };
-    svg.dataset.quality=light?'compact':'fine';svg.dataset.motion=light?'static':'scanning';svg.inkController=controller;return controller;
-  }
-  window.HelmetInk={mount,buildMesh,outline:{shell,shield,details}};
+ 'use strict';
+ // Traced against hero-helmet-v2.png, in its native 1448 × 1086 coordinates.
+ const shell='M370 663C387 646 417 630 436 609C429 550 439 489 474 440C513 389 572 359 638 349C707 337 769 349 819 378C873 409 910 457 928 514C941 559 943 616 929 667C908 676 883 681 858 694C816 723 770 754 721 780C683 800 649 813 613 817C585 821 555 801 537 775C526 757 525 737 512 719L492 708L485 675C484 663 490 652 500 647L444 660C416 671 388 679 373 674Q365 670 370 663Z';
+ const shield='M491 707C476 716 453 740 445 761C433 788 452 817 476 839L513 870C529 881 546 882 560 870L603 829C613 817 610 804 600 794L582 782C563 782 548 769 540 754L528 726C517 716 504 710 491 707Z';
+ const details=[
+  'M373 667C405 667 445 651 488 639L541 624Q549 624 552 635L555 653L522 674',
+  'M378 674C414 673 456 658 487 650',
+  'M447 531C458 518 474 519 502 516C573 511 652 487 718 469',
+  'M449 522C459 510 475 509 502 507C574 501 646 478 706 462',
+  'M735 378C777 399 803 431 818 472C834 519 835 569 820 613C805 657 776 697 744 725',
+  'M751 376C787 398 813 431 826 468',
+  'M615 804C662 779 716 744 764 706C816 666 860 626 919 613',
+  'M624 811C673 783 730 748 777 710C823 673 869 637 926 624',
+  'M461 474C460 482 464 490 471 494Q478 496 479 490L472 475Q465 467 461 474Z',
+  'M477 461C476 471 482 481 489 486Q496 489 498 482L488 464Q482 456 477 461Z',
+  'M498 451C497 460 505 471 512 474Q518 475 518 469L508 453Q502 446 498 451Z',
+  'M559 376Q580 366 603 366L608 370Q582 373 562 380Z',
+  'M638 363Q672 357 703 364L709 370Q670 366 641 370Z',
+  'M738 379Q762 391 777 409L780 416Q759 399 738 387Z',
+  'M565 688C579 672 610 658 644 648L655 674C664 697 652 716 633 734C613 752 587 762 573 750C555 736 552 708 565 688Z',
+  'M558 681C580 662 612 647 647 636L661 667C676 697 659 727 638 744C614 764 587 775 569 760C547 741 542 708 558 681Z',
+  'M509 636L541 630L545 654L514 662Z M517 643Q529 636 536 643L537 650L520 655Z',
+  'M488 719C475 735 453 756 450 774C448 793 466 815 489 836L519 861C534 871 546 871 556 861L593 825Q600 817 596 809',
+  'M458 748L478 758L497 791L521 815L548 825L568 806',
+  'M446 782C459 812 488 840 518 862',
+  'M486 724L506 729L522 756L538 776L565 789',
+  'M493 748L508 753L519 774L506 769Z M578 789L596 800L603 817L590 828L577 815Z'
+ ];
+ let serial=0;
+ function mount(portrait){
+  const existing=portrait.querySelector('.hero-helmet-ink');if(existing)return existing.inkController;
+  const id='helmet-ink-'+(++serial),svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 1448 1086');svg.setAttribute('aria-hidden','true');
+  svg.classList.add('hero-helmet-ink');svg.dataset.structure='current-photo-contours';
+  // A vertical reveal, a full-drawing hold, then a fade before the next cycle.
+  // No generic triangular mesh or traveling perimeter stroke remains.
+  svg.innerHTML=`<defs><clipPath id="${id}-reveal"><rect x="350" y="335" width="610" height="0"><animate attributeName="height" values="0;0;560;560" keyTimes="0;.06;.62;1" dur="4.6s" repeatCount="indefinite"/></rect></clipPath></defs>
+   <g class="helmet-drawing" clip-path="url(#${id}-reveal)" fill="none" stroke="#263e52" stroke-linecap="round" stroke-linejoin="round" opacity="0">
+    <animate attributeName="opacity" values="0;.78;.78;0;0" keyTimes="0;.06;.74;.92;1" dur="4.6s" repeatCount="indefinite"/>
+    <path class="helmet-shell" d="${shell}" stroke-width="2"/>
+    <path class="helmet-guard" d="${shield}" stroke-width="1.8"/>
+    <g class="helmet-details" stroke-width="1.35">${details.map(d=>`<path d="${d}"/>`).join('')}</g>
+    <g class="helmet-markings" stroke-width="1.2">
+     <ellipse cx="727" cy="532" rx="60" ry="64" transform="rotate(-12 727 532)"/>
+     <ellipse cx="727" cy="532" rx="51" ry="55" transform="rotate(-12 727 532)"/>
+     <path d="M700 511L706 551L725 547M717 550L727 504L749 541M722 533L743 529" stroke-width="2.5"/>
+     <path d="M435 543L453 549L463 584L441 578Z M435 588L458 594L470 608L442 602Z M879 545L900 540L914 568L890 575Z"/>
+     <circle cx="507" cy="644" r="3"/><circle cx="588" cy="808" r="3"/>
+    </g>
+    <g fill="#263e52" stroke="none" font-family="Arial,sans-serif" font-style="italic" font-weight="700">
+     <text x="531" y="605" font-size="18" transform="rotate(-13 531 605)">RAWLINGS</text>
+     <text x="863" y="615" font-size="12" transform="rotate(-15 863 615)">RAWLINGS</text>
+     <text x="872" y="535" font-size="45" transform="rotate(-12 872 535)">23</text>
+    </g>
+   </g>`;
+  portrait.append(svg);let active=true;
+  const controller={
+   setActive(value){value=!!value;if(value===active)return;active=value;if(active)svg.unpauseAnimations?.();else svg.pauseAnimations?.();svg.dataset.motion=active?'scanning':'paused';},
+   setThumbnail(progress){svg.style.opacity=String(Math.max(0,1-progress)**1.5);},
+   remove(){svg.remove();}
+  };
+  svg.dataset.quality='contours';svg.dataset.motion='scanning';svg.inkController=controller;return controller;
+ }
+ window.HelmetInk={mount,outline:{shell,shield,details}};
 })();
