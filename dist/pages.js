@@ -9,6 +9,7 @@
   const root = $('#detail-pages'), home = $('#experience');
   const overlay = $('.route-transition'), cutout = $('.route-cutout'), echo = $('.route-mark-echo');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const SCROLL_DAMPING_MS = 145;
   const progress = $('.scroll-progress>span'), dialog = $('.image-dialog');
   let route = 'home', busy = false, frame = 0, transitionFrame = 0, lastTime = 0;
   let position = 0, target = 0, written = 0, jump = null, menuPaused = false;
@@ -298,7 +299,7 @@
     frame=0;if(route==='home'||busy||menuPaused)return;
     const dt=lastTime?Math.min(64,time-lastTime):16.67;lastTime=time;
     if(jump){if(jump.started===null)jump.started=time;const p=clamp((time-jump.started)/jump.duration);position=mix(jump.from,jump.to,1-Math.pow(1-p,3));if(p===1){position=target;jump=null;}}
-    else {position=mix(position,target,reduced.matches?1:1-Math.exp(-dt/70));if(Math.abs(position-target)<.35)position=target;}
+    else {position=mix(position,target,reduced.matches?1:1-Math.exp(-dt/SCROLL_DAMPING_MS));if(Math.abs(position-target)<.35)position=target;}
     mouseX=mix(mouseX,aimX,1-Math.exp(-dt/90));mouseY=mix(mouseY,aimY,1-Math.exp(-dt/90));
     if(Math.abs(mouseX-aimX)<.0001)mouseX=aimX;if(Math.abs(mouseY-aimY)<.0001)mouseY=aimY;
     if(position!==written)write(position);render(position);

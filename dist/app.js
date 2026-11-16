@@ -23,7 +23,7 @@
   let mouseX = 0, mouseY = 0, aimX = 0, aimY = 0;
   const TOTAL_HEIGHT = 5.6;
   const TIMELINE_SCALE = 1.5;
-  const SCROLL_DAMPING_MS = 70;
+  const SCROLL_DAMPING_MS = 145;
   const POINTER_DAMPING_MS = 90;
   let lastWrittenScroll = scrollY, navigation = null;
   let homeSuspended = false;

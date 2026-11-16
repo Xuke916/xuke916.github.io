@@ -207,16 +207,20 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
  assert.equal(w.scrollY,0);assert.equal(w.location.hash,'#intro');closed();flush();
  w.close();console.log(`PASS ${width}×${height}, reduced-motion=${reduce}: three menu entries, direct HOME, both interior links, current-page menu closing`);
 }
-for(const fps of [60,120]){
- const {w,advance}=boot(1600,900);
+for(const route of ['', '#work', '#life', '#work/project-03'])for(const fps of [60,120]){
+ const {w,advance,flush}=boot(1600,900,false,route);
  w.dispatchEvent(new w.WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true}));
- let elapsed=0,t95=null;
- for(let i=0;i<fps*.3;i++){advance(1000/fps);elapsed+=1000/fps;if(t95===null&&w.scrollY>=162*.95)t95=elapsed;}
- assert.ok(t95<=225,'wheel reaches 95% of its movement within 225ms');
+ let elapsed=0,t95=null;const samples=[];
+ for(let i=0;i<fps*.6;i++){advance(1000/fps);elapsed+=1000/fps;if((i+1)%(fps/10)===0)samples.push(w.scrollY);if(t95===null&&w.scrollY>=162*.95)t95=elapsed;}
+ assert.ok(t95>=400&&t95<=475,'wheel has a gentle settling tail without a long drift');
+ assert.ok(samples[0]>65,'the first wheel impulse still responds promptly');
+ assert.ok(samples[3]-samples[1]>15,'the picture continues gliding after input stops');
+ assert.ok(samples[3]-samples[2]<samples[2]-samples[1],'the trailing movement decelerates');
  frameSamples.push(w.scrollY);
- console.log(`PASS ${fps}Hz: 95% response in ${Math.round(t95)}ms`);w.close();
+ flush();assert.equal(w.scrollY,162,'inertia preserves the requested distance and fully settles');
+ console.log(`PASS ${route||'home'} ${fps}Hz: gentle tail, 95% in ${Math.round(t95)}ms, exact stop`);w.close();
 }
-assert.ok(Math.abs(frameSamples[0]-frameSamples[1])<.5,'high-refresh and standard displays follow the same motion curve');
+for(let i=0;i<frameSamples.length;i+=2)assert.ok(Math.abs(frameSamples[i]-frameSamples[i+1])<.5,'high-refresh and standard displays follow the same motion curve');
 for (const file of ['styles.css', 'content.js', 'app.js', 'pages.js', 'pages.css']) assert.ok(fs.statSync(path.join(root, file)).size > 0);
 assert.ok(!/https?:\/\//.test(fs.readFileSync(path.join(root, 'app.js'), 'utf8')), 'no remote runtime dependency');
 console.log('PASS local assets and self-contained runtime');
