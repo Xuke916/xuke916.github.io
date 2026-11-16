@@ -113,6 +113,7 @@
     return `<section class="detail-section detail-horizontal life-moments${isTeam?' life-team':''}" data-detail-section="${collection.id}" data-horizontal-id="${collection.id}" data-editorial-width="${width}" data-editorial-mobile-width="${mobileWidth}" data-editorial-anchors="${anchors}" data-editorial-mobile-anchors="${mobileAnchors}"><div class="detail-sticky project-viewport" tabindex="0" aria-label="${esc(collection.title)}，向下滚动以横向浏览"><span class="projects-wheel-hint mono"><span class="projects-pointer-hint">向下滚动 · 横向浏览</span><span class="projects-touch-hint">上滑浏览 · 也可左右轻扫</span> <i>→</i></span><div class="project-track" style="--life-track-width:${width};--life-mobile-track-width:${mobileWidth}"><header class="projects-heading"><span class="mono">${String(number).padStart(2,'0')} / ${esc(collection.english)}</span><h2><strong>${esc(heading[0])}</strong><em>${esc(heading[1])}</em></h2></header>${groups.map(group=>`<header class="life-photo-group${group.index===0?' life-photo-group-first':''}" style="--group-x:${group.start};--mobile-group-x:${group.mobileStart}"><span class="mono">${String(group.index+1).padStart(2,'0')} / ${String(groups.length).padStart(2,'0')}</span><h3>${esc(group.title)}</h3><p class="mono">${esc(group.category)}</p></header>`).join('')}${panels.join('')}</div><div class="projects-controls life-photo-controls"><span class="mono"><b class="project-current">01</b> / ${String(groups.length).padStart(2,'0')}</span><div class="project-dots life-group-nav" aria-label="${esc(collection.title)}照片分类">${groups.map((group,i)=>`<button data-project-position="${i}" data-project-collection="${collection.id}" aria-label="前往${esc(group.title)}" class="${i===0?'active':''}">${esc(group.title)}</button>`).join('')}</div><span class="projects-mini-progress"><i></i></span></div></div></section>`;
   }
   function horizontalSection({id,title,english,items:projects},number,coverOnly,name) {
+    if(name==='work')return `<section class="detail-section work-project-list" data-detail-section="${id}" data-vertical-id="${id}"><header class="projects-heading"><span class="mono">${String(number).padStart(2,'0')} / ${esc(english)}</span><h2>${esc(title)}</h2></header><nav class="projects-controls" aria-label="${esc(title)}"><span class="mono"><b class="project-current">01</b> / ${String(projects.length).padStart(2,'0')}</span><div class="project-dots">${projects.map((p,i)=>`<button data-project-position="${i}" data-project-collection="${id}">${esc(p.title)}</button>`).join('')}</div></nav><div class="project-track">${projects.map((p,i)=>`<section class="project-panel" aria-label="${esc(p.title)}">${coverLink(p,i,true,name,id)}<div class="project-panel-title"><span class="mono">${String(i+1).padStart(2,'0')} / ${esc(p.year||'')}</span><h3><a href="${'#'+projectRoute(p)}" data-project-index="${i}" data-project-collection="${id}">${esc(p.title)}</a></h3><p class="project-summary">${esc(p.overview)}</p><ul class="project-tags">${(p.tags||[]).map(tag=>`<li>${esc(tag)}</li>`).join('')}</ul></div></section>`).join('')}</div></section>`;
     if(name==='life'&&projects.length&&projects.every(project=>Array.isArray(project.photos)))return lifePhotoSection({id,title,english,items:projects},number);
     return `<section class="detail-section detail-horizontal" data-detail-section="${id}" data-horizontal-id="${id}"><div class="detail-sticky project-viewport" tabindex="0" aria-label="${esc(title)}，向下滚动以横向浏览">
           <header class="projects-heading"><span class="mono">${String(number).padStart(2,'0')} / ${esc(english)}</span><h2>${esc(title)}</h2></header>
@@ -175,7 +176,7 @@
       projectDots: $$('.project-dots button',root), miniProgress: $('.projects-mini-progress i',root),
       sectionButtons: $$('.detail-section-nav button',root), viewport: $('.project-viewport',root),footerPhoto:$('.footer-portrait',root)
     };
-    ui.collections=collections.map(collection=>{const el=$(`[data-horizontal-id="${collection.id}"]`,root);return {...collection,el,track:$('.project-track',el),panels:$$('.project-panel',el),current:$('.project-current',el),dots:$$('.project-dots button',el),progress:$('.projects-mini-progress i',el),viewport:$('.project-viewport',el)};});
+    ui.collections=collections.map(collection=>{const el=$(`[data-horizontal-id="${collection.id}"],[data-vertical-id="${collection.id}"]`,root);return {...collection,vertical:el.hasAttribute('data-vertical-id'),el,track:$('.project-track',el),panels:$$('.project-panel',el),current:$('.project-current',el),dots:$$('.project-dots button',el),progress:$('.projects-mini-progress i',el),viewport:$('.project-viewport',el)};});
     // Keep the primary collection references for project routes and existing consumers.
     const primary=ui.collections.find(collection=>collection.id==='projects');Object.assign(ui,{track:primary.track,panels:primary.panels,projectCurrent:primary.current,projectDots:primary.dots,miniProgress:primary.progress,viewport:primary.viewport});
     measure();
@@ -186,6 +187,7 @@
         measure();if(jump?.section)target=jump.to=metrics.sections[jump.section].start;render(position);
       }});
       projectObserver.observe(ui.heroView);
+      if(primary.vertical)projectObserver.observe(primary.el);
     }
   }
   function measure() {
@@ -201,6 +203,11 @@
       metrics.max=Math.max(0,offset-h);ui.article.dataset.scrollHeight=String(offset);return;
     }
     const panelWidth=w*(mobile?1:.85),collections=Object.fromEntries(ui.collections.map(collection=>{
+      if(collection.vertical){
+        const length=collection.el.scrollHeight||h*(collection.panels.length+1),travel=Math.max(0,length-h)*1.35,top=collection.el.getBoundingClientRect().top;
+        const anchors=collection.panels.map((panel,i)=>Math.min(travel,Math.max(0,(panel.getBoundingClientRect().top-top||h*(.35+i))-120)*1.35));
+        return [collection.id,{vertical:true,length,travel,anchors,panelWidth:w}];
+      }
       const attributes=collection.el.dataset,units=Number(mobile?attributes.editorialMobileWidth:attributes.editorialWidth);
       if(units){const travel=Math.max(0,units*w-w),anchors=(mobile?attributes.editorialMobileAnchors:attributes.editorialAnchors).split(',').map(x=>Math.min(Number(x)*w,travel));return [collection.id,{panelWidth:w,travel,anchors}];}
       return [collection.id,{panelWidth,travel:Math.max(0,panelWidth*collection.panels.length-w)}];
@@ -209,8 +216,8 @@
     let offset=0;metrics={h,w,mobile,panelWidth,travel,collections,sections:{}};
     for(const el of ui.sections){
       const name=el.dataset.detailSection;
-      const length=collections[name]?h+collections[name].travel/1.35:name==='hero'?Math.max(spans.hero,ui.heroView.offsetHeight):name==='profile'?el.offsetHeight:name==='footer'?Math.max(spans[name],parseFloat(getComputedStyle(el).minHeight)||0):spans[name];
-      metrics.sections[name]={start:offset,length};if(name!=='profile')el.style.height=length+'px';offset+=length;
+      const length=collections[name]?.vertical?collections[name].length:collections[name]?h+collections[name].travel/1.35:name==='hero'?Math.max(spans.hero,ui.heroView.offsetHeight):name==='profile'?el.offsetHeight:name==='footer'?Math.max(spans[name],parseFloat(getComputedStyle(el).minHeight)||0):spans[name];
+      metrics.sections[name]={start:offset,length};if(name!=='profile'&&!collections[name]?.vertical)el.style.height=length+'px';offset+=length;
     }
     metrics.max=Math.max(0,offset-h);
     root.style.setProperty('--project-panel-width',panelWidth+'px');
@@ -252,7 +259,7 @@
     }
     for(const collection of ui.collections){
       const {travel,panelWidth,anchors}=metrics.collections[collection.id],x=clamp((y-s[collection.id].start)*1.35,0,travel);
-      if(collection.x!==x){collection.x=x;collection.track.style.transform=`translate3d(${-x}px,0,0)`;collection.progress.style.transform=`scaleX(${travel?x/travel:1})`;}
+      if(!collection.vertical&&collection.x!==x){collection.x=x;collection.track.style.transform=`translate3d(${-x}px,0,0)`;collection.progress.style.transform=`scaleX(${travel?x/travel:1})`;}
       const index=anchors?Math.max(0,anchors.findLastIndex(anchor=>x>=anchor-2)):clamp(Math.round(x/panelWidth),0,collection.panels.length-1);
       if(collection.index!==index){collection.index=index;collection.current.textContent=String(index+1).padStart(2,'0');collection.dots.forEach((b,i)=>{const start=Number(b.dataset.projectPosition),next=collection.dots[i+1],active=index>=start&&(!next||index<Number(next.dataset.projectPosition));b.classList.toggle('active',active);if(active){b.setAttribute('aria-current','true');const nav=b.parentElement;if(nav.classList.contains('life-group-nav')&&collection.activeGroup!==i){collection.activeGroup=i;nav.scrollLeft=Math.max(0,b.offsetLeft-(nav.clientWidth-b.offsetWidth)/2);}}else b.removeAttribute('aria-current');});}
     }
@@ -282,7 +289,7 @@
   }
   function horizontalAt(y){
     if(!metrics?.collections)return null;
-    return Object.keys(metrics.collections).find(id=>{const section=metrics.sections[id];return y>=section.start-1&&y<=section.start+section.length-metrics.h+1;})||null;
+    return Object.keys(metrics.collections).find(id=>{if(metrics.collections[id].vertical)return false;const section=metrics.sections[id];return y>=section.start-1&&y<=section.start+section.length-metrics.h+1;})||null;
   }
   function applyRoute(to,{chapter='explore',restore=false,projectIndex}={}){
     projectObserver?.disconnect();projectObserver=null;
@@ -300,7 +307,7 @@
       home.inert=true;root.hidden=false;if(info)buildProject(info);else build(to);root.inert=busy;
       window.PortfolioLanguage?.refresh();measure();
       let destination=restore?(savedPositions.get(to)||0):0;
-      if(to==='work'&&Number.isInteger(projectIndex))destination=metrics.sections.projects.start+Math.min(projectIndex*metrics.panelWidth,metrics.travel)/1.35;
+      if(to==='work'&&Number.isInteger(projectIndex))destination=metrics.sections.projects.start+(metrics.collections.projects.anchors?.[projectIndex]??Math.min(projectIndex*metrics.panelWidth,metrics.travel))/1.35;
       position=target=clamp(destination,0,metrics.max);written=position;write(position);render(position);
       const title=info?(info.project.caseTitle||info.project.title):data.title.join(data.title.some(part=>/\p{Script=Han}/u.test(part))?'':' ');
       $('.skip-link').href='#detail-section-navigation';$('.live-status').textContent=title;

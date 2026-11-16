@@ -32,7 +32,7 @@ for(const [width,height] of [[320,568],[360,800],[375,667],[390,844],[430,932],[
  assert.ok(!q('.project-track').style.transform.includes('NaN'));
  q('[data-project-position="0"]').click();flush();
  const x0=q('.project-track').style.transform;
- w.scrollTo({top:start+100});flush();assert.notEqual(q('.project-track').style.transform,x0,'native vertical scrolling drives the track');
+ w.scrollTo({top:start+100});flush();assert.equal(q('.project-track').style.transform,x0,'native vertical scrolling does not translate the work list sideways');
  q('[data-project-position="2"]').click();flush();
  const atThird=w.scrollY;
  t.resize(width,height-60,height);assert.equal(w.scrollY,atThird,'browser toolbar does not change section position');
@@ -59,10 +59,7 @@ for(const [width,height] of [[320,568],[360,800],[375,667],[390,844],[430,932],[
 {
  const t=boot(390,844,'#work'),{w,d,flush,touch,advance}=t,q=s=>d.querySelector(s);
  q('.detail-section-nav [data-section="projects"]').click();flush();const start=w.scrollY;
- touch('touchstart',[[330,450]]);advance(20);assert.equal(touch('touchmove',[[150,452]]),true,'horizontal intent is handled');
- advance(150);touch('touchend',[]);q('.project-art-main').click();assert.equal(w.location.hash,'#work','swipe does not open the cover');flush();
- assert.ok(w.scrollY>start,'leftward swipe moves forward');assert.notEqual(q('.project-track').style.transform,'translate3d(0px,0,0)');
- touch('touchstart',[[80,450]]);advance(20);assert.ok(touch('touchmove',[[330,452]]));advance(150);touch('touchend',[]);flush();assert.equal(w.scrollY,start,'reverse swipe restores first cover');
+ touch('touchstart',[[330,450]]);advance(20);assert.equal(touch('touchmove',[[150,452]]),false,'work list does not capture horizontal gestures');touch('touchend',[]);flush();assert.equal(w.scrollY,start);
  touch('touchstart',[[150,450]]);advance(20);assert.equal(touch('touchmove',[[153,330]]),false,'vertical intent stays native');touch('touchend',[]);
  touch('touchstart',[[150,450],[200,450]]);assert.equal(touch('touchmove',[[120,430],[240,430]]),false,'pinch is never intercepted');touch('touchcancel',[]);
  advance(400);touch('touchstart',[[150,450]]);touch('touchend',[]);q('.project-art-main').click();flush();assert.equal(w.location.hash,'#work/project-01','ordinary tap opens its independent page');

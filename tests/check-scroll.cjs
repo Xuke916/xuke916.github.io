@@ -191,7 +191,8 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,t
  assert.equal(d.body.dataset.page,'work');assert.equal(w.location.hash,'#work');
  assert.equal(d.querySelector('.detail-hero-title').textContent,'专业作品');
  assert.equal(d.querySelector('.detail-collage'),null,'the removed professional visuals section leaves no markup or spacer');
- assert.deepEqual([...d.querySelectorAll('.project-panel h3')].map(el=>el.textContent),['项目01','项目02','项目03','other work']);
+ assert.deepEqual([...d.querySelectorAll('.project-panel h3')].map(el=>el.textContent),['魄罗大冒险','Rewinder','Money Ball','Other work']);
+ assert.ok([...d.querySelectorAll('.work-project-list .project-panel')].every(el=>el.querySelector('.project-summary').textContent&&el.querySelectorAll('.project-tags li').length===3),'every named project has a summary and three tags');
  assert.ok([...d.querySelectorAll('.project-panel')].every(el=>el.querySelectorAll('.detail-image').length===1&&el.querySelectorAll('.project-art').length===1),'each professional project contains exactly one cover');
  assert.equal(d.querySelector('.detail-story'),null,'professional creative statement has no markup or scroll spacer');
  assert.equal(d.querySelectorAll('.detail-section-nav button').length,2,'section navigation follows the removed chapters');
@@ -203,8 +204,8 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,t
  const start=before.slice(0,before.indexOf(projectSection)).reduce((sum,e)=>sum+parseFloat(e.style.height),0);
  w.scrollTo(0,start+80);flush();const first=d.querySelector('.project-track').style.transform;
  w.scrollTo(0,start+260);flush();const second=d.querySelector('.project-track').style.transform;
- assert.notEqual(first,second,'vertical scroll moves the personal project track horizontally');
- assert.ok(parseFloat(second.slice(12))<parseFloat(first.slice(12)),'scrolling down moves the project track left');
+ assert.equal(first,second,'vertical scrolling keeps the project list in normal document flow');
+ assert.equal(projectSection.hasAttribute('data-horizontal-id'),false,'ON DESIGN does not register horizontal input');
  w.scrollTo(0,start+80);flush();assert.equal(d.querySelector('.project-track').style.transform,first,'reverse scroll restores horizontal project position');
  d.querySelector('[data-project-position="2"]').click();flush();
  assert.equal(d.querySelector('.project-current').textContent,'03');
@@ -213,7 +214,7 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[1600,900,t
  assert.equal(d.querySelector('.detail-section-nav button.active').dataset.section,'projects');
  const endX=d.querySelector('.project-track').style.transform,endY=w.scrollY;
  w.scrollTo(0,endY+height*.4);flush();
- assert.ok(Math.abs(parseFloat(d.querySelector('.project-track').style.transform.slice(12))-parseFloat(endX.slice(12)))<1e-6,'after the last panel the track stops while the page keeps scrolling');
+ assert.equal(d.querySelector('.project-track').style.transform,endX,'the project list has no horizontal translation');
  assert.ok(w.scrollY>endY);
  d.querySelector('.project-art-main').click();flush();assert.equal(d.querySelector('dialog').open,false);assert.equal(d.body.dataset.page,'project');assert.equal(w.location.hash,'#work/project-01');
  d.querySelector('[data-back-projects]').click();flush();assert.equal(d.body.dataset.page,'work');

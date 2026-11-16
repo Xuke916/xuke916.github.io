@@ -266,20 +266,21 @@ window.PORTFOLIO_CONTENT = {
   ]
 };
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[2], {
-  caseTitle: 'Money Ball', image: 'assets/moneyball/photos/title.webp', year: '2025',
+  title: 'Money Ball', caseTitle: 'Money Ball', image: 'assets/moneyball/photos/title.webp', year: '2025', tags:['桌游','棒球','独立设计'],
   role: '独立设计与制作', category: '双人棒球策略桌游',
   overview: '把球场上一瞬间的判断，转化为桌面上可以观察、预测和调整的选择。'
 });
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[0], {
-  caseTitle: '魄罗大冒险', image: 'assets/poro/launch-cn.jpg', year: '2024.10 — 2025.01',
+  title: '魄罗大冒险', caseTitle: '魄罗大冒险', image: 'assets/poro/launch-cn.jpg', year: '2024.10 — 2025.01', tags:['平台动作','像素美术','英雄联盟手游'],
   role: '项目负责人 / 玩法策划 / 美术与动画', category: '2D 像素平台动作游戏',
   overview: '从魄罗柔软、活泼的形象出发，用钩锁、碰撞反弹与坠落风险组织移动体验。'
 });
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[1], {
-  caseTitle:'Rewinder', image:'assets/project02-cover-v2.png',
+  title:'Rewinder', caseTitle:'Rewinder', image:'assets/project02-cover-v2.png', year:'2026', tags:['动作游戏','时间回溯','战斗设计'],
   category:'第三人称近战动作游戏', role:'战斗策划 · 概念美术',
   overview:'用回溯扭转眼前的交锋，也面对改写过去留下的后果。'
 });
+Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[3],{title:'Other work',image:'assets/video-covers/mercedes.webp',year:'2024 — 2026',overview:'商业动画与 Game Jam 作品：从二维车辆与三维场景，到太空挖掘和多人海盗对战。',tags:['动画','Game Jam','商业项目']});
 window.PORTFOLIO_CONTENT.pages.work.projects[2].playtestPhotos = [
    {image:'assets/moneyball/photos/test.webp',title:'试玩全景',caption:'双人对局与桌面布局'},
    {image:'assets/moneyball/photos/test-pov.webp',title:'投打操作',caption:'玩家选择球种并准备揭牌'},
