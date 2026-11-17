@@ -17,7 +17,7 @@
   let ui = null, metrics = null, data = null, savedHome = null, queuedPop = null;
   const savedPositions = new Map();
   let touchGesture = null, suppressCoverClickUntil = 0;
-  let projectObserver = null, caseCleanup = null, footerObserver = null, socialCleanup = null;
+  let projectObserver = null, caseCleanup = null, footerObserver = null, revealObserver = null, socialCleanup = null;
 
   function projectRoute(project) { return 'work/' + project.slug; }
   function projectInfo(key) {
@@ -33,14 +33,21 @@
   function footerItem(label,href,attributes='',index=0){
     const glyphs=Array.from(label,(letter,i)=>`<span class="footer-glyph" style="--glyph-index:${i}"><span class="footer-glyph-track"><span>${letter===' '?'&nbsp;':esc(letter)}</span><span>${letter===' '?'&nbsp;':esc(letter)}</span></span></span>`).join('');
     const body=`<span class="footer-item-label" aria-hidden="true">${glyphs}</span>`;
-    return href?`<a class="footer-item" href="${esc(href)}" ${attributes} aria-label="${esc(label)}" style="--item-index:${index}">${body}</a>`:`<span class="footer-item" role="img" aria-label="${esc(label)}" style="--item-index:${index}">${body}</span>`;
+    const item=href?`<a class="footer-item" href="${esc(href)}" ${attributes} aria-label="${esc(label)}" style="--item-index:${index}">${body}</a>`:`<span class="footer-item" role="img" aria-label="${esc(label)}" style="--item-index:${index}">${body}</span>`;
+    return `<span class="footer-item-entry">${item}</span>`;
   }
   function setupFooter(){
     const social=$('.socials-section',root);if(social)socialCleanup=setupSocialFan(social);
     const sections=$$('.portrait-footer,.socials-section',root);if(!sections.length)return;
-    if(typeof IntersectionObserver==='undefined'){sections.forEach(el=>el.classList.add('is-revealed','is-visible'));return;}
-    footerObserver=new IntersectionObserver(entries=>{for(const entry of entries){const el=entry.target;el.classList.toggle('is-visible',entry.isIntersecting);if(entry.isIntersecting)el.classList.add('is-revealed');}},{threshold:.18});
+    const reveals=$$('.footer-signature,.footer-title-line,.social-title-line,.footer-item-entry,.socials-follow>p,.footer-pages>.mono,.footer-socials>.mono,.socials-emblem',root);
+    if(typeof IntersectionObserver==='undefined'||reduced.matches){sections.forEach(el=>el.classList.add('is-visible'));reveals.forEach(el=>el.classList.add('is-revealed'));return;}
+    footerObserver=new IntersectionObserver(entries=>{for(const entry of entries){entry.target.classList.toggle('is-visible',entry.isIntersecting);}},{threshold:.02});
     sections.forEach(el=>footerObserver.observe(el));
+    revealObserver=[];
+    for(const follow of [false,true]){
+      const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target);}},{rootMargin:`0px 0px -${follow?30:12}% 0px`,threshold:.12});
+      reveals.filter(el=>!!el.closest('.socials-follow')===follow).forEach(el=>observer.observe(el));revealObserver.push(observer);
+    }
   }
   function setupSocialFan(section){
     const cards=$$('.social-card',section),fan=$('.socials-fan',section),timers=new Map();let active=-1,box=null;
@@ -48,7 +55,7 @@
     function select(index){
       if(reduced.matches)index=-1;
       if(index===active)return;
-      const previous=cards[active];if(previous){clear(previous);previous.classList.add('is-returning');timers.set(previous,setTimeout(()=>{previous.classList.remove('is-returning');timers.delete(previous);},600));}
+      const previous=cards[active];if(previous){clear(previous);previous.classList.add('is-returning');timers.set(previous,setTimeout(()=>{previous.classList.remove('is-returning');timers.delete(previous);},850));}
       active=index;section.classList.toggle('has-active-card',index>=0);
       cards.forEach((card,i)=>{const on=i===index;card.classList.toggle('is-active',on);if(on){clear(card);card.classList.remove('is-returning');}card.style.setProperty('--neighbor-x',index<0||on?0:(i<index?-1:1)*(.17-Math.min(Math.abs(i-index)-1,3)*.025));});
     }
@@ -73,7 +80,7 @@
     const photos=content.socialPhotos.map(image=>library.find(photo=>photo.image===image));
     return `<section class="detail-section socials-section" data-detail-section="socials" aria-label="WHAT'S UP ON SOCIALS"><div class="socials-inner">
       <svg class="socials-emblem" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17"/><path d="M11 6c16 9-2 19 13 30M22 3c-7 16 19 17 9 30"/></svg>
-      <h2 class="socials-title"><strong class="footer-reveal-word" style="--word-index:0">WHAT'S UP</strong><em class="footer-reveal-word" style="--word-index:1">ON SOCIALS</em></h2>
+      <h2 class="socials-title"><span class="social-title-line"><strong class="footer-reveal-word" style="--word-index:0">WHAT'S UP</strong></span><span class="social-title-line"><em class="footer-reveal-word" style="--word-index:1">ON SOCIALS</em></span></h2>
       <div class="socials-fan" aria-label="照片">${photos.map((photo,index)=>{const i=index-3,scale=1-Math.abs(i)*.07;return `<button class="social-card" type="button" style="--fan-x:${i*.49};--fan-y:${i*i*.025};--fan-r:${i*8}deg;--fan-scale:${scale};--fan-z:${10-Math.abs(i)};--hover-scale:${1.07/scale};--counter-r:${-i*5.6}deg" data-social-photo="${esc(photo.image)}" data-caption="${esc(photo.alt)}" aria-label="放大查看：${esc(photo.alt)}"><span class="social-card-surface"><img src="${esc(photo.thumbnail)}" srcset="${esc(photo.thumbnail)} 640w, ${esc(photo.image)} ${photo.width}w" sizes="(max-width:600px) 23vw, 14vw" width="${photo.width}" height="${photo.height}" alt="${esc(photo.alt)}" loading="lazy" decoding="async"></span></button>`;}).join('')}</div>
       <div class="socials-follow"><p>Follow XuKe on social media</p><nav class="socials-links" aria-label="FOLLOW ON">${content.footer.socials.map((item,i)=>footerItem(item.label,item.url,'target="_blank" rel="noopener noreferrer"',i)).join('')}</nav></div>
     </div></section>`;
@@ -282,6 +289,7 @@
       metrics.sections[name]={start:offset,length};if(name!=='profile'&&!collections[name]?.vertical)el.style.height=length+'px';offset+=length;
     }
     metrics.max=Math.max(0,offset-h);
+    if(ui.socials){ui.socialLayout={top:$('.socials-fan',ui.socials).offsetTop||spans.socials*.5,cards:$$('.social-card',ui.socials)};ui.socialProgress=null;}
     root.style.setProperty('--project-panel-width',panelWidth+'px');
     ui.article.dataset.scrollHeight=String(offset);
   }
@@ -290,7 +298,7 @@
     const {h,w,sections:s}=metrics;
     const overSocials=s.socials&&y>=s.socials.start-h*.06&&y<s.footer.start+h*.1;
     document.documentElement.style.setProperty('--header-color',menuPaused?'#f3f3eb':overSocials?(route==='life'?'#0a2447':'#f3f3eb'):ui.caseStudy?ui.headerColor:route==='life'?'#0a2447':'#f3f3eb');
-    if(ui.socials){const p=reduced.matches?1:smooth((y+h*.9-s.socials.start)/(h*.55));if(p!==ui.socialProgress){ui.socialProgress=p;ui.socials.style.setProperty('--spread',p);$$('.social-card',ui.socials).forEach((card,i)=>card.style.setProperty('--card-spread',smooth((p-Math.abs(i-3)*.055)/(1-Math.abs(i-3)*.055))));}}
+    if(ui.socials){const at=s.socials.start+ui.socialLayout.top,p=reduced.matches?1:smooth((y+h*.66-at)/(h*.13)),lift=reduced.matches?1:smooth((y+h*1.1-at)/(h*.45));ui.socials.style.setProperty('--fan-lift',lift);if(p!==ui.socialProgress){ui.socialProgress=p;ui.socials.style.setProperty('--spread',p);ui.socialLayout.cards.forEach((card,i)=>card.style.setProperty('--card-spread',smooth((p-Math.abs(i-3)*.045)/(1-Math.abs(i-3)*.045))));}}
     if(ui.kind==='project'){
       if(!ui.caseStudy)ui.projectCover.style.transform=`translate3d(0,${clamp(y/h)*22}px,0)`;
       ui.sectionButtons.forEach((button,i)=>{const section=s[button.dataset.section],next=ui.sectionButtons[i+1];const active=ui.caseStudy?(y>=section.anchor-2||i===0)&&(!next||y<s[next.dataset.section].anchor-2):y>=section.start-h*.2&&y<section.start+section.length-h*.2;if(button.classList.contains('active')!==active){button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');}if(active&&ui.caseStudy&&ui.activeToc!==button.dataset.section){ui.activeToc=button.dataset.section;ui.toc.scrollTop=Math.max(0,button.offsetTop-ui.toc.clientHeight/2+button.offsetHeight/2);}});
@@ -374,6 +382,7 @@
   function applyRoute(to,{chapter='explore',restore=false,projectIndex}={}){
     projectObserver?.disconnect();projectObserver=null;
     footerObserver?.disconnect();footerObserver=null;
+    revealObserver?.forEach(observer=>observer.disconnect());revealObserver=null;
     socialCleanup?.();socialCleanup=null;
     caseCleanup?.();caseCleanup=null;
     stop();route=to;mouseX=mouseY=aimX=aimY=0;
