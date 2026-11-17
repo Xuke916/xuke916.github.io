@@ -33,7 +33,7 @@ function boot(width, height, reduce = false, initialHash = '', settle = true) {
  assert.equal(overlay.hidden,false);assert.equal(overlay.dataset.effect,'opening');assert.equal(d.querySelector('#experience').inert,true);
  const before=cutout.getAttribute('transform');advance();advance(400);assert.notEqual(cutout.getAttribute('transform'),before,'blue X opens on the initial Home visit');flush();
  assert.equal(overlay.hidden,true);assert.equal(d.querySelector('#experience').inert,false);assert.equal(w.scrollY,0);assert.equal(d.body.style.overflow,'');
- w.PortfolioPages.open('work');assert.equal(overlay.dataset.effect,'fade','interior navigation uses a fade');flush();
+ w.PortfolioPages.open('work');assert.equal(overlay.dataset.effect,'work','ON DESIGN uses its branded entrance');flush();
  d.querySelector('.project-art-main').click();assert.equal(overlay.dataset.effect,'fade','project entry uses the fade too');flush();w.close();
  const reduced=boot(390,844,true,'',false);assert.equal(reduced.d.querySelector('.route-transition').hidden,true);reduced.w.close();
  console.log('PASS initial Home X reveal, restored input, interior/project fades and reduced-motion bypass');

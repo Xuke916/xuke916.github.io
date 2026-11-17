@@ -14,6 +14,12 @@ for(const file of ['content.js','app.js','work-profile.js','pages.js'])w.eval(fs
 function flush(){for(let i=0;frames.size&&i<1200;i++){clock+=16.667;const jobs=[...frames.values()];frames.clear();jobs.forEach(cb=>cb(clock));}assert.equal(frames.size,0);}
 
 assert.ok(d.querySelector('.work-profile .wp-identity img'));
+assert.equal(d.querySelectorAll('.work-profile h1').length,1,'the editorial title is the sole page heading');
+assert.equal(d.querySelector('.wp-display').getAttribute('aria-label'),'ON DESIGN');
+assert.ok(d.querySelector('.wp-opening-portrait img').getAttribute('srcset'));
+assert.equal(d.querySelectorAll('.wp-opening-facts>div').length,3);
+assert.equal(d.querySelector('.wp-opening .detail-scroll').dataset.section,'projects');
+flush();assert.ok(d.querySelector('.wp-opening').classList.contains('is-entered'),'direct links start the editorial entrance');
 assert.equal(d.querySelector('.wp-content').lang,'zh-CN');
 assert.equal(d.querySelectorAll('.wp-content ol li').length,7);
 assert.equal(d.querySelectorAll('.wp-content [data-project-route]').length,0);
@@ -48,5 +54,17 @@ assert.ok(d.querySelector('.life-editorial-photo'));
 assert.equal(d.querySelectorAll('.life-team .project-panel').length,17);
 assert.equal(d.querySelectorAll('.life-moments:not(.life-team) .project-panel').length,12);
 assert.equal(d.querySelector('.wp-language'),null);
+
+// Reading entries reveal independently, and leaving the route releases observers.
+const host=d.createElement('div');host.innerHTML=w.WorkProfile.render();d.body.append(host);
+let callback,disconnected=false;const observed=new Set();
+w.IntersectionObserver=class{constructor(cb){callback=cb;}observe(el){observed.add(el);}unobserve(el){observed.delete(el);}disconnect(){disconnected=true;observed.clear();}};
+const dispose=w.WorkProfile.mount(host),items=[...host.querySelectorAll('.wp-content ol li')];
+assert.ok(items.every(el=>!el.classList.contains('is-revealed')),'reading content waits for its own viewport entry');
+callback([{target:items[0],isIntersecting:true}]);
+assert.ok(items[0].classList.contains('is-revealed'));assert.ok(!items[1].classList.contains('is-revealed'));
+dispose.enter();dispose();flush();assert.equal(disconnected,true);assert.equal(observed.size,0);
+assert.ok(!host.querySelector('.wp-opening').classList.contains('is-entered'),'cleanup cancels an unpainted entrance frame');
+const reducedDispose=w.WorkProfile.mount(host,{reduced:true});assert.ok(items.every(el=>el.classList.contains('is-revealed')),'reduced motion exposes all reading content');reducedDispose();host.remove();
 dom.window.close();
 console.log('PASS resume: moved to work hero, supplied avatar, four experience and three award entries, repeatable position-preserving language switch, project covers/return language, life photos retained without duplicate resume');

@@ -1,5 +1,8 @@
 // English copy for the Chinese source text.
 window.PORTFOLIO_EN = {
+  "关于 XuKe": "About XuKe",
+  "制作人": "Producer",
+  "XU KE 的棒球头盔侧影": "XU KE wearing a baseball helmet",
   "开发中预览": "In development",
   "从概念到开发中场景": "From concept to a scene in development",
   "从概念推进到 UE 中的场景搭建。以下为开发中截图，包含临时角色与编辑器辅助标记，视觉仍在迭代。": "The concepts are being brought into a UE scene. These work-in-progress captures include temporary characters and editor guides; the visuals are still being developed.",

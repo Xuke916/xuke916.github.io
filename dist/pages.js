@@ -253,6 +253,7 @@
     // Keep the primary collection references for project routes and existing consumers.
     const primary=ui.collections.find(collection=>collection.id==='projects');Object.assign(ui,{track:primary.track,panels:primary.panels,projectCurrent:primary.current,projectDots:primary.dots,miniProgress:primary.progress,viewport:primary.viewport});
     measure();
+    if(resume)caseCleanup=window.WorkProfile.mount(root,{reduced:reduced.matches});
     if((profile||resume)&&typeof ResizeObserver!=='undefined'){
       projectObserver=new ResizeObserver(()=>{if(route===name){
         // Keep the old viewport metrics until resize has restored the photo anchor.
@@ -424,6 +425,26 @@
     if(immediate||reduced.matches){
       applyRoute(to,{chapter,restore,projectIndex});finish(chapter);return;
     }
+    if(to==='work'&&!projectInfo(route)){
+      overlay.dataset.effect='work';overlay.hidden=false;overlay.style.opacity=1;
+      cutout.setAttribute('transform','translate(800 450) scale(0) translate(-50 -50)');echo.style.opacity=0;
+      const cross='polygon(35% 25%,50% 43%,65% 25%,72% 34%,57% 50%,72% 66%,65% 75%,50% 57%,35% 75%,28% 66%,43% 50%,28% 34%)';
+      overlay.style.clipPath=cross;overlay.style.transform='scale(.001)';let started=null,switched=false,entered=false;
+      function animateWork(time){
+        if(started===null)started=time;const p=clamp((time-started)/1250);
+        if(p<.28){overlay.style.transform=`scale(${mix(.001,12,Math.pow(p/.28,2))})`;}
+        else{
+          overlay.style.clipPath='';overlay.style.transform='translate3d(0,0,0)';
+          if(!switched){switched=true;applyRoute(to,{chapter,restore,projectIndex});}
+          const reveal=smooth((p-.44)/.56);cutout.setAttribute('transform',`translate(800 450) scale(${200*Math.pow(reveal,2.5)}) translate(-50 -50)`);
+          echo.style.opacity=(1-smooth((p-.44)/.16))*smooth((p-.28)/.08);
+          if(!entered&&p>=.62){entered=true;caseCleanup?.enter?.();}
+        }
+        if(p<1)transitionFrame=requestAnimationFrame(animateWork);else finish(chapter);
+      }
+      transitionFrame=requestAnimationFrame(animateWork);return;
+    }
+    overlay.style.clipPath='';
     overlay.dataset.effect='fade';overlay.style.transform='translate3d(0,0,0)';overlay.style.opacity=0;overlay.hidden=false;let started=null,switched=false;
     function animate(time){
       if(started===null)started=time;
@@ -437,7 +458,7 @@
   function finish(chapter='explore'){
     transitionFrame=0;busy=false;overlay.hidden=true;document.documentElement.classList.remove('home-entering');document.body.classList.remove('is-routing');
     document.body.style.overflow='';root.inert=route==='home';home.inert=route!=='home';$('.site-header').inert=false;
-    if(route!=='home'){ui.heroTitle.focus({preventScroll:true});render(position);request();}
+    if(route!=='home'){caseCleanup?.enter?.();ui.heroTitle.focus({preventScroll:true});render(position);request();}
     else (chapter==='explore'?$('.split-option'):$('.wordmark'))?.focus({preventScroll:true});
     if(queuedPop){const next=queuedPop;queuedPop=null;transitionTo(next.to,{...next,push:false});}
   }
@@ -572,6 +593,6 @@
   });
   function readLocation(){const hash=location.hash.slice(1);return hash==='work'||hash==='life'||projectInfo(hash)?{to:hash,restore:true}:{to:'home',chapter:['intro','message','gallery','explore'].includes(hash)?hash:'intro',restore:true};}
   addEventListener('popstate',()=>{const next=readLocation();if(busy)queuedPop=next;else transitionTo(next.to,{...next,push:false});});
-  const initial=readLocation();if(initial.to!=='home'){window.PortfolioHome.pause();applyRoute(initial.to);root.inert=false;}
+  const initial=readLocation();if(initial.to!=='home'){window.PortfolioHome.pause();applyRoute(initial.to);root.inert=false;caseCleanup?.enter?.();}
   else if(initial.chapter==='intro')enterHome();
 })();
