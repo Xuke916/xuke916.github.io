@@ -20,30 +20,38 @@
   <div class="wp-notes"><section><h2>${en?'Design & tools':'设计与工具'}</h2><p>${c.skills.map(esc).join(' · ')}</p><ul>${p.tools.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></section></div><button class="wp-projects-link" data-section="projects">${en?'Explore the projects':'浏览个人项目'} <span aria-hidden="true">↓</span></button>`;
  }
  function opening(){
-  const content=window.PORTFOLIO_CONTENT;
-  return '<header class="wp-opening"><h1 class="detail-hero-title wp-display" tabindex="-1" aria-label="ON DESIGN"><span class="wp-on" data-language-label="true"><span class="wp-sr">ON </span><svg viewBox="0 0 320 260" aria-hidden="true"><path pathLength="1" d="M130 45C80 8 27 84 19 160S77 230 123 155 169 31 130 45M144 216 202 45C204 104 207 166 224 199L300 14"/></svg></span><strong data-language-label="true">DESIGN</strong></h1><figure class="wp-opening-portrait"><img src="'+esc(content.heroHelmetImage)+'" srcset="'+esc(content.heroHelmetImageSmall)+' 640w, '+esc(content.heroHelmetImage)+' 1448w" sizes="(max-width:700px) 120vw, 74vw" width="1448" height="1086" alt="XU KE 的棒球头盔侧影" fetchpriority="high" decoding="async"></figure><div class="wp-opening-content"><div class="wp-opening-meta"><span class="wp-entry" style="--entry-delay:100ms">XU KE</span><span class="wp-entry" style="--entry-delay:170ms">GAME DESIGN</span><span class="wp-entry" style="--entry-delay:240ms">CONCEPT ART</span></div><div class="wp-opening-intro"><span class="wp-kicker wp-entry" style="--entry-delay:300ms">XU KE / PORTFOLIO</span><p class="wp-intro-line" data-language-label="true" style="--line-index:0"><span>游戏制作、战斗设计与概念美术。</span></p><p class="wp-intro-line" data-language-label="true" style="--line-index:1"><span>为工作室原创动作游戏 Rewinder 获得投资，推进项目制作。</span></p></div><div class="wp-opening-facts"><div class="wp-entry" style="--entry-delay:650ms"><span class="wp-date">学习</span><strong>中国传媒大学</strong><span>动画 · 游戏美术</span></div><div class="wp-entry" style="--entry-delay:730ms"><span class="wp-date">创作</span><strong>Rewinder</strong><span>制作人</span></div><div class="wp-entry" style="--entry-delay:810ms"><span class="wp-date">设计与工具</span><strong>Unreal Engine 5</strong><span>战斗机制 · 场景概念设计</span></div></div><button class="detail-scroll wp-entry" style="--entry-delay:900ms" data-section="projects">SCROLL TO EXPLORE <span>↓</span></button></div></header>';
+  return '<header class="wp-opening"><h1 class="detail-hero-title wp-display" tabindex="-1" aria-label="ON DESIGN"><span class="wp-on" data-language-label="true"><span class="wp-sr">ON </span><svg viewBox="0 0 320 260" aria-hidden="true"><path pathLength="1" d="M130 45C80 8 27 84 19 160S77 230 123 155 169 31 130 45M144 216 202 45C204 104 207 166 224 199L300 14"/></svg></span><strong data-language-label="true">DESIGN</strong></h1></header>';
  }
  function render(){return opening()+'<div class="wp-layout"><aside class="wp-identity"><img src="assets/work/xu-ke-avatar.webp" width="640" height="640" alt="XU KE 的头像：红底像素绵羊" loading="lazy" decoding="async"><p>XU KE</p><span>GAME DESIGN<br>CONCEPT ART</span></aside><div class="wp-content" lang="'+(language==='en'?'en':'zh-CN')+'">'+body()+'</div></div>';}
  function mount(root,{reduced=false}={}){
-  const opening=root.querySelector('.wp-opening'),reading=root.querySelector('.wp-layout'),paragraphs=[...opening.querySelectorAll('.wp-intro-line')],copy=paragraphs.map(p=>p.textContent);let observer,frame=0,copyWidth=0;
-  function wrapCopy(){
-   const width=opening.querySelector('.wp-opening-content').offsetWidth;copyWidth=width;let lineIndex=0;
-   paragraphs.forEach((p,i)=>{
-    const text=window.PortfolioLanguage?.language==='en'?window.PortfolioLanguage.translate(copy[i]):copy[i];
-    const tokens=/[\u3400-\u9fff]/.test(text)?Array.from(text):text.match(/\S+\s*/g)||[text];
-    const spans=tokens.map(token=>{const span=document.createElement('span');span.style.cssText='display:inline-block;white-space:pre';span.textContent=token;return span;});p.replaceChildren(...spans);
-    const rows=[];let top=-1;for(const span of spans){if(span.offsetTop!==top){top=span.offsetTop;rows.push('');}rows[rows.length-1]+=span.textContent;}
-    p.replaceChildren(...rows.map(text=>{const row=document.createElement('span'),label=document.createElement('span');row.className='wp-wipe-line';row.style.setProperty('--line-index',lineIndex++);label.textContent=text;row.append(label);if(opening.classList.contains('is-entered')){row.classList.add('wp-copy-static');}return row;}));
-   });
+  const opening=root.querySelector('.wp-opening'),reading=root.querySelector('.wp-layout'),targets=new Set(),visible=new Set();let observer,edgeObserver,frame=0,ready=false;
+  const selector='.wp-identity>p,.wp-identity>span,.wp-kicker,.wp-resume-title,.wp-heading p,.wp-language button,.wp-content h2,.wp-content h3,.wp-date,.wp-content li>p,.wp-notes p,.wp-notes li,.wp-projects-link,.work-project-list .projects-heading>.mono,.work-project-list .projects-heading h2,.work-project-list .project-dots button,.project-panel-title>.mono,.project-panel-title h3,.project-summary,.project-tags li,.work-project-list .projects-controls>.mono,.footer-pages>.mono,.footer-socials>.mono,.footer-brand,.footer-legal';
+  function reveal(el){
+   if(el.classList.contains('wp-wipe-shown'))return;
+   if(!reduced){
+    const box=el.getBoundingClientRect(),rows=[],walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;
+    while(node=walker.nextNode()){
+     if(!node.textContent.trim())continue;const range=document.createRange();range.selectNodeContents(node);
+     const rects=typeof range.getClientRects==='function'?[...range.getClientRects()]:[];
+     for(const rect of rects){if(!rect.width||!rect.height)continue;let row=rows.find(r=>Math.abs(r.top-rect.top)<rect.height*.4);if(row){row.left=Math.min(row.left,rect.left);row.right=Math.max(row.right,rect.right);row.bottom=Math.max(row.bottom,rect.bottom);}else rows.push({top:rect.top,left:rect.left,right:rect.right,bottom:rect.bottom});}
+    }
+    const layer=document.createElement('span');layer.className='wp-wipe-layer';layer.setAttribute('aria-hidden','true');
+    rows.sort((a,b)=>a.top-b.top).forEach((r,i)=>{const cover=document.createElement('i');cover.style.cssText='left:'+(r.left-box.left)+'px;top:'+(r.top-box.top)+'px;width:'+(r.right-r.left)+'px;height:'+(r.bottom-r.top)+'px;--line-index:'+i;layer.append(cover);});el.append(layer);
+   }
+   el.classList.add('is-revealed','wp-wipe-shown');observer?.unobserve(el);edgeObserver?.unobserve(el);
   }
-  wrapCopy();const languageChanged=()=>wrapCopy();document.addEventListener('portfolio:languagechange',languageChanged);
-  const copyResize=typeof ResizeObserver==='undefined'?null:new ResizeObserver(()=>{if(opening.querySelector('.wp-opening-content').offsetWidth!==copyWidth)wrapCopy();});copyResize?.observe(opening.querySelector('.wp-opening-content'));
-  const reveal=()=>{const targets=reading.querySelectorAll('.wp-identity,.wp-heading,.wp-content h2,.wp-content ol li,.wp-notes,.wp-projects-link');for(const el of targets){el.classList.add('wp-reading-entry');if(reduced||typeof IntersectionObserver==='undefined')el.classList.add('is-revealed');else observer.observe(el);}};
-  if(!reduced&&typeof IntersectionObserver!=='undefined')observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('is-revealed');observer.unobserve(e.target);}},{rootMargin:'0px 0px -8% 0px',threshold:.08});
-  reveal();const mutations=new MutationObserver(()=>reveal());mutations.observe(reading.querySelector('.wp-content'),{childList:true});
+  const scan=()=>{for(const el of root.querySelectorAll(selector)){if(targets.has(el))continue;targets.add(el);el.classList.add('wp-text-wipe');if(getComputedStyle(el).position==='static')el.classList.add('wp-wipe-relative');if(reduced||typeof IntersectionObserver==='undefined')reveal(el);else (el.matches('.footer-brand,.footer-legal')?edgeObserver:observer).observe(el);}};
+  if(!reduced&&typeof IntersectionObserver!=='undefined'){
+   const onEntries=entries=>{for(const e of entries){if(e.isIntersecting){if(ready)reveal(e.target);else visible.add(e.target);}else visible.delete(e.target);}};
+   observer=new IntersectionObserver(onEntries,{rootMargin:'0px 0px -8% 0px',threshold:.08});
+   edgeObserver=new IntersectionObserver(onEntries,{threshold:.08});
+  }
+  scan();const mutations=new MutationObserver(()=>{for(const el of targets)if(!root.contains(el)){observer?.unobserve(el);targets.delete(el);}scan();});mutations.observe(reading.querySelector('.wp-content'),{childList:true});
+  const clearCovers=()=>{for(const el of targets)el.querySelector(':scope>.wp-wipe-layer')?.remove();};
+  document.addEventListener('portfolio:languagechange',clearCovers);addEventListener('resize',clearCovers,{passive:true});
   opening.classList.add('wp-motion');
-  const cleanup=()=>{cancelAnimationFrame(frame);observer?.disconnect();mutations.disconnect();copyResize?.disconnect();document.removeEventListener('portfolio:languagechange',languageChanged);};
-  cleanup.enter=()=>{if(frame||opening.classList.contains('is-entered'))return;frame=requestAnimationFrame(()=>{frame=0;opening.classList.add('is-entered');});};
+  const cleanup=()=>{cancelAnimationFrame(frame);observer?.disconnect();edgeObserver?.disconnect();mutations.disconnect();document.removeEventListener('portfolio:languagechange',clearCovers);removeEventListener('resize',clearCovers);};
+  cleanup.enter=()=>{if(frame||opening.classList.contains('is-entered'))return;frame=requestAnimationFrame(()=>{frame=0;opening.classList.add('is-entered');ready=true;for(const el of visible)reveal(el);visible.clear();});};
   return cleanup;
  }
  function apply(root,lang){if(!['zh','en'].includes(lang))return;language=lang;const content=root.querySelector('.wp-content');content.lang=lang==='en'?'en':'zh-CN';content.innerHTML=body();content.querySelector(`[data-resume-language="${lang}"]`).focus({preventScroll:true});}
