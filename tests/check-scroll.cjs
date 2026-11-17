@@ -195,6 +195,9 @@ for(const [width,height,reduce] of [[1600,900,false],[390,844,false],[390,844,tr
    const socialStart=Number(d.querySelector('.detail-route').dataset.scrollHeight)-parseFloat(social.style.height)-parseFloat(d.querySelector('.portrait-footer').style.height);
    w.scrollTo(0,socialStart-height);flush();assert.equal(+social.style.getPropertyValue('--spread'),reduce?1:0);
    w.scrollTo(0,socialStart);flush();assert.equal(+social.style.getPropertyValue('--spread'),1);
+   cards[1].focus();assert.equal(cards[1].classList.contains('is-active'),!reduce,'keyboard selection lifts the focused card unless reduced motion is requested');
+   if(!reduce){assert.ok(+cards[0].style.getPropertyValue('--neighbor-x')<0&&+cards[2].style.getPropertyValue('--neighbor-x')>0,'neighboring cards make room on both sides');cards[5].focus();assert.equal(cards[1].classList.contains('is-active'),false);assert.equal(cards[5].classList.contains('is-active'),true);}
+   social.dispatchEvent(new w.Event('pointerleave'));assert.equal(social.querySelector('.is-active'),null,'leaving the fan returns the selected card');cards[1].blur();cards[5].blur();
    w.scrollTo(0,socialStart-height);flush();assert.equal(+social.style.getPropertyValue('--spread'),reduce?1:0,'scrolling back restores the initial stack');
    cards[3].click();assert.equal(d.querySelector('dialog').open,true,'social cards open the full photograph');d.querySelector('dialog').close();flush();assert.equal(w.location.hash,'#'+family);
    assert.equal(d.querySelectorAll('.footer-pages a').length,3);assert.equal(d.querySelector('.footer-portrait img').getAttribute('src'),family==='life'?w.PORTFOLIO_CONTENT.heroImage:w.PORTFOLIO_CONTENT.heroHelmetImage,'footer uses the matching cap or helmet portrait');
