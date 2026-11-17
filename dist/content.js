@@ -171,6 +171,7 @@ window.PORTFOLIO_CONTENT = {
               },
               {
                 "image": "assets/team/field-days-04.webp",
+                "layout": {"desktop":[0.56,0.65,0.22,0.23]},
                 "thumbnail": "assets/team/field-days-04-small.webp",
                 "width": 1600,
                 "height": 1067,
@@ -343,6 +344,7 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
       },
       {
         "image": "assets/life/collection-04.webp",
+        "layout": {"desktop":[0.82,0.25,0.3,0.45],"mobile":[1.46,0.35,0.64,0.47]},
         "thumbnail": "assets/life/collection-04-small.webp",
         "width": 1280,
         "height": 1707,
@@ -350,28 +352,13 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
         "alt": "我的收藏 · 04"
       },
       {
-        "image": "assets/life/collection-05.webp",
-        "thumbnail": "assets/life/collection-05-small.webp",
-        "width": 1600,
-        "height": 1200,
-        "smallWidth": 640,
-        "alt": "我的收藏 · 05"
-      },
-      {
         "image": "assets/life/collection-06.webp",
+        "layout": {"desktop":[1.15,0.14,0.36,0.66],"mobile":[2.2,0.24,0.7,0.54]},
         "thumbnail": "assets/life/collection-06-small.webp",
         "width": 1600,
         "height": 1200,
         "smallWidth": 640,
         "alt": "我的收藏 · 06"
-      },
-      {
-        "image": "assets/life/collection-07.webp",
-        "thumbnail": "assets/life/collection-07-small.webp",
-        "width": 960,
-        "height": 1280,
-        "smallWidth": 640,
-        "alt": "我的收藏 · 07"
       }
     ]
   },
@@ -379,7 +366,7 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
     "title": "滑雪",
     "category": "SNOW",
     "image": "assets/life/snow-01.webp",
-    "detailImage": "assets/life/snow-02.webp",
+    "detailImage": "assets/life/snow-03.webp",
     "photos": [
       {
         "image": "assets/life/snow-01.webp",
@@ -388,14 +375,6 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
         "height": 1707,
         "smallWidth": 640,
         "alt": "滑雪 · 01"
-      },
-      {
-        "image": "assets/life/snow-02.webp",
-        "thumbnail": "assets/life/snow-02-small.webp",
-        "width": 1280,
-        "height": 1707,
-        "smallWidth": 640,
-        "alt": "滑雪 · 02"
       },
       {
         "image": "assets/life/snow-03.webp",
@@ -415,6 +394,7 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
     "photos": [
       {
         "image": "assets/life/mocap-01.webp",
+        "layout": {"desktop":[0.07,0.36,0.32,0.48]},
         "thumbnail": "assets/life/mocap-01-small.webp",
         "width": 1600,
         "height": 1067,
@@ -423,6 +403,7 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
       },
       {
         "image": "assets/life/mocap-02.webp",
+        "layout": {"desktop":[0.46,0.14,0.42,0.66]},
         "thumbnail": "assets/life/mocap-02-small.webp",
         "width": 1600,
         "height": 1067,
@@ -439,6 +420,7 @@ window.PORTFOLIO_CONTENT.pages.life.projects = [
     "photos": [
       {
         "image": "assets/life/tattoo-01.webp",
+        "layout": {"desktop":[0.24,0.14,0.36,0.66]},
         "thumbnail": "assets/life/tattoo-01-small.webp",
         "width": 1280,
         "height": 1707,

@@ -46,7 +46,7 @@ assert.equal(d.querySelector('.life-about'),null);
 assert.equal(d.querySelector('[data-detail-section="profile"]'),null);
 assert.ok(d.querySelector('.life-editorial-photo'));
 assert.equal(d.querySelectorAll('.life-team .project-panel').length,17);
-assert.equal(d.querySelectorAll('.life-moments:not(.life-team) .project-panel').length,15);
+assert.equal(d.querySelectorAll('.life-moments:not(.life-team) .project-panel').length,12);
 assert.equal(d.querySelector('.wp-language'),null);
 dom.window.close();
 console.log('PASS resume: moved to work hero, supplied avatar, four experience and three award entries, repeatable position-preserving language switch, project covers/return language, life photos retained without duplicate resume');

@@ -14,12 +14,12 @@ for(const file of ['content.js','app.js','pages.js'])w.eval(fs.readFileSync(path
 function flush(){for(let i=0;frames.size&&i<1200;i++){clock+=16.667;const jobs=[...frames.values()];frames.clear();jobs.forEach(cb=>cb(clock));}assert.equal(frames.size,0);}
 const groups=w.PORTFOLIO_CONTENT.pages.life.projects;
 const gallery=d.querySelector('[data-horizontal-id="projects"]'),team=d.querySelector('[data-horizontal-id="team"]');
-assert.deepEqual(Array.from(groups,g=>[g.title,g.photos.length]),[['我的宠物',3],['我的收藏',6],['滑雪',3],['动捕中',2],['我的纹身',1]]);
+assert.deepEqual(Array.from(groups,g=>[g.title,g.photos.length]),[['我的宠物',3],['我的收藏',4],['滑雪',2],['动捕中',2],['我的纹身',1]]);
 assert.ok(!JSON.stringify(w.PORTFOLIO_CONTENT).includes('assets/team/pitching-02.webp'));
 assert.ok(!JSON.stringify(w.PORTFOLIO_CONTENT).includes('assets/life/collection-01.webp'));
 assert.ok(!JSON.stringify(groups).includes('sketch-clay'));
 const photos=groups.flatMap(g=>Array.from(g.photos)),buttons=[...gallery.querySelectorAll('.life-photo-button')];
-assert.equal(photos.length,15);assert.equal(new Set(photos.map(p=>p.image )).size,15);assert.equal(buttons.length,15);
+assert.equal(photos.length,12);assert.equal(new Set(photos.map(p=>p.image )).size,12);assert.equal(buttons.length,12);
 assert.ok(!gallery.textContent.includes('我与超级英雄'));assert.ok(!photos.some(photo=>photo.image.includes('heroes-')));
 assert.deepEqual([...gallery.querySelectorAll('.life-group-nav button')].map(b=>Number(b.dataset.projectPosition)),[0,1,2,3,4]);
 
@@ -71,4 +71,4 @@ d.querySelector('.dialog-close').click();assert.equal(d.querySelector('dialog').
 const nav=gallery.querySelector('.life-group-nav'),start=y;
 function touch(type,points){const event=new w.Event(type,{bubbles:true,cancelable:true});Object.defineProperty(event,'touches',{value:points.map(([clientX,clientY])=>({clientX,clientY}))});nav.dispatchEvent(event);return event.defaultPrevented;}
 touch('touchstart',[[300,780]]);assert.equal(touch('touchmove',[[100,780]]),false,'category bar keeps its native horizontal scroll');touch('touchend',[]);flush();assert.equal(y,start,'scrolling categories does not move the photographs');
-dom.window.close();console.log('PASS 17 team photos with Singapore and original team art, independent team categories and full-size preview, supplied portrait, compact compositions with mobile category anchors, retained 15-photo/5-category mapping, removed hero photos, responsive WebP sources, metadata removal, category jumps, scoped touch input and correct high-resolution photo preview');
+dom.window.close();console.log('PASS 17 team photos with Singapore and original team art, independent team categories and full-size preview, supplied portrait, compact compositions with mobile category anchors, retained 12-photo/5-category mapping, removed hero photos, responsive WebP sources, metadata removal, category jumps, scoped touch input and correct high-resolution photo preview');

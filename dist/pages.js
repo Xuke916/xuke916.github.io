@@ -50,28 +50,34 @@
     }
   }
   function setupSocialFan(section){
-    const cards=$$('.social-card',section),fan=$('.socials-fan',section),timers=new Map();let active=-1,box=null;
-    const clear=card=>{clearTimeout(timers.get(card));timers.delete(card);};
+    const cards=$$('.social-card',section),fan=$('.socials-fan',section),x=cards.map(()=>0),velocity=cards.map(()=>0),dest=cards.map(()=>0);
+    let active=-1,box=null,frame=0,last=0,spread=0,spreadFrom=0,spreadTarget=0,spreadStart=null;
+    function paintSpread(){section.style.setProperty('--spread',spread);cards.forEach((card,i)=>card.style.setProperty('--card-spread',smooth((spread-Math.abs(i-3)*.035)/(1-Math.abs(i-3)*.035))));}
+    function request(){if(!frame)frame=requestAnimationFrame(tick);}
+    function tick(time){
+      frame=0;const dt=Math.min((last?time-last:16.67)/1000,.032);last=time;let moving=false;
+      if(spread!==spreadTarget){if(spreadStart===null)spreadStart=time;const p=clamp((time-spreadStart)/1350);spread=mix(spreadFrom,spreadTarget,smooth(p));if(p===1)spread=spreadTarget;else moving=true;paintSpread();}
+      cards.forEach((card,i)=>{velocity[i]+=(190*(dest[i]-x[i])-23*velocity[i])*dt;x[i]+=velocity[i]*dt;if(Math.abs(dest[i]-x[i])<.00015&&Math.abs(velocity[i])<.001){x[i]=dest[i];velocity[i]=0;}else moving=true;card.style.setProperty('--neighbor-x',x[i]);});
+      if(moving)request();else last=0;
+    }
     function select(index){
-      if(reduced.matches)index=-1;
-      if(index===active)return;
-      const previous=cards[active];if(previous){clear(previous);previous.classList.add('is-returning');timers.set(previous,setTimeout(()=>{previous.classList.remove('is-returning');timers.delete(previous);},850));}
-      active=index;section.classList.toggle('has-active-card',index>=0);
-      cards.forEach((card,i)=>{const on=i===index;card.classList.toggle('is-active',on);if(on){clear(card);card.classList.remove('is-returning');}card.style.setProperty('--neighbor-x',index<0||on?0:(i<index?-1:1)*(.17-Math.min(Math.abs(i-index)-1,3)*.025));});
+      if(reduced.matches)index=-1;if(index===active)return;active=index;section.classList.toggle('has-active-card',index>=0);
+      cards.forEach((card,i)=>{card.classList.toggle('is-active',i===index);dest[i]=index<0||i===index?0:(i<index?-1:1)*(.43-Math.min(Math.abs(i-index)-1,4)*.02);});request();
     }
     function measure(){const r=fan.getBoundingClientRect(),card=cards[3];box={x:r.left,y:r.top,w:card.offsetWidth,h:card.offsetHeight};}
     function move(e){
-      if(e.pointerType==='touch'||reduced.matches||menuPaused||dialog.open)return;
-      if(!box)measure();const {x,y,w,h}=box,spread=Number(section.style.getPropertyValue('--spread'));
-      if(spread<.85||Math.abs(e.clientX-x)>w*2.15||e.clientY<y-h*.72||e.clientY>y+h*.83){select(-1);return;}
-      // Use fixed fan slots rather than the moving card edges, preventing hover flicker.
-      select(clamp(Math.round((e.clientX-x)/(w*.49))+3,0,6));
+      if(e.pointerType==='touch'||reduced.matches||menuPaused||dialog.open)return;if(!box)measure();const {x:cx,y,w,h}=box;
+      if(spread<.94||Math.abs(e.clientX-cx)>w*2.6||e.clientY<y-h*.65||e.clientY>y+h*.83){select(-1);return;}
+      const distances=cards.map((_,i)=>Math.abs(e.clientX-(cx+((i-3)*.49+x[i])*w))),nearest=distances.indexOf(Math.min(...distances));
+      if(active<0||distances[nearest]+w*.12<distances[active])select(nearest);
     }
-    const leave=()=>{box=null;select(-1);},focus=e=>{const card=e.target.closest('.social-card');if(card)select(cards.indexOf(card));},blur=e=>{if(!e.relatedTarget?.closest?.('.social-card'))select(-1);};
-    const scroll=()=>{box=null;select(-1);},menu=e=>{if(e.detail.open)leave();},visibility=()=>{if(document.hidden)leave();};
+    const leave=()=>{box=null;select(-1);},focus=e=>{const card=e.target.closest('.social-card');if(card&&matchMedia('(hover: hover) and (pointer: fine)').matches)select(cards.indexOf(card));},blur=e=>{if(!e.relatedTarget?.closest?.('.social-card'))select(-1);};
+    const scroll=()=>{box=null;},menu=e=>{if(e.detail.open)leave();},visibility=()=>{if(document.hidden)leave();};
     section.addEventListener('pointermove',move);section.addEventListener('pointerleave',leave);section.addEventListener('focusin',focus);section.addEventListener('focusout',blur);
     addEventListener('scroll',scroll,{passive:true});addEventListener('resize',leave,{passive:true});document.addEventListener('portfolio:menu',menu);document.addEventListener('visibilitychange',visibility);
-    return ()=>{timers.forEach(clearTimeout);timers.clear();section.removeEventListener('pointermove',move);section.removeEventListener('pointerleave',leave);section.removeEventListener('focusin',focus);section.removeEventListener('focusout',blur);removeEventListener('scroll',scroll);removeEventListener('resize',leave);document.removeEventListener('portfolio:menu',menu);document.removeEventListener('visibilitychange',visibility);};
+    const cleanup=()=>{cancelAnimationFrame(frame);section.removeEventListener('pointermove',move);section.removeEventListener('pointerleave',leave);section.removeEventListener('focusin',focus);section.removeEventListener('focusout',blur);removeEventListener('scroll',scroll);removeEventListener('resize',leave);document.removeEventListener('portfolio:menu',menu);document.removeEventListener('visibilitychange',visibility);};
+    cleanup.setSpread=value=>{if(reduced.matches){spread=spreadTarget=1;paintSpread();return;}if(value===spreadTarget)return;spreadFrom=spread;spreadTarget=value;spreadStart=null;request();};
+    return cleanup;
   }
   function socialSection(){
     const content=window.PORTFOLIO_CONTENT,life=content.pages.life,profile=life.profile;
@@ -167,7 +173,7 @@
     const groups=collection.items.map((group,index)=>{
       const start=width,mobileStart=mobileWidth;
       const photos=group.photos.map((photo,i)=>{
-        const d=group.photos.length===1?[.36,.14,.36,.66]:desktop[i],m=group.photos.length===1?[.08,.32,.70,.54]:mobile[i];
+        const d=photo.layout?.desktop||(group.photos.length===1?[.36,.14,.36,.66]:desktop[i]),m=photo.layout?.mobile||(group.photos.length===1?[.08,.32,.70,.54]:mobile[i]);
         return {...photo,localIndex:i+1,total:group.photos.length,d:[start+d[0],...d.slice(1)],m:[mobileStart+m[0],...m.slice(1)]};
       });
       width+=Math.max(.75,...photos.map(p=>p.d[0]-start+p.d[2]+.025));
@@ -298,7 +304,7 @@
     const {h,w,sections:s}=metrics;
     const overSocials=s.socials&&y>=s.socials.start-h*.06&&y<s.footer.start+h*.1;
     document.documentElement.style.setProperty('--header-color',menuPaused?'#f3f3eb':overSocials?(route==='life'?'#0a2447':'#f3f3eb'):ui.caseStudy?ui.headerColor:route==='life'?'#0a2447':'#f3f3eb');
-    if(ui.socials){const at=s.socials.start+ui.socialLayout.top,p=reduced.matches?1:smooth((y+h*.66-at)/(h*.13)),lift=reduced.matches?1:smooth((y+h*1.1-at)/(h*.45));ui.socials.style.setProperty('--fan-lift',lift);if(p!==ui.socialProgress){ui.socialProgress=p;ui.socials.style.setProperty('--spread',p);ui.socialLayout.cards.forEach((card,i)=>card.style.setProperty('--card-spread',smooth((p-Math.abs(i-3)*.045)/(1-Math.abs(i-3)*.045))));}}
+    if(ui.socials){const at=s.socials.start+ui.socialLayout.top,lift=reduced.matches?1:smooth((y+h*1.1-at)/(h*.45));ui.socials.style.setProperty('--fan-lift',lift);socialCleanup?.setSpread(y+h*.66>=at?1:0);}
     if(ui.kind==='project'){
       if(!ui.caseStudy)ui.projectCover.style.transform=`translate3d(0,${clamp(y/h)*22}px,0)`;
       ui.sectionButtons.forEach((button,i)=>{const section=s[button.dataset.section],next=ui.sectionButtons[i+1];const active=ui.caseStudy?(y>=section.anchor-2||i===0)&&(!next||y<s[next.dataset.section].anchor-2):y>=section.start-h*.2&&y<section.start+section.length-h*.2;if(button.classList.contains('active')!==active){button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');}if(active&&ui.caseStudy&&ui.activeToc!==button.dataset.section){ui.activeToc=button.dataset.section;ui.toc.scrollTop=Math.max(0,button.offsetTop-ui.toc.clientHeight/2+button.offsetHeight/2);}});
