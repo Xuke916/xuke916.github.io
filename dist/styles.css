@@ -74,3 +74,13 @@ body.opening-motion .hero-contours>svg{animation-play-state:running}
 /* Background marquees only animate while their scene is visible. */
 body:not(.message-visible) .message-marquee,body.menu-open .message-marquee{animation-play-state:paused}
 @media(pointer:coarse){.scene,.hero-portrait,.split-portrait{will-change:auto}.image-dialog::backdrop{backdrop-filter:none}}
+
+/* Supplied player cutouts frame the two entrance links. */
+.split-scene .split-portrait{width:30vw;height:86%;bottom:-9%;pointer-events:none;opacity:1}
+.split-scene .split-portrait-left{left:-4%}.split-scene .split-portrait-right{right:-6%;width:33vw}
+.split-scene .split-portrait .user-image{object-position:center bottom}
+.split-scene .split-portrait>.mono{display:none}.split-options{z-index:2}
+@media(max-width:600px){.split-scene .split-portrait{width:46%;height:43%;bottom:-1%}.split-scene .split-portrait-left{left:-8%}.split-scene .split-portrait-right{right:-10%}}
+
+@media(min-width:601px) and (max-width:1100px) and (min-height:601px){.split-scene .split-portrait{width:44vw}.split-scene .split-portrait-left{left:-8%}.split-scene .split-portrait-right{right:-14%}}
+@media(max-width:600px){.split-scene .split-portrait{width:60%;bottom:-3%}.split-scene .split-portrait-left{left:-12%}.split-scene .split-portrait-right{right:-17%}.split-scene .split-heading em,.split-scene .split-heading strong{font-size:10.4vw}}

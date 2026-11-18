@@ -258,8 +258,8 @@ window.PORTFOLIO_CONTENT = {
     }
   },
   entries: [
-    { title: ["ON", "DESIGN"], eyebrow: "01 / ON DESIGN", description: "", image: "" },
-    { title: ["OFF", "DESIGN"], eyebrow: "02 / OFF DESIGN", description: "", image: "" }
+    { title: ["ON", "DESIGN"], eyebrow: "01 / ON DESIGN", description: "", image: "assets/entry/pitcher-left-v1.webp" },
+    { title: ["OFF", "DESIGN"], eyebrow: "02 / OFF DESIGN", description: "", image: "assets/entry/player-right-v1.webp" }
   ]
 };
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[2], {

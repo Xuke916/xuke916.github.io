@@ -249,7 +249,7 @@
     split.style.transform='none';
     const endP=smooth(range(t,4.25,5.65));
     const dist=mobile?28:32;
-    ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)-px*2}%,${py*-1}%,0) scaleX(-1)`;
+    ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)-px*2}%,${py*-1}%,0) scaleX(${content.entries[0].image?1:-1})`;
     ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)+px*2}%,${py}%,0)`;
     ui.splitOptions.style.opacity=smooth(range(t,4.3,4.8));
     ui.splitOptions.style.transform=`translate(calc(-50% + ${px*6}px),-48%)`;
