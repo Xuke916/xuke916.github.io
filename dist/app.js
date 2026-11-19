@@ -260,7 +260,7 @@
       part.style.opacity=reveal;
       // Stagger whole lines rather than creating per-letter animation work.
       part.style.translate='0 0';
-      if(index<3){part.style.clipPath=`inset(-25% ${(1-clamp(reveal/.5))*100}% -25% 0)`;part.style.setProperty('--entry-cover',reduced.matches?0:reveal<.45?reveal/.45:(1-reveal)/.55);}
+      if(index<3){const cut=(1-clamp(reveal/.5))*100;part.style.clipPath=column===0?`inset(-25% ${cut}% -25% 0)`:`inset(-25% 0 -25% ${cut}%)`;part.style.setProperty('--entry-cover',reduced.matches?0:reveal<.45?reveal/.45:(1-reveal)/.55);}
     }));
     ui.splitContours.style.transform=`rotate(${mix(-6,0,endP)}deg) scale(${mix(1.15,1,endP)})`;
     }

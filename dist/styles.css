@@ -87,3 +87,5 @@ body:not(.message-visible) .message-marquee,body.menu-open .message-marquee{anim
 @media(min-width:601px) and (max-width:1100px) and (min-height:601px){.split-scene .split-portrait{width:44vw;height:46%;bottom:-4%}.split-scene .split-portrait-left{left:-8%}.split-scene .split-portrait-right{right:-14%}}
 @media(max-width:600px){.split-scene .split-portrait{width:60%;height:40%;bottom:-3%}.split-scene .split-portrait-left{left:-12%}.split-scene .split-portrait-right{right:-17%}.split-scene .split-heading em,.split-scene .split-heading strong{font-size:10.4vw}}
 @media(prefers-reduced-motion:reduce){.split-option .option-index:after,.split-heading em:after,.split-heading strong:after{display:none}}
+
+.split-option:nth-child(2) .option-index:after,.split-option:nth-child(2) .split-heading em:after,.split-option:nth-child(2) .split-heading strong:after{transform-origin:left}
