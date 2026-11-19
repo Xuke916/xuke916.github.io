@@ -27,6 +27,7 @@
   const POINTER_DAMPING_MS = 90;
   let lastWrittenScroll = scrollY, navigation = null;
   let homeSuspended = false;
+  let entryReady=false,entryElapsed=0;
 
   // Each section's distance is expressed in viewport heights, not wheel events.
   // Native scrolling also supports trackpads, touch, keyboard, and scrollbars.
@@ -180,6 +181,7 @@
   // Scroll and pointer movement share one reversible, frame-rate-independent timeline.
   function render(y) {
     const t = y / unit * TIMELINE_SCALE, mobile = innerWidth <= 600;
+    entryReady=t>=5.65;if(!entryReady)entryElapsed=0;
     const openingMotion=t<2&&!menuOpen&&!homeSuspended&&!document.hidden&&!reduced.matches;
     setOpeningMotion(openingMotion);
     const px = reduced.matches ? 0 : mouseX, py = reduced.matches ? 0 : mouseY;
@@ -255,8 +257,8 @@
     ui.splitOptions.style.transform='translate(-50%,-48%)';
     ui.splitParts.forEach((parts,column)=>parts.forEach((part,index)=>{
       if(!part)return;
-      const start=4.35+index*.14+column*.08;
-      const reveal=reduced.matches?1:smooth(range(t,start,start+.65));
+      const start=100+index*130+column*80;
+      const reveal=reduced.matches?1:entryReady?smooth(range(entryElapsed,start,start+650)):0;
       part.style.opacity=reveal;
       // Stagger whole lines rather than creating per-letter animation work.
       part.style.translate='0 0';
@@ -307,9 +309,10 @@
     if(Math.abs(mouseY-aimY)<.0001)mouseY=aimY;
     // The native scroll position and visible frame move together, with no second trailing filter.
     if(current!==lastWrittenScroll)writeScroll(current);
+    if(entryReady&&!menuOpen)entryElapsed=Math.min(1600,entryElapsed+dt);
     render(current);
     onComplete?.();
-    if(navigation||current!==target||mouseX!==aimX||mouseY!==aimY)frame=requestAnimationFrame(tick);else lastTime=0;
+    if(navigation||current!==target||mouseX!==aimX||mouseY!==aimY||(entryReady&&!reduced.matches&&!menuOpen&&entryElapsed<1600))frame=requestAnimationFrame(tick);else lastTime=0;
   }
   function requestTick(){if(!homeSuspended&&!frame)frame=requestAnimationFrame(tick);}
   document.addEventListener('visibilitychange',()=>{
@@ -365,7 +368,7 @@
   const initial=location.hash.slice(1);
   if(initial==='gallery')history.replaceState(null,'','#explore');
   if(initial in CHAPTERS)writeScroll(CHAPTERS[initial]*unit/TIMELINE_SCALE);
-  current=target=scrollY;render(current);
+  current=target=scrollY;render(current);if(entryReady)requestTick();
   window.PortfolioHome = {
     pause() {
       homeSuspended = true;
@@ -384,7 +387,7 @@
       unit = window.PortfolioViewport();
       portraitHeight = portrait.offsetHeight;
       current = target = savedScroll ?? (CHAPTERS[chapter] ?? CHAPTERS.explore) * unit / TIMELINE_SCALE;
-      activeChapter = -1; lastTime = 0; writeScroll(current); render(current);
+      activeChapter = -1; lastTime = 0; writeScroll(current); render(current);if(entryReady)requestTick();
     },
     preview: openPreview,
     closeMenu() { if (menuOpen) setMenu(false); }

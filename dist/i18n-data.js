@@ -1,5 +1,9 @@
 // English copy for the Chinese source text.
 window.PORTFOLIO_EN = {
+  "项目创作声明": "Project authorship statement",
+  "阅读声明": "BEFORE YOU EXPLORE",
+  "本网站使用 AI vibe coding 辅助搭建。": "This website was built with AI-assisted vibe coding.",
+  "游戏项目本身为手工打造。": "The game projects themselves were handcrafted.",
   "关于 XuKe": "About XuKe",
   "制作人": "Producer",
   "XU KE 的棒球头盔侧影": "XU KE wearing a baseball helmet",

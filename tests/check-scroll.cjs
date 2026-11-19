@@ -256,12 +256,13 @@ for (const file of ['styles.css', 'content.js', 'app.js', 'pages.js', 'pages.css
 assert.ok(!/https?:\/\//.test(fs.readFileSync(path.join(root, 'app.js'), 'utf8')), 'no remote runtime dependency');
 console.log('PASS local assets and self-contained runtime');
 {
- const {w,d,scroll,flush}=boot(1600,900);
+ const {w,d,scroll,flush,advance}=boot(1600,900);
  const title=d.querySelector('.split-heading em'),arrow=d.querySelector('.square-arrow');
- scroll(4.7);assert.ok(+title.style.opacity>+arrow.style.opacity,'Entry headings lead the button reveal');
+ scroll(5.5);assert.equal(title.style.opacity,'0','text stays hidden while the portraits are entering');
+ w.scrollTo(0,5.8*900/1.5);for(let i=0;i<12;i++)advance(40);
+ assert.ok(+title.style.opacity>+arrow.style.opacity,'headings begin first after the portraits stop');
  assert.ok(+title.style.getPropertyValue('--entry-cover')>0,'entry lines have a blue wipe during their reveal');
- const before=[title.style.opacity,title.style.translate];scroll(5.4);scroll(4.7);
- assert.deepEqual([title.style.opacity,title.style.translate],before,'Layered entrance reverses without a jump');
+ scroll(5.4);assert.equal(title.style.opacity,'0','scrolling out resets the timed entrance');
  scroll(6);assert.equal(title.style.opacity,'1');assert.equal(arrow.style.opacity,'1');
  const fixed=[...d.querySelectorAll('.split-portrait,.split-options,.split-scene .contours')].map(el=>el.style.transform);
  for(const [clientX,clientY] of [[0,0],[1600,900]]){const move=new w.Event('pointermove',{bubbles:true});Object.assign(move,{clientX,clientY,pointerType:'mouse'});d.dispatchEvent(move);flush();assert.deepEqual([...d.querySelectorAll('.split-portrait,.split-options,.split-scene .contours')].map(el=>el.style.transform),fixed,'entrance portraits, text and background remain fixed under pointer movement');}
