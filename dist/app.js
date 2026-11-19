@@ -249,19 +249,20 @@
     split.style.transform='none';
     const endP=smooth(range(t,4.25,5.65));
     const dist=mobile?28:32;
-    ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)-px*2}%,${py*-1}%,0) scaleX(${content.entries[0].image?1:-1})`;
-    ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)+px*2}%,${py}%,0)`;
+    ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)}%,0%,0) scaleX(${content.entries[0].image?1:-1})`;
+    ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)}%,0%,0)`;
     ui.splitOptions.style.opacity=smooth(range(t,4.3,4.8));
-    ui.splitOptions.style.transform=`translate(calc(-50% + ${px*6}px),-48%)`;
+    ui.splitOptions.style.transform='translate(-50%,-48%)';
     ui.splitParts.forEach((parts,column)=>parts.forEach((part,index)=>{
       if(!part)return;
       const start=4.35+index*.14+column*.08;
       const reveal=reduced.matches?1:smooth(range(t,start,start+.65));
       part.style.opacity=reveal;
       // Stagger whole lines rather than creating per-letter animation work.
-      part.style.translate=`0 ${(1-reveal)*(mobile?16:26)}px`;
+      part.style.translate='0 0';
+      if(index<3){part.style.clipPath=`inset(-25% ${(1-clamp(reveal/.5))*100}% -25% 0)`;part.style.setProperty('--entry-cover',reduced.matches?0:reveal<.45?reveal/.45:(1-reveal)/.55);}
     }));
-    ui.splitContours.style.transform=`translate3d(${-px*14}px,${py*-10}px,0) rotate(${mix(-6,0,endP)}deg) scale(${mix(1.15,1,endP)})`;
+    ui.splitContours.style.transform=`rotate(${mix(-6,0,endP)}deg) scale(${mix(1.15,1,endP)})`;
     }
     const isDark=menuOpen||thumb>.12&&splitEnter<.7;
     document.documentElement.style.setProperty('--header-color',isDark?'#f3f3eb':'#0a2447');
