@@ -74,5 +74,11 @@ assert.equal(items[0].textContent,originalText,'releasing covers leaves selectab
 dispose();assert.equal(disconnected,true);assert.equal(observed.size,0);
 host.querySelector('.wp-opening').classList.remove('is-entered');
 const reducedDispose=w.WorkProfile.mount(host,{reduced:true});assert.ok(items.every(el=>el.classList.contains('is-revealed')),'reduced motion exposes all reading content');reducedDispose.enter();reducedDispose();flush();assert.ok(!host.querySelector('.wp-opening').classList.contains('is-entered'),'cleanup cancels an unpainted entrance frame');host.remove();
+// The light life route uses the same viewport gating without requiring résumé markup.
+const lifeHost=d.createElement('main');lifeHost.innerHTML='<section class="life-editorial"><p class="life-hero-intro">Life introduction</p></section><section class="life-moments"><header class="projects-heading"><h2>Next chapter</h2></header></section>';d.body.append(lifeHost);
+const lifeDispose=w.WorkProfile.mount(lifeHost,{life:true}),lifeIntro=lifeHost.querySelector('.life-hero-intro'),lifeChapter=lifeHost.querySelector('h2');
+callback([{target:lifeIntro,isIntersecting:true}]);assert.ok(!lifeIntro.classList.contains('wp-wipe-shown'),'life text waits for the route entrance');
+lifeDispose.enter();flush();assert.ok(lifeHost.querySelector('.life-editorial').classList.contains('is-entered'));assert.ok(lifeIntro.classList.contains('wp-wipe-shown'));assert.ok(!lifeChapter.classList.contains('wp-wipe-shown'),'offscreen life chapters wait for their own entry');
+callback([{target:lifeChapter,isIntersecting:true}]);assert.ok(lifeChapter.classList.contains('wp-wipe-shown'));lifeDispose();lifeHost.remove();
 dom.window.close();
 console.log('PASS resume: moved to work hero, supplied avatar, four experience and three award entries, repeatable position-preserving language switch, project covers/return language, life photos retained without duplicate resume');

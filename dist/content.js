@@ -31,7 +31,7 @@ window.PORTFOLIO_CONTENT = {
       title: ["OFF", "DESIGN"], english: "OFF DESIGN", mark: "LIFE",
       profile: {
         name: 'XU KE',
-        intro: '我是 XU KE，中国传媒大学动画专业游戏美术方向在读。我做游戏制作、战斗设计与概念美术，也担任校棒球队副队长。',
+        intro: '欢迎来到我的个人简介，我是许可（XU KE），今年21岁，来自中国四川，中国传媒大学游戏艺术专业在读，我是一名游戏制作人和概念设计师，拥有自己的游戏工作室Absolutely Games，同时也是一名棒球运动员，在校队中主要担任投手和游击手。',
         facts: [
           { label: '学习', value: '中传', detail: '动画 · 游戏美术' },
           { label: '创作', value: '游戏', detail: '机制与视觉设计' },
@@ -56,8 +56,8 @@ window.PORTFOLIO_CONTENT = {
       showStatement: false, showGallery: false,
       galleryTitle: "日常记录", projectsTitle: "生活片段",
       team: {
-        "title": "我与我的球队",
-        "english": "ME & MY TEAM",
+        "title": "我的球队狼队",
+        "english": "MY TEAM / WOLVES",
         "items": [
           {
             "title": "球队合影",

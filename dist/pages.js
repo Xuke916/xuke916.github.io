@@ -162,10 +162,10 @@
     const photos=[...data.team.items,...data.projects].flatMap(group=>group.photos);
     const selected=['assets/team/pitching-04.webp','assets/team/at-bat-01.webp','assets/team/field-days-03.webp','assets/team/singapore-02.webp','assets/life/snow-01.webp','assets/life/mocap-01.webp','assets/life/pets-01.webp','assets/team/portraits-02.webp','assets/team/pitching-03.webp'].map(path=>photos.find(photo=>photo.image===path));
     const frames=[{image:profile.heroPhoto,thumbnail:profile.heroPhotoSmall,width:profile.heroPhotoWidth,height:profile.heroPhotoHeight,alt:profile.heroPhotoAlt},...selected];
-    return `<div class="life-editorial-meta"><span>${esc(profile.name)}</span><span class="mono">GAME DESIGN / BASEBALL</span></div><div class="life-sequence-statement" aria-hidden="true"><em>球场之外</em><strong>日常之中</strong></div><figure class="life-editorial-photo"><button type="button" data-life-photo="${esc(profile.heroPhoto)}" data-caption="${esc(profile.heroPhotoCaption)}" aria-label="放大当前照片">${frames.map((photo,i)=>`<img class="life-sequence-frame" data-full-image="${photo.image}" data-frame-caption="${esc(photo.alt)}" src="${i===0?photo.image:photo.thumbnail}"${i===0?` srcset="${photo.thumbnail} 640w, ${photo.image} ${photo.width}w" sizes="(max-width:600px) 84vw, 43vw" fetchpriority="high"`:' loading="eager"'} alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}" style="opacity:${i===0?1:0}" decoding="async">`).join('')}</button><figcaption>${esc(profile.heroPhotoCaption)}</figcaption></figure><span class="life-sequence-count mono" aria-hidden="true">01 / ${String(frames.length).padStart(2,'0')}</span><p class="life-editorial-note">球场之外，也记录宠物、收藏、速写与模型。<span class="mono">XU KE / EVERYDAY LIFE</span></p>`;
+    return `<div class="life-editorial-meta"><span>${esc(profile.name)}</span><span class="mono">GAME DESIGN / BASEBALL</span></div><div class="life-sequence-statement" aria-hidden="true"><em>球场之外</em><strong>日常之中</strong></div><figure class="life-editorial-photo"><button type="button" data-life-photo="${esc(profile.heroPhoto)}" data-caption="${esc(profile.heroPhotoCaption)}" aria-label="放大当前照片">${frames.map((photo,i)=>`<img class="life-sequence-frame" data-full-image="${photo.image}" data-frame-caption="${esc(photo.alt)}" src="${i===0?photo.image:photo.thumbnail}"${i===0?` srcset="${photo.thumbnail} 640w, ${photo.image} ${photo.width}w" sizes="(max-width:600px) 84vw, 43vw" fetchpriority="high"`:' loading="eager"'} alt="${esc(photo.alt)}" width="${photo.width}" height="${photo.height}" style="opacity:${i===0?1:0}" decoding="async">`).join('')}</button><figcaption>${esc(profile.heroPhotoCaption)}</figcaption></figure><span class="life-sequence-count mono" aria-hidden="true">01 / ${String(frames.length).padStart(2,'0')}</span><p class="life-editorial-note">个人兴趣爱好</p>`;
   }
   function lifePhotoSection(collection,number){
-    const isTeam=collection.id==='team',heading=isTeam?['我与','我的球队']:['生活','片段'];
+    const isTeam=collection.id==='team',heading=isTeam?['我的球队','狼队']:['生活','片段'];
     // Each chapter is a continuous composition; paired smaller photos share a column.
     const desktop=[[.07,.36,.25,.48],[.42,.14,.36,.66],[.81,.25,.22,.36],[.81,.65,.22,.23],[1.06,.14,.36,.66],[1.45,.25,.22,.36],[1.45,.65,.22,.23],[1.70,.14,.36,.66]];
     const mobile=[[.08,.42,.62,.43],[.73,.24,.70,.54],[1.46,.43,.56,.39],[1.46,.17,.56,.23],[2.05,.24,.70,.54],[2.78,.43,.56,.39],[2.78,.17,.56,.23],[3.37,.24,.70,.54]];
@@ -253,7 +253,7 @@
     // Keep the primary collection references for project routes and existing consumers.
     const primary=ui.collections.find(collection=>collection.id==='projects');Object.assign(ui,{track:primary.track,panels:primary.panels,projectCurrent:primary.current,projectDots:primary.dots,miniProgress:primary.progress,viewport:primary.viewport});
     measure();
-    if(resume)caseCleanup=window.WorkProfile.mount(root,{reduced:reduced.matches});
+    if(resume||profile&&window.WorkProfile)caseCleanup=window.WorkProfile.mount(root,{reduced:reduced.matches,life:!!profile});
     if((profile||resume)&&typeof ResizeObserver!=='undefined'){
       projectObserver=new ResizeObserver(()=>{if(route===name){
         // Keep the old viewport metrics until resize has restored the photo anchor.

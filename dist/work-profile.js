@@ -23,9 +23,9 @@
   return '<header class="wp-opening"><h1 class="detail-hero-title wp-display" tabindex="-1" aria-label="ON DESIGN"><span class="wp-on" data-language-label="true"><span class="wp-sr">ON </span><svg viewBox="0 0 320 260" aria-hidden="true"><path pathLength="1" d="M130 45C80 8 27 84 19 160S77 230 123 155 169 31 130 45M144 216 202 45C204 104 207 166 224 199L300 14"/></svg></span><strong data-language-label="true">DESIGN</strong></h1></header>';
  }
  function render(){return opening()+'<div class="wp-layout"><aside class="wp-identity"><img src="assets/work/xu-ke-avatar.webp" width="640" height="640" alt="XU KE 的头像：红底像素绵羊" loading="lazy" decoding="async"><p>XU KE</p><span>GAME DESIGN<br>CONCEPT ART</span></aside><div class="wp-content" lang="'+(language==='en'?'en':'zh-CN')+'">'+body()+'</div></div>';}
- function mount(root,{reduced=false}={}){
-  const opening=root.querySelector('.wp-opening'),reading=root.querySelector('.wp-layout'),targets=new Set(),visible=new Set();let observer,edgeObserver,frame=0,ready=false;
-  const selector='.wp-identity>p,.wp-identity>span,.wp-kicker,.wp-resume-title,.wp-heading p,.wp-language button,.wp-content h2,.wp-content h3,.wp-date,.wp-content li>p,.wp-notes p,.wp-notes li,.wp-projects-link,.work-project-list .projects-heading>.mono,.work-project-list .projects-heading h2,.work-project-list .project-dots button,.project-panel-title>.mono,.project-panel-title h3,.project-summary,.project-tags li,.projects-disclosure>span,.projects-disclosure>p,.work-project-list .projects-controls>.mono,.footer-pages>.mono,.footer-socials>.mono,.footer-brand,.footer-legal';
+ function mount(root,{reduced=false,life=false}={}){
+  const opening=root.querySelector(life?'.life-editorial':'.wp-opening'),reading=life?root:root.querySelector('.wp-layout'),targets=new Set(),visible=new Set();let observer,edgeObserver,frame=0,ready=false;
+  const selector=life?'.life-editorial-meta>span,.life-editorial .detail-copy-kicker,.life-hero-intro,.life-editorial-note,.life-moments .projects-heading>.mono,.life-moments .projects-heading h2,.life-photo-group>.mono,.life-photo-group h3,.life-photo-group p,.life-photo-caption':'.wp-identity>p,.wp-identity>span,.wp-kicker,.wp-resume-title,.wp-heading p,.wp-language button,.wp-content h2,.wp-content h3,.wp-date,.wp-content li>p,.wp-notes p,.wp-notes li,.wp-projects-link,.work-project-list .projects-heading>.mono,.work-project-list .projects-heading h2,.work-project-list .project-dots button,.project-panel-title>.mono,.project-panel-title h3,.project-summary,.project-tags li,.projects-disclosure>span,.projects-disclosure>p,.work-project-list .projects-controls>.mono,.footer-pages>.mono,.footer-socials>.mono,.footer-brand,.footer-legal';
   function prepareReveal(el){
    if(el.classList.contains('wp-wipe-shown'))return;
    let layer;
@@ -54,13 +54,13 @@
    observer=new IntersectionObserver(onEntries,{rootMargin:'0px 0px -8% 0px',threshold:.08});
    edgeObserver=new IntersectionObserver(onEntries,{threshold:.08});
   }
-  scan();const mutations=new MutationObserver(()=>{for(const el of targets)if(!root.contains(el)){observer?.unobserve(el);targets.delete(el);}scan();});mutations.observe(reading.querySelector('.wp-content'),{childList:true});
+  scan();const mutations=new MutationObserver(()=>{for(const el of targets)if(!root.contains(el)){observer?.unobserve(el);targets.delete(el);}scan();});const dynamic=reading.querySelector('.wp-content');if(dynamic)mutations.observe(dynamic,{childList:true});
   const clearCovers=()=>{for(const el of targets)el.querySelector(':scope>.wp-wipe-layer')?.remove();};
   document.addEventListener('portfolio:languagechange',clearCovers);addEventListener('resize',clearCovers,{passive:true});
   const releaseCover=e=>{const layer=e.target.parentElement;if(e.animationName==='wp-line-uncover'&&layer?.classList.contains('wp-wipe-layer')&&e.target===layer.lastElementChild)layer.remove();};root.addEventListener('animationend',releaseCover);
   opening.classList.add('wp-motion');
   const cleanup=()=>{cancelAnimationFrame(frame);root.removeEventListener('animationend',releaseCover);observer?.disconnect();edgeObserver?.disconnect();mutations.disconnect();document.removeEventListener('portfolio:languagechange',clearCovers);removeEventListener('resize',clearCovers);};
-  cleanup.enter=()=>{if(frame||opening.classList.contains('is-entered'))return;frame=requestAnimationFrame(()=>{frame=0;opening.classList.add('is-entered');ready=true;revealBatch(visible);visible.clear();});};
+  cleanup.enter=()=>{if(frame||opening.classList.contains('is-entered'))return;frame=requestAnimationFrame(()=>{frame=requestAnimationFrame(()=>{frame=0;opening.classList.add('is-entered');ready=true;revealBatch(visible);visible.clear();});});};
   return cleanup;
  }
  function apply(root,lang){if(!['zh','en'].includes(lang))return;language=lang;const content=root.querySelector('.wp-content');content.lang=lang==='en'?'en':'zh-CN';content.innerHTML=body();content.querySelector(`[data-resume-language="${lang}"]`).focus({preventScroll:true});}

@@ -51,7 +51,7 @@ const teamPhotos=teamGroups.flatMap(g=>Array.from(g.photos)),teamButtons=[...tea
 assert.equal(new Set(teamPhotos.map(p=>p.image)).size,17);
 assert.ok(teamPhotos.slice(13,15).every(p=>p.alt.includes('新加坡')));
 assert.ok(teamPhotos.slice(15).every(p=>p.alt.includes('我为球队画的宣传画')));
-assert.ok(team.querySelector('.projects-heading').textContent.includes('我与我的球队'));
+assert.ok(team.querySelector('.projects-heading').textContent.includes('我的球队狼队'));
 for(const [i,photo] of [...photos,...teamPhotos].entries()){
  const buttonsForCheck=[...buttons,...teamButtons];
  const img=buttonsForCheck[i].querySelector('img');assert.equal(img.getAttribute('loading'),'lazy');assert.equal(img.alt,photo.alt);assert.ok(img.width>0&&img.height>0);

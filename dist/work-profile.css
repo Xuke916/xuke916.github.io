@@ -25,8 +25,8 @@
 .wp-wipe-relative{position:relative}
 .wp-text-wipe:not(.wp-wipe-shown){visibility:hidden}
 .wp-wipe-layer{position:absolute;inset:0;display:block;pointer-events:none;z-index:5}
-.wp-wipe-layer>i{position:absolute;display:block;background:#111;transform-origin:right;animation:wp-line-uncover .8s cubic-bezier(.22,.7,.2,1) calc(var(--line-index)*100ms) both}
-@keyframes wp-line-uncover{0%,12%{background:#111;transform:scaleX(1)}30%{background:#1e90ff;transform:scaleX(1)}100%{background:#1e90ff;transform:scaleX(0)}}
+.wp-wipe-layer>i{position:absolute;display:block;background:var(--wipe-background,#111);transform-origin:right;animation:wp-line-uncover .8s cubic-bezier(.22,.7,.2,1) calc(var(--line-index)*100ms) both}
+@keyframes wp-line-uncover{0%,12%{background:var(--wipe-background,#111);transform:scaleX(1)}30%{background:#1e90ff;transform:scaleX(1)}100%{background:#1e90ff;transform:scaleX(0)}}
 .work-profile .socials-follow>p{position:relative;clip-path:inset(0 100% 0 0)}
 .work-profile .socials-follow>p.is-revealed{animation:footer-word-on .75s cubic-bezier(.22,.7,.2,1) both}
 .work-profile .socials-follow>p:after{content:'';position:absolute;inset:0;background:#1e90ff;transform:scaleX(0);pointer-events:none}
