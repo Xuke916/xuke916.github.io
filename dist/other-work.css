@@ -31,7 +31,7 @@
 .ow-paintings-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start}
 .ow-painting-column{display:flex;flex-direction:column;gap:32px}.ow-painting-column:nth-child(even){padding-top:100px}
 .ow-painting{display:block;width:100%;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:zoom-in;order:var(--art-index)}
-.ow-paint-frame{display:block;position:relative;aspect-ratio:1;background:#ffffff40;border-radius:6px;--frame-cut:polygon(0 0,100% 0,100% 90%,71% 90%,62% 100%,0 100%);clip-path:var(--frame-cut)}
+.ow-paint-frame{display:block;position:relative;aspect-ratio:1;background:#ffffff40;border-radius:6px;--frame-cut:url(#ow-soft-frame);clip-path:var(--frame-cut)}
 .ow-paint-frame img{display:block;position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:cover;object-position:center;clip-path:var(--frame-cut);border-radius:5px}
 .ow-paint-caption{display:flex;align-items:baseline;justify-content:flex-end;gap:10px;font-size:11px;line-height:1.6;margin:12px 0 0;padding-left:15px}.ow-paint-year{color:#6cb6ff}.ow-paint-caption>span:last-child{color:#6cb6ff}
 .ow-painting:hover .ow-paint-frame{background:#6cb6ff}.ow-painting:focus-visible{outline:2px solid #1e90ff;outline-offset:5px}
@@ -43,3 +43,5 @@
 .ow-credit{font-size:13px;line-height:1.8;color:#91bde8;max-width:280px}.ow-copy p{font-size:17px;line-height:1.95;color:#c1ccda;margin:0 0 22px;overflow-wrap:break-word}
 .ow-toc{position:fixed;right:20px;top:42%;display:flex;flex-direction:column;gap:20px;z-index:20;width:30px}.ow-toc button{background:none;border:0;color:transparent;font-size:0;padding:8px 0;cursor:pointer}.ow-toc button span{font:9px monospace;color:#8193a8}.ow-toc button.active span{color:#1e90ff}.ow-toc button:focus-visible{outline:2px solid #1e90ff}
 @media(max-width:700px){.other-work-case{padding-top:140px}.ow-header,.ow-project{width:86%}.ow-header .project-detail-title{margin-bottom:55px}.ow-overview{grid-template-columns:1fr;gap:15px;padding-top:35px}.ow-overview h3{margin:16px 0}.ow-copy p{font-size:15px}.ow-toc{right:4px;width:22px}.ow-play{gap:12px;padding:20px}.ow-play-icon{width:48px;height:48px;font-size:18px}.ow-provider{bottom:15px;left:18px}.ow-play .mono{font-size:9px}}
+
+.ow-painting-defs{position:absolute;pointer-events:none}

@@ -128,7 +128,7 @@
   }
   function closePreview() { dialog.close(); }
   $('.dialog-close').addEventListener('click', closePreview);
-  dialog.addEventListener('click', e => { if (e.target === dialog) { const r = dialog.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closePreview(); } });
+  dialog.addEventListener('click', e => { if (e.target === dialog || e.target === $('.dialog-image')) closePreview(); });
   dialog.addEventListener('close', () => { document.body.style.overflow = menuOpen ? 'hidden' : ''; });
 
   function setMenu(open) {
