@@ -27,7 +27,7 @@
   const POINTER_DAMPING_MS = 90;
   let lastWrittenScroll = scrollY, navigation = null;
   let homeSuspended = false;
-  let entryReady=false,entryElapsed=0;
+  let entryReady=false,entryElapsed=0,entryPaintKey='';
 
   // Each section's distance is expressed in viewport heights, not wheel events.
   // Native scrolling also supports trackpads, touch, keyboard, and scrollbars.
@@ -250,6 +250,8 @@
     // Fade the whole white scene in over the signature scene, without a spatial wipe.
     split.style.transform='none';
     const endP=smooth(range(t,4.25,5.65));
+    const entryKey=[endP,entryElapsed,unit,innerWidth,reduced.matches].join(':');
+    if(entryKey!==entryPaintKey){entryPaintKey=entryKey;
     const dist=mobile?28:32;
     ui.splitPortraits[0].style.transform=`translate3d(${mix(-dist,0,endP)}%,0%,0) scaleX(${content.entries[0].image?1:-1})`;
     ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)}%,0%,0)`;
@@ -266,8 +268,9 @@
     }));
     ui.splitContours.style.transform=`rotate(${mix(-6,0,endP)}deg) scale(${mix(1.15,1,endP)})`;
     }
+    }
     const isDark=menuOpen||thumb>.12&&splitEnter<.7;
-    document.documentElement.style.setProperty('--header-color',isDark?'#f3f3eb':'#0a2447');
+    const headerColor=isDark?'#f3f3eb':'#0a2447';if(document.documentElement.style.getPropertyValue('--header-color')!==headerColor)document.documentElement.style.setProperty('--header-color',headerColor);
     ui.centerMark.style.opacity=1-smooth(range(t,1.4,2.2));
     const chapter=t<2.2?0:t<5.25?1:2;
     if(chapter!==activeChapter){

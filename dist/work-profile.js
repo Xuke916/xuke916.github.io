@@ -26,8 +26,9 @@
  function mount(root,{reduced=false}={}){
   const opening=root.querySelector('.wp-opening'),reading=root.querySelector('.wp-layout'),targets=new Set(),visible=new Set();let observer,edgeObserver,frame=0,ready=false;
   const selector='.wp-identity>p,.wp-identity>span,.wp-kicker,.wp-resume-title,.wp-heading p,.wp-language button,.wp-content h2,.wp-content h3,.wp-date,.wp-content li>p,.wp-notes p,.wp-notes li,.wp-projects-link,.work-project-list .projects-heading>.mono,.work-project-list .projects-heading h2,.work-project-list .project-dots button,.project-panel-title>.mono,.project-panel-title h3,.project-summary,.project-tags li,.projects-disclosure>span,.projects-disclosure>p,.work-project-list .projects-controls>.mono,.footer-pages>.mono,.footer-socials>.mono,.footer-brand,.footer-legal';
-  function reveal(el){
+  function prepareReveal(el){
    if(el.classList.contains('wp-wipe-shown'))return;
+   let layer;
    if(!reduced){
     const box=el.getBoundingClientRect(),rows=[],walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;
     while(node=walker.nextNode()){
@@ -35,23 +36,31 @@
      const rects=typeof range.getClientRects==='function'?[...range.getClientRects()]:[];
      for(const rect of rects){if(!rect.width||!rect.height)continue;let row=rows.find(r=>Math.abs(r.top-rect.top)<rect.height*.4);if(row){row.left=Math.min(row.left,rect.left);row.right=Math.max(row.right,rect.right);row.bottom=Math.max(row.bottom,rect.bottom);}else rows.push({top:rect.top,left:rect.left,right:rect.right,bottom:rect.bottom});}
     }
-    const layer=document.createElement('span');layer.className='wp-wipe-layer';layer.setAttribute('aria-hidden','true');
-    rows.sort((a,b)=>a.top-b.top).forEach((r,i)=>{const cover=document.createElement('i');cover.style.cssText='left:'+(r.left-box.left)+'px;top:'+(r.top-box.top)+'px;width:'+(r.right-r.left)+'px;height:'+(r.bottom-r.top)+'px;--line-index:'+i;layer.append(cover);});el.append(layer);
+    layer=document.createElement('span');layer.className='wp-wipe-layer';layer.setAttribute('aria-hidden','true');
+    rows.sort((a,b)=>a.top-b.top).forEach((r,i)=>{const cover=document.createElement('i');cover.style.cssText='left:'+(r.left-box.left)+'px;top:'+(r.top-box.top)+'px;width:'+(r.right-r.left)+'px;height:'+(r.bottom-r.top)+'px;--line-index:'+i;layer.append(cover);});
    }
-   el.classList.add('is-revealed','wp-wipe-shown');observer?.unobserve(el);edgeObserver?.unobserve(el);
+   return ()=>{if(layer)el.append(layer);el.classList.add('is-revealed','wp-wipe-shown');observer?.unobserve(el);edgeObserver?.unobserve(el);};
   }
-  const scan=()=>{for(const el of root.querySelectorAll(selector)){if(targets.has(el))continue;targets.add(el);el.classList.add('wp-text-wipe');if(getComputedStyle(el).position==='static')el.classList.add('wp-wipe-relative');if(reduced||typeof IntersectionObserver==='undefined')reveal(el);else (el.matches('.footer-brand,.footer-legal')?edgeObserver:observer).observe(el);}};
+  const revealBatch=elements=>{const paint=[...elements].map(prepareReveal).filter(Boolean);paint.forEach(commit=>commit());};
+  const scan=()=>{
+   const added=[...root.querySelectorAll(selector)].filter(el=>!targets.has(el));
+   const relative=added.map(el=>getComputedStyle(el).position==='static');
+   added.forEach((el,i)=>{targets.add(el);el.classList.add('wp-text-wipe');if(relative[i])el.classList.add('wp-wipe-relative');});
+   if(reduced||typeof IntersectionObserver==='undefined')revealBatch(added);
+   else added.forEach(el=>(el.matches('.footer-brand,.footer-legal')?edgeObserver:observer).observe(el));
+  };
   if(!reduced&&typeof IntersectionObserver!=='undefined'){
-   const onEntries=entries=>{for(const e of entries){if(e.isIntersecting){if(ready)reveal(e.target);else visible.add(e.target);}else visible.delete(e.target);}};
+   const onEntries=entries=>{const batch=[];for(const e of entries){if(e.isIntersecting){if(ready)batch.push(e.target);else visible.add(e.target);}else visible.delete(e.target);}revealBatch(batch);};
    observer=new IntersectionObserver(onEntries,{rootMargin:'0px 0px -8% 0px',threshold:.08});
    edgeObserver=new IntersectionObserver(onEntries,{threshold:.08});
   }
   scan();const mutations=new MutationObserver(()=>{for(const el of targets)if(!root.contains(el)){observer?.unobserve(el);targets.delete(el);}scan();});mutations.observe(reading.querySelector('.wp-content'),{childList:true});
   const clearCovers=()=>{for(const el of targets)el.querySelector(':scope>.wp-wipe-layer')?.remove();};
   document.addEventListener('portfolio:languagechange',clearCovers);addEventListener('resize',clearCovers,{passive:true});
+  const releaseCover=e=>{const layer=e.target.parentElement;if(e.animationName==='wp-line-uncover'&&layer?.classList.contains('wp-wipe-layer')&&e.target===layer.lastElementChild)layer.remove();};root.addEventListener('animationend',releaseCover);
   opening.classList.add('wp-motion');
-  const cleanup=()=>{cancelAnimationFrame(frame);observer?.disconnect();edgeObserver?.disconnect();mutations.disconnect();document.removeEventListener('portfolio:languagechange',clearCovers);removeEventListener('resize',clearCovers);};
-  cleanup.enter=()=>{if(frame||opening.classList.contains('is-entered'))return;frame=requestAnimationFrame(()=>{frame=0;opening.classList.add('is-entered');ready=true;for(const el of visible)reveal(el);visible.clear();});};
+  const cleanup=()=>{cancelAnimationFrame(frame);root.removeEventListener('animationend',releaseCover);observer?.disconnect();edgeObserver?.disconnect();mutations.disconnect();document.removeEventListener('portfolio:languagechange',clearCovers);removeEventListener('resize',clearCovers);};
+  cleanup.enter=()=>{if(frame||opening.classList.contains('is-entered'))return;frame=requestAnimationFrame(()=>{frame=0;opening.classList.add('is-entered');ready=true;revealBatch(visible);visible.clear();});};
   return cleanup;
  }
  function apply(root,lang){if(!['zh','en'].includes(lang))return;language=lang;const content=root.querySelector('.wp-content');content.lang=lang==='en'?'en':'zh-CN';content.innerHTML=body();content.querySelector(`[data-resume-language="${lang}"]`).focus({preventScroll:true});}

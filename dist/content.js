@@ -2,8 +2,8 @@
 // Put image files in dist/assets/ and use paths such as "assets/portrait.webp".
 window.PORTFOLIO_CONTENT = {
   name: ["XU", "KE"],
-  heroImage: "assets/hero-person-v2.png",
-  heroHelmetImage: "assets/hero-helmet-v2.png",
+  heroImage: "assets/hero-person-v3.webp",
+  heroHelmetImage: "assets/hero-helmet-v3.webp",
   heroImageSmall: "assets/hero-person-small-v2.webp",
   heroHelmetImageSmall: "assets/hero-helmet-small-v2.webp",
   message: {
@@ -273,7 +273,7 @@ Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[0], {
   overview: '从魄罗柔软、活泼的形象出发，用钩锁、碰撞反弹与坠落风险组织移动体验。'
 });
 Object.assign(window.PORTFOLIO_CONTENT.pages.work.projects[1], {
-  title:'Rewinder', caseTitle:'Rewinder', image:'assets/project02-cover-v2.png', year:'2026', tags:['动作游戏','时间回溯','战斗设计'],
+  title:'Rewinder', caseTitle:'Rewinder', image:'assets/project02-cover-v3.webp', year:'2026', tags:['动作游戏','时间回溯','战斗设计'],
   category:'第三人称近战动作游戏', role:'战斗策划 · 概念美术',
   overview:'用回溯扭转眼前的交锋，也面对改写过去留下的后果。'
 });
