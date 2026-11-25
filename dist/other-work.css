@@ -31,10 +31,10 @@
 .ow-paintings-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;align-items:start}
 .ow-painting-column{display:flex;flex-direction:column;gap:32px}.ow-painting-column:nth-child(even){padding-top:100px}
 .ow-painting{display:block;width:100%;min-width:0;background:none;border:0;padding:0;color:inherit;text-align:left;cursor:zoom-in;order:var(--art-index)}
-.ow-paint-frame{display:block;border:1px solid #ffffff40}
-.ow-paint-frame img{display:block;width:100%;height:auto;object-fit:contain}
+.ow-paint-frame{display:block;position:relative;aspect-ratio:1;background:#ffffff40;border-radius:6px;--frame-cut:polygon(0 0,100% 0,100% 90%,71% 90%,62% 100%,0 100%);clip-path:var(--frame-cut)}
+.ow-paint-frame img{display:block;position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:cover;object-position:center;clip-path:var(--frame-cut);border-radius:5px}
 .ow-paint-caption{display:flex;align-items:baseline;justify-content:flex-end;gap:10px;font-size:11px;line-height:1.6;margin:12px 0 0;padding-left:15px}.ow-paint-year{color:#6cb6ff}.ow-paint-caption>span:last-child{color:#6cb6ff}
-.ow-painting:hover .ow-paint-frame{border-color:#6cb6ff}.ow-painting:focus-visible{outline:2px solid #1e90ff;outline-offset:5px}
+.ow-painting:hover .ow-paint-frame{background:#6cb6ff}.ow-painting:focus-visible{outline:2px solid #1e90ff;outline-offset:5px}
 @media(max-width:1000px){.ow-paintings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 20px}.ow-painting-column{display:contents}.ow-paintings-heading{gap:30px;margin-bottom:60px}}
 @media(max-width:600px){.ow-project.ow-paintings{padding-top:55px;padding-bottom:65px}.ow-paintings-heading{grid-template-columns:1fr;gap:12px;margin-bottom:38px}.ow-paintings-heading h2{font-size:48px;margin-top:20px}.ow-paintings-heading>p{font-size:15px;margin:8px 0 0}.ow-paintings-grid{grid-template-columns:1fr;gap:30px}.ow-paint-caption{font-size:12px}}
 @media(max-width:700px){.ow-play-title{bottom:44px;left:18px;right:18px;font-size:20px}.ow-play>.mono{bottom:16px;left:18px}.ow-play .ow-provider{left:auto;right:18px;bottom:16px}.ow-play-icon{transform:translateY(-10px)}}
