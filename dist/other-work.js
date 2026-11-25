@@ -31,15 +31,40 @@
  ].map((alt,i)=>({alt,image:'assets/mercedes/car-'+String(i+1).padStart(2,'0')+'.webp',thumbnail:'assets/mercedes/car-'+String(i+1).padStart(2,'0')+'-small.webp'}));
  pair('车辆绘画','Car illustrations');pair('为本项目绘制的二维车辆作品。点击图片可放大查看。','2D car artwork I created for this project. Select an image to view it larger.');
  function artwork(p){return `<div class="ow-artwork"><header><h3>车辆绘画</h3><p>为本项目绘制的二维车辆作品。点击图片可放大查看。</p></header><div class="ow-artwork-row">${p.drawings.map((drawing,i)=>`<button class="ow-artwork-card" type="button" data-ow-art="${i}" aria-label="放大查看：${esc(drawing.alt)}"><img src="${drawing.thumbnail}" alt="${esc(drawing.alt)}" width="640" height="360" loading="lazy" decoding="async"><span class="mono" aria-hidden="true">${String(i+1).padStart(2,'0')} / 05 <b>↗</b></span></button>`).join('')}</div></div>`;}
- entries.forEach(p=>{p.poster=`assets/video-covers/${p.id}.webp`;});
+ const paintings=[
+  {caption:pair("雾中战场","Battlefield in the mist"),year:2025},
+  {caption:pair("火光中的身影","A figure in firelight"),year:2024},
+  {caption:pair("举拳的人物","A raised fist"),year:2024},
+  {caption:pair("暖光肖像","Portrait in warm light"),year:2024},
+  {caption:pair("墨镜与烟雾","Sunglasses and smoke"),year:2024},
+  {caption:pair("明暗肖像","Light and shadow portrait"),year:2024},
+  {caption:pair("冠饰肖像","Portrait with a crown"),year:2024},
+  {caption:pair("夜行骑士","A rider at night"),year:2024},
+  {caption:pair("沙漠中的披风","A cloak in the desert"),year:2024},
+  {caption:pair("冷暖光肖像","Portrait in cool and warm light"),year:2024},
+  {caption:pair("霓虹背影","A silhouette in neon"),year:2024},
+  {caption:pair("烛光肖像","Portrait by candlelight"),year:2024},
+  {caption:pair("逆光中的两人","Two figures in backlight"),year:2024},
+  {caption:pair("沙发上的人物","A figure on a sofa"),year:2024},
+  {caption:pair("车内与车外","Inside and outside the car"),year:2024},
+  {caption:pair("暮色雪山","Snowy mountain at dusk"),year:2024},
+  {caption:pair("荒漠探索","Desert exploration"),year:2024},
+  {caption:pair("光束与烟雾","A beam of light and smoke"),year:2024},
+  {caption:pair("舞台光下的人物","A figure in stage light"),year:2024}
+ ].map((p,i)=>({...p,image:'assets/speed-paintings/study-'+String(i+1).padStart(2,'0')+'.webp',thumbnail:'assets/speed-paintings/study-'+String(i+1).padStart(2,'0')+'-small.webp'}));
+ entries.push({id:'speed-paintings',kind:'paintings',title:pair('我的速涂','My speed paintings'),date:'2024 — 2025',paintings});
+ pair('我的','My');pair('速涂','Speed paintings');pair('一些人物、场景与光影的速涂记录。','Speed painting studies of people, environments, light and shadow.');
+ function speedPaintings(p,i){return `<section class="ow-project ow-paintings" data-detail-section="other-${p.id}"><header class="ow-paintings-heading"><div><span class="mono">${String(i+1).padStart(2,'0')} / PERSONAL PAINTINGS · ${p.date}</span><h2 aria-label="我的速涂"><span>我的</span><em>速涂</em></h2></div><p>一些人物、场景与光影的速涂记录。</p></header><div class="ow-paintings-grid">${Array.from({length:4},(_,column)=>`<div class="ow-painting-column">${p.paintings.map((painting,index)=>index%4!==column?'':`<button type="button" class="ow-painting" data-ow-painting="${index}" style="--art-index:${index}" aria-label="放大查看：${esc(painting.caption)}"><span class="ow-paint-frame"><img src="${painting.thumbnail}" alt="${esc(painting.caption)}" loading="lazy" decoding="async"></span><span class="ow-paint-caption"><span>${esc(painting.caption)}</span><span class="ow-paint-year">${painting.year}</span><span aria-hidden="true">↗</span></span></button>`).join('')}</div>`).join('')}</div></section>`;}
+ entries.filter(p=>p.video).forEach(p=>{p.poster=`assets/video-covers/${p.id}.webp`;});
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const label=(prefix,title)=>prefix+title;
  function render({pagination='',footer=''}={}){
-  return `<nav class="ow-toc" aria-label="其他作品目录">${entries.map((p,i)=>`<button data-section="other-${p.id}"><span>${String(i+1).padStart(2,'0')}</span> ${esc(p.title)}</button>`).join('')}</nav><article class="detail-route project-detail other-work-case" data-route="work/other-work"><header class="ow-header"><span class="mono">SELECTED FILMS & GAMES / 2024 — 2026</span><h1 class="project-detail-title" tabindex="-1">Other work</h1></header>${entries.map((p,i)=>`<section class="ow-project" data-detail-section="other-${p.id}"><header class="ow-project-heading"><span class="mono">${String(i+1).padStart(2,'0')} / ${esc(p.date)}</span><h2>${esc(p.title)}</h2><p>${esc(p.role)}</p></header><div class="ow-video" data-ow-video="${p.id}"><button class="ow-play" data-ow-play="${p.id}" aria-label="${esc(label('播放视频：',p.title))}"><img class="ow-poster" src="${p.poster}" alt="" width="1280" height="720" loading="lazy" decoding="async"><span class="ow-play-icon" aria-hidden="true">▶</span><span class="ow-play-title">${esc(p.title)}</span><span class="mono">点击播放</span><span class="ow-provider mono">${p.platform} / FILM ${String(i+1).padStart(2,'0')}</span></button></div><a class="ow-external" href="${p.url}" target="_blank" rel="noopener noreferrer">在原站观看 ↗</a><div class="ow-overview"><div><span class="mono">${String(i+1).padStart(2,'0')} / OVERVIEW</span><h3>关于作品</h3>${p.credit?`<p class="ow-credit">${esc(p.credit)}</p>`:''}</div><div class="ow-copy">${p.paragraphs.map(text=>`<p>${esc(text)}</p>`).join('')}</div></div>${p.drawings?artwork(p):''}</section>`).join('')}${pagination}${footer}</article>`;
+  return `<nav class="ow-toc" aria-label="其他作品目录">${entries.map((p,i)=>`<button data-section="other-${p.id}"><span>${String(i+1).padStart(2,'0')}</span> ${esc(p.title)}</button>`).join('')}</nav><article class="detail-route project-detail other-work-case" data-route="work/other-work"><header class="ow-header"><span class="mono">FILMS, GAMES & PAINTINGS / 2024 — 2026</span><h1 class="project-detail-title" tabindex="-1">Other work</h1></header>${entries.map((p,i)=>p.kind==='paintings'?speedPaintings(p,i):`<section class="ow-project" data-detail-section="other-${p.id}"><header class="ow-project-heading"><span class="mono">${String(i+1).padStart(2,'0')} / ${esc(p.date)}</span><h2>${esc(p.title)}</h2><p>${esc(p.role)}</p></header><div class="ow-video" data-ow-video="${p.id}"><button class="ow-play" data-ow-play="${p.id}" aria-label="${esc(label('播放视频：',p.title))}"><img class="ow-poster" src="${p.poster}" alt="" width="1280" height="720" loading="lazy" decoding="async"><span class="ow-play-icon" aria-hidden="true">▶</span><span class="ow-play-title">${esc(p.title)}</span><span class="mono">点击播放</span><span class="ow-provider mono">${p.platform} / FILM ${String(i+1).padStart(2,'0')}</span></button></div><a class="ow-external" href="${p.url}" target="_blank" rel="noopener noreferrer">在原站观看 ↗</a><div class="ow-overview"><div><span class="mono">${String(i+1).padStart(2,'0')} / OVERVIEW</span><h3>关于作品</h3>${p.credit?`<p class="ow-credit">${esc(p.credit)}</p>`:''}</div><div class="ow-copy">${p.paragraphs.map(text=>`<p>${esc(text)}</p>`).join('')}</div></div>${p.drawings?artwork(p):''}</section>`).join('')}${pagination}${footer}</article>`;
  }
  function mount(root){
   const unload=()=>root.querySelectorAll('.ow-video iframe').forEach(frame=>frame.remove());
   const click=event=>{
+   const painting=event.target.closest('[data-ow-painting]');if(painting){const item=paintings[Number(painting.dataset.owPainting)];if(item)window.PortfolioHome?.preview(item.image,item.caption);return;}
    const art=event.target.closest('[data-ow-art]');if(art){const drawing=entries[0].drawings[Number(art.dataset.owArt)];if(drawing)window.PortfolioHome?.preview(drawing.image,drawing.alt);return;}
    const button=event.target.closest('[data-ow-play]');if(!button)return;
    const p=entries.find(p=>p.id===button.dataset.owPlay);if(!p)return;
