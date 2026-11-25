@@ -9,10 +9,16 @@ assert.equal(host.querySelectorAll('iframe').length,0,'No provider iframe or thi
 assert.equal(host.querySelectorAll('.ow-poster').length,4,'all video buttons show real preview images before playback');
 for(const entry of api.entries){assert.ok(fs.statSync(path.join(dist,entry.poster)).size>1000,'video cover is included locally in the deployment');}
 assert.equal(host.querySelectorAll('.ow-overview').length,4);assert.equal(host.querySelectorAll('a.ow-external').length,4);
+assert.equal(host.querySelectorAll('.ow-artwork').length,1);
+assert.equal(host.querySelector('.ow-artwork').closest('.ow-project').dataset.detailSection,'other-mercedes');
+assert.equal(host.querySelectorAll('[data-ow-art]').length,5);
+for(const drawing of api.entries[0].drawings)for(const source of [drawing.image,drawing.thumbnail])assert.ok(fs.statSync(path.join(dist,source)).size>1000);
 const original=host.textContent;
 w.PortfolioLanguage.setLanguage('en');
 assert.ok(!/[\u3400-\u9fff]/.test(host.textContent),'Complete English copy');
 const cleanup=api.mount(host);
+let preview;w.PortfolioHome={preview:(image,caption)=>{preview={image,caption};}};
+for(const [i,button]of [...host.querySelectorAll('[data-ow-art]')].entries()){button.click();assert.equal(preview.image,api.entries[0].drawings[i].image);assert.equal(preview.caption,api.entries[0].drawings[i].alt);}
 const buttons=[...host.querySelectorAll('[data-ow-play]')];
 for(const [i,button]of buttons.entries()){
  button.click();assert.equal(host.querySelectorAll('iframe').length,1,'Only one video is active');const frame=host.querySelector('iframe');
