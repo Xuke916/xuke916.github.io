@@ -22,11 +22,11 @@
 .socials-section+.portrait-footer{background:linear-gradient(to bottom,#111,#1e90ff99 55%,#1e90ff 82%)}
 .detail-light .socials-section+.portrait-footer{background:linear-gradient(to bottom,var(--paper),#8fc8ff 35%,#1e90ff 82%)}
 @media(max-width:600px){
- .socials-section{min-height:600px;--card-w:23vw}
+ .socials-section{min-height:600px;--card-w:23vw;--fan-top:57%}
  .socials-emblem{top:15%;width:23px;height:23px;left:calc(50% - 11.5px)}
  .socials-title{top:21%;font-size:clamp(25px,8vw,36px)}
- .socials-fan{top:57%}.social-card{border-radius:13px}
- .socials-follow{top:87%}.socials-follow>p{font-size:19px;margin-bottom:18px}
+ .social-card{border-radius:13px}
+ .socials-follow>p{font-size:19px;margin-bottom:18px}
  .socials-links{gap:16px}.socials-links .footer-item{font-size:10px;min-height:32px;display:flex;align-items:center}
 }
 @media(prefers-reduced-motion:reduce){.socials-section{--spread:1}.social-card-surface,.social-card img{transition:none}}

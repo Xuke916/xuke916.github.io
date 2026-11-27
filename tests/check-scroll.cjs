@@ -288,3 +288,18 @@ for(const family of ['work','life']){
  d.querySelector('[data-footer-home]').click();flush();assert.equal(observer.targets.size,0);w.close();
 }
 console.log('PASS social follow group: sentence and links reveal together on both routes, then clean up');
+
+// Model the wide/short layout that previously put links below the clipped section.
+for(const [width,height] of [[2743,1306],[3840,1829],[1920,700],[390,844]]){
+ for(const family of ['work','life']){
+  const {w,d,flush}=boot(width,height);w.PortfolioPages.open(family);flush();
+  const social=d.querySelector('.socials-section'),follow=social.querySelector('.socials-follow'),mobile=width<=600;
+  const cardHeight=(mobile?width*.23:Math.max(140,Math.min(380,width*.14)))*16/9;
+  Object.defineProperty(follow,'offsetTop',{get(){const size=parseFloat(social.style.height);return mobile?size*.57+cardHeight*.72+28:Math.max(size*.46,Math.max(108,size*.1)+Math.max(32,Math.min(84,width*.0315))*2+cardHeight*.69+24)+cardHeight*.72+28;}});
+  Object.defineProperty(follow,'offsetHeight',{get(){return 110;}});
+  w.dispatchEvent(new w.Event('resize'));flush();
+  assert.ok(parseFloat(social.style.height)>=follow.offsetTop+follow.offsetHeight+30,'complete sentence and links fit above the footer at '+width+'x'+height);
+  assert.equal(follow.querySelectorAll('a[href]').length,4,'all four links remain available');w.close();
+ }
+}
+console.log('PASS complete social follow bounds at wide, short and mobile sizes on both routes');

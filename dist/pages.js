@@ -292,7 +292,19 @@
     for(const el of ui.sections){
       const name=el.dataset.detailSection;
       if(name==='team'&&ui.editorial){const overlap=reduced.matches?0:h*.5;el.style.marginTop=-overlap+'px';offset-=overlap;}
-      const length=collections[name]?.vertical?collections[name].length:collections[name]?h+collections[name].travel/1.35:name==='hero'?Math.max(spans.hero,ui.heroView.offsetHeight):name==='profile'?el.offsetHeight:name==='footer'?Math.max(spans[name],parseFloat(getComputedStyle(el).minHeight)||0):spans[name];
+      let length=collections[name]?.vertical?collections[name].length:collections[name]?h+collections[name].travel/1.35:name==='hero'?Math.max(spans.hero,ui.heroView.offsetHeight):name==='profile'?el.offsetHeight:name==='footer'?Math.max(spans[name],parseFloat(getComputedStyle(el).minHeight)||0):spans[name];
+      if(name==='socials'){
+        // Percentage-based fan placement also moves the follow group when the
+        // section grows. Resolve its complete bottom before placing the footer.
+        const follow=$('.socials-follow',el),padding=mobile?40:64;
+        length=Math.max(length,parseFloat(getComputedStyle(el).minHeight)||0);
+        for(let pass=0;follow&&pass<10;pass++){
+          el.style.height=Math.ceil(length)+'px';
+          const needed=follow.offsetTop+follow.offsetHeight+padding;
+          if(needed<=length)break;
+          length=Math.ceil(needed);
+        }
+      }
       metrics.sections[name]={start:offset,length};if(name!=='profile'&&!collections[name]?.vertical)el.style.height=length+'px';offset+=length;
     }
     metrics.max=Math.max(0,offset-h);
