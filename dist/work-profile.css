@@ -13,14 +13,14 @@
 /* Retain the title entrance, then continue directly into the original résumé. */
 .wp-opening{position:relative;height:calc(clamp(112px,13svh,175px) + 15.8vw + 52px);isolation:isolate;overflow:clip}
 .work-profile .wp-display{position:absolute;display:flex;align-items:center;gap:.4vw;left:12%;top:clamp(112px,13svh,175px);width:77%;margin:0;transform:none!important;font:600 13.7vw/.86 Arial,Helvetica,sans-serif;letter-spacing:-.075em;white-space:nowrap;z-index:1}
-.wp-display>strong{display:block;font:inherit;font-size:1.2em;transform-origin:50% 100%}
+.wp-display>strong{display:block;font:inherit;font-size:1.2em;transform-origin:50% 0;transform:translateY(0);clip-path:inset(0 0 0 0)}
 .wp-on{position:relative;display:block;flex:0 0 23%;height:1.15em;margin-right:-.03em;color:#d2ff00}
 .wp-on svg{position:absolute;width:115%;height:145%;left:-9%;top:-27%;overflow:visible;fill:currentColor}
 .wp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .wp-layout{padding-top:55px;padding-bottom:50px;border-top:1px solid #ffffff1a}
 .wp-motion:not(.is-entered) .wp-display>strong{transform:translateY(-12%);clip-path:inset(0 0 100% 0)}
 .wp-motion .wp-display>strong{color:#f3f3eb;transition:transform .85s cubic-bezier(.22,.7,.2,1) .12s,clip-path .85s cubic-bezier(.22,.7,.2,1) .12s}
-.wp-on-draw{fill:none;stroke:#fff;stroke-width:60;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
+.wp-on-draw{fill:none;stroke:#fff;stroke-width:60;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
 .wp-motion:not(.is-entered) .wp-on-draw{stroke-dashoffset:1}
 .wp-motion.is-entered .wp-on-draw{transition:stroke-dashoffset .55s cubic-bezier(.3,.05,.4,1)}
 .wp-motion.is-entered .wp-on-draw-n{transition-delay:.32s;transition-duration:.5s}
