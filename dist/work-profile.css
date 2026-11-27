@@ -24,6 +24,8 @@
 .wp-motion:not(.is-entered) .wp-on-draw{stroke-dashoffset:1}
 .wp-motion.is-entered .wp-on-draw{transition:stroke-dashoffset .55s cubic-bezier(.3,.05,.4,1)}
 .wp-motion.is-entered .wp-on-draw-n{transition-delay:.32s;transition-duration:.5s}
+.wp-motion.is-entered .wp-on-brush{animation:wp-brush-finish 1ms .9s forwards}
+@keyframes wp-brush-finish{to{mask:none}}
 .wp-wipe-relative{position:relative}
 .wp-text-wipe:not(.wp-wipe-shown){visibility:hidden}
 .wp-wipe-layer{position:absolute;inset:0;display:block;pointer-events:none;z-index:5}
@@ -34,4 +36,5 @@
 .work-profile .socials-follow>p:after{content:'';position:absolute;inset:0;background:#1e90ff;transform:scaleX(0);pointer-events:none}
 .work-profile .socials-follow>p.is-revealed:after{animation:footer-wipe .75s cubic-bezier(.22,.7,.2,1) both}
 @media(max-width:700px){.wp-opening{height:calc(146px + 19vw + 42px)}.work-profile .wp-display{left:8%;top:146px;width:84%;font-size:15.1vw;gap:1.2vw}.wp-on{flex-basis:23%;height:1.2em}.wp-layout{padding-top:35px}}
-@media(prefers-reduced-motion:reduce){.wp-motion *{transition:none!important;animation:none!important}.wp-motion:not(.is-entered) .wp-display>strong{opacity:1;transform:none;clip-path:none}.wp-motion:not(.is-entered) .wp-on-draw{stroke-dashoffset:0}.wp-text-wipe:not(.wp-wipe-shown){visibility:visible}.wp-wipe-layer{display:none}.work-profile .socials-follow>p{clip-path:none;animation:none!important}.work-profile .socials-follow>p:after{display:none}}
+.wp-on-brush{stroke:none}
+@media(prefers-reduced-motion:reduce){.wp-on-brush{mask:none}.wp-motion *{transition:none!important;animation:none!important}.wp-motion:not(.is-entered) .wp-display>strong{opacity:1;transform:none;clip-path:none}.wp-motion:not(.is-entered) .wp-on-draw{stroke-dashoffset:0}.wp-text-wipe:not(.wp-wipe-shown){visibility:visible}.wp-wipe-layer{display:none}.work-profile .socials-follow>p{clip-path:none;animation:none!important}.work-profile .socials-follow>p:after{display:none}}
