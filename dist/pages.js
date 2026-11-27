@@ -45,8 +45,8 @@
     sections.forEach(el=>footerObserver.observe(el));
     revealObserver=[];
     for(const follow of [false,true]){
-      const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('is-revealed');observer.unobserve(entry.target);}},{rootMargin:`0px 0px -${follow?30:12}% 0px`,threshold:.12});
-      reveals.filter(el=>!!el.closest('.socials-follow')===follow).forEach(el=>observer.observe(el));revealObserver.push(observer);
+      const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('is-revealed');if(follow)$$('p,.footer-item-entry',entry.target).forEach(el=>el.classList.add('is-revealed'));observer.unobserve(entry.target);}},{rootMargin:`0px 0px -${follow?8:12}% 0px`,threshold:.08});
+      const targets=follow?$$('.socials-follow',root):reveals.filter(el=>!el.closest('.socials-follow'));targets.forEach(el=>observer.observe(el));revealObserver.push(observer);
     }
   }
   function setupSocialFan(section){

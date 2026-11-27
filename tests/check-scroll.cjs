@@ -268,3 +268,23 @@ console.log('PASS local assets and self-contained runtime');
  for(const [clientX,clientY] of [[0,0],[1600,900]]){const move=new w.Event('pointermove',{bubbles:true});Object.assign(move,{clientX,clientY,pointerType:'mouse'});d.dispatchEvent(move);flush();assert.deepEqual([...d.querySelectorAll('.split-portrait,.split-options,.split-scene .contours')].map(el=>el.style.transform),fixed,'entrance portraits, text and background remain fixed under pointer movement');}
  w.close();console.log('PASS staged entry headings/buttons, complete reveal and reversible scrolling');
 }
+
+// The follow sentence and all links must enter together when their group is visible.
+for(const family of ['work','life']){
+ const {w,d,flush}=boot(390,844),observers=[];
+ w.IntersectionObserver=class{
+  constructor(callback){this.callback=callback;this.targets=new Set();observers.push(this);}
+  observe(el){this.targets.add(el);}unobserve(el){this.targets.delete(el);}disconnect(){this.targets.clear();}
+ };
+ w.PortfolioPages.open(family);flush();
+ const follow=d.querySelector('.socials-follow'),caption=follow.querySelector('p'),links=[...follow.querySelectorAll('.footer-item-entry')];
+ assert.equal(caption.textContent,'Follow XuKe on social media');
+ assert.ok(!caption.classList.contains('is-revealed'));
+ const observer=observers.find(o=>o.targets.has(follow));assert.ok(observer,'observe the complete follow group');
+ observer.callback([{target:follow,isIntersecting:true}]);
+ assert.ok(caption.classList.contains('is-revealed'),'the missing follow sentence becomes visible');
+ assert.ok(links.every(el=>el.classList.contains('is-revealed')),'all social links enter with the sentence');
+ assert.ok(!observer.targets.has(follow),'reveal happens once');
+ d.querySelector('[data-footer-home]').click();flush();assert.equal(observer.targets.size,0);w.close();
+}
+console.log('PASS social follow group: sentence and links reveal together on both routes, then clean up');

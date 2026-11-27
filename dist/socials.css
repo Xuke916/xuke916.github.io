@@ -30,3 +30,22 @@
  .socials-links{gap:16px}.socials-links .footer-item{font-size:10px;min-height:32px;display:flex;align-items:center}
 }
 @media(prefers-reduced-motion:reduce){.socials-section{--spread:1}.social-card-surface,.social-card img{transition:none}}
+
+/* Social title: uncover vertically; follow copy and links: neutral grey wipe. */
+.socials-section .social-title-line .footer-reveal-word{clip-path:inset(0 0 100% 0)}
+.socials-section .social-title-line.is-revealed .footer-reveal-word{animation:social-title-down .8s cubic-bezier(.22,.7,.2,1) calc(var(--word-index)*120ms) both}
+.socials-section .social-title-line .footer-reveal-word::after{content:none}
+.socials-section .socials-follow>p{position:relative;display:table;max-width:100%;margin-left:auto;margin-right:auto;opacity:1;transition:none;clip-path:inset(0 100% 0 0)}
+.socials-section .socials-follow>p::after{content:'';position:absolute;inset:0;background:#60605c;transform:scaleX(0);transform-origin:left;pointer-events:none}
+.socials-section .socials-follow>p.is-revealed{animation:social-copy-on .75s cubic-bezier(.22,.7,.2,1) both}
+.socials-section .socials-follow>p.is-revealed::after{animation:social-grey-wipe .75s cubic-bezier(.22,.7,.2,1) both}
+.socials-section .socials-links .footer-item::after{background:#60605c}
+.socials-section .socials-links .footer-item-entry.is-revealed .footer-item{animation:social-copy-on .65s cubic-bezier(.22,.7,.2,1) calc(.18s + var(--item-index)*65ms) both}
+.socials-section .socials-links .footer-item-entry.is-revealed .footer-item::after{animation:social-grey-wipe .65s cubic-bezier(.22,.7,.2,1) calc(.18s + var(--item-index)*65ms) both}
+@keyframes social-title-down{from{clip-path:inset(0 0 100% 0);transform:translateY(-12%)}to{clip-path:inset(0 0 0 0);transform:translateY(0)}}
+@keyframes social-copy-on{0%{clip-path:inset(0 100% 0 0)}38%,100%{clip-path:inset(0 0 0 0)}}
+@keyframes social-grey-wipe{0%{transform:scaleX(0);transform-origin:left}38%{transform:scaleX(1);transform-origin:left}39%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}
+@media(prefers-reduced-motion:reduce){
+ .socials-section .social-title-line .footer-reveal-word,.socials-section .socials-follow>p,.socials-section .socials-links .footer-item{animation:none!important;clip-path:none!important;transform:none!important;opacity:1}
+ .socials-section .socials-follow>p::after,.socials-section .socials-links .footer-item::after{display:none}
+}
