@@ -73,7 +73,7 @@
     marqueeGroup: $('.message-marquees'),
     messageEyebrow: $('.message-eyebrow'), messageFooter: $('.message-footer'),
     splitPortraits: $$('.split-portrait'), splitOptions: $('.split-options'),
-    splitParts: $$('.split-option').map(option=>['.option-index','.split-heading em','.split-heading strong','.description-skeleton','.square-arrow'].map(selector=>$(selector,option))),
+    splitParts: $$('.split-option').map(option=>['.option-index','.split-heading em','.split-heading strong','.entry-description','.square-arrow'].map(selector=>$(selector,option))),
     splitContours: $('.split-contours'), centerMark: $('.center-mark', header),
     chapterLinks: $$('.chapter-navigation a'), liveStatus: $('.live-status')
   };
@@ -86,7 +86,7 @@
     if (entry.eyebrow) $('.option-index', button).textContent = entry.eyebrow;
     const entryName = entry.title.join(hasChinese ? '' : ' ');
     button.setAttribute('aria-label', `查看${entryName}`);
-    if (entry.description) { const desc = $('.description-skeleton', button); desc.className = 'entry-description'; desc.textContent = entry.description; }
+    if (entry.description) { const desc = $('.entry-description', button); desc.className = 'entry-description'; desc.textContent = entry.description; }
     fillUserImage($$( '.split-portrait')[i], entry.image);
     button.addEventListener('click', () => window.PortfolioPages?.open(i === 0 ? 'work' : 'life'));
   });
@@ -257,6 +257,7 @@
     ui.splitPortraits[1].style.transform=`translate3d(${mix(dist,0,endP)}%,0%,0)`;
     ui.splitOptions.style.opacity=smooth(range(t,4.3,4.8));
     ui.splitOptions.style.transform='translate(-50%,-48%)';
+    ui.splitOptions.style.setProperty('--entry-brush-reveal',reduced.matches?1:entryReady?smooth(range(entryElapsed,760,1320)):0);
     ui.splitParts.forEach((parts,column)=>parts.forEach((part,index)=>{
       if(!part)return;
       const start=100+index*130+column*80;
@@ -264,7 +265,7 @@
       part.style.opacity=reveal;
       // Stagger whole lines rather than creating per-letter animation work.
       part.style.translate='0 0';
-      if(index<3){const cut=(1-clamp(reveal/.5))*100;part.style.clipPath=column===0?`inset(-25% ${cut}% -25% 0)`:`inset(-25% 0 -25% ${cut}%)`;part.style.setProperty('--entry-cover',reduced.matches?0:reveal<.45?reveal/.45:(1-reveal)/.55);}
+      if(index<4){const cut=(1-clamp(reveal/.5))*100;part.style.clipPath=column===0?`inset(-25% ${cut}% -25% 0)`:`inset(-25% 0 -25% ${cut}%)`;part.style.setProperty('--entry-cover',reduced.matches?0:reveal<.45?reveal/.45:(1-reveal)/.55);}
     }));
     ui.splitContours.style.transform=`rotate(${mix(-6,0,endP)}deg) scale(${mix(1.15,1,endP)})`;
     }

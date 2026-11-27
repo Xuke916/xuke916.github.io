@@ -1,5 +1,5 @@
 /* Bodoni Moda, distributed under SIL OFL; see assets/fonts/bodoni-moda-OFL.txt. */
-@font-face{font-family:'Portfolio Bodoni';src:url('assets/fonts/bodoni-moda.ttf') format('truetype');font-style:normal;font-weight:400 900;font-display:swap;unicode-range:U+0046,U+004F}
+@font-face{font-family:'Portfolio Bodoni';src:url('assets/fonts/bodoni-moda.ttf') format('truetype');font-style:normal;font-weight:400 900;font-display:swap;unicode-range:U+0046,U+004E,U+004F}
 .has-life-profile .detail-object,.has-life-profile .detail-hero-scribble{visibility:hidden}
 .has-life-profile .detail-top-label{top:20%;left:9%}
 .has-life-profile .detail-hero-title{left:9%;top:26%;font-size:clamp(68px,8.5vw,145px);line-height:.95;letter-spacing:-.06em}

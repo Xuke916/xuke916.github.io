@@ -739,3 +739,5 @@ Object.assign(window.PORTFOLIO_EN,{
  '商业动画与 Game Jam 作品：从二维车辆与三维场景，到太空挖掘和多人海盗对战。':'Commercial animation and Game Jam projects, from 2D cars in 3D scenes to space mining and multiplayer pirate battles.'
 });
 Object.assign(window.PORTFOLIO_EN,{'平台动作':'Platformer','像素美术':'Pixel Art','英雄联盟手游':'Wild Rift','动作游戏':'Action','时间回溯':'Time Rewind','战斗设计':'Combat Design','桌游':'Tabletop','棒球':'Baseball','独立设计':'Solo Design','动画':'Animation','商业项目':'Commercial Work'});
+
+Object.assign(window.PORTFOLIO_EN,{'游戏制作、战斗设计与概念美术。':'Game production, combat design and concept art.','棒球、日常生活与个人兴趣。':'Baseball, everyday life and personal interests.'});

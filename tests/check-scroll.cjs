@@ -261,9 +261,12 @@ console.log('PASS local assets and self-contained runtime');
  scroll(5.5);assert.equal(title.style.opacity,'0','text stays hidden while the portraits are entering');
  w.scrollTo(0,5.8*900/1.5);for(let i=0;i<12;i++)advance(40);
  assert.ok(+title.style.opacity>+arrow.style.opacity,'headings begin first after the portraits stop');
- assert.ok(+title.style.getPropertyValue('--entry-cover')>0,'entry lines have a blue wipe during their reveal');
+ assert.ok(+title.style.getPropertyValue('--entry-cover')>0,'entry lines expose a wipe during their reveal');
  scroll(5.4);assert.equal(title.style.opacity,'0','scrolling out resets the timed entrance');
  scroll(6);assert.equal(title.style.opacity,'1');assert.equal(arrow.style.opacity,'1');
+ assert.equal(d.querySelectorAll('.description-skeleton').length,0,'entry descriptions replace placeholder bars');
+ assert.ok([...d.querySelectorAll('.entry-description')].every(el=>el.textContent.trim()&&el.style.opacity==='1'),'both descriptions finish revealing');
+ assert.equal(d.querySelector('.split-options').style.getPropertyValue('--entry-brush-reveal'),'1','the supplied ON mark finishes entering');
  const fixed=[...d.querySelectorAll('.split-portrait,.split-options,.split-scene .contours')].map(el=>el.style.transform);
  for(const [clientX,clientY] of [[0,0],[1600,900]]){const move=new w.Event('pointermove',{bubbles:true});Object.assign(move,{clientX,clientY,pointerType:'mouse'});d.dispatchEvent(move);flush();assert.deepEqual([...d.querySelectorAll('.split-portrait,.split-options,.split-scene .contours')].map(el=>el.style.transform),fixed,'entrance portraits, text and background remain fixed under pointer movement');}
  w.close();console.log('PASS staged entry headings/buttons, complete reveal and reversible scrolling');
