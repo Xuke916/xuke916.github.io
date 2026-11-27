@@ -32,25 +32,25 @@
  pair('车辆绘画','Car illustrations');pair('为本项目绘制的二维车辆作品。点击图片可放大查看。','2D car artwork I created for this project. Select an image to view it larger.');
  function artwork(p){return `<div class="ow-artwork"><header><h3>车辆绘画</h3><p>为本项目绘制的二维车辆作品。点击图片可放大查看。</p></header><div class="ow-artwork-row">${p.drawings.map((drawing,i)=>`<button class="ow-artwork-card" type="button" data-ow-art="${i}" aria-label="放大查看：${esc(drawing.alt)}"><img src="${drawing.thumbnail}" alt="${esc(drawing.alt)}" width="640" height="360" loading="lazy" decoding="async"><span class="mono" aria-hidden="true">${String(i+1).padStart(2,'0')} / 05 <b>↗</b></span></button>`).join('')}</div></div>`;}
  const paintings=[
-  {caption:pair("雾中战场","Battlefield in the mist"),year:2025},
-  {caption:pair("火光中的身影","A figure in firelight"),year:2024},
-  {caption:pair("举拳的人物","A raised fist"),year:2024},
+  {caption:pair("对马岛之魂","Ghost of Tsushima"),year:2025},
+  {caption:pair("蝙蝠侠","Batman"),year:2024},
+  {caption:pair("特朗普","Donald Trump"),year:2024},
   {caption:pair("暖光肖像","Portrait in warm light"),year:2024},
   {caption:pair("墨镜与烟雾","Sunglasses and smoke"),year:2024},
-  {caption:pair("明暗肖像","Light and shadow portrait"),year:2024},
+  {caption:pair("盗梦空间","Inception"),year:2024},
   {caption:pair("冠饰肖像","Portrait with a crown"),year:2024},
   {caption:pair("夜行骑士","A rider at night"),year:2024},
-  {caption:pair("沙漠中的披风","A cloak in the desert"),year:2024},
+  {caption:pair("月光骑士","Moon Knight"),year:2024},
   {caption:pair("冷暖光肖像","Portrait in cool and warm light"),year:2024},
-  {caption:pair("霓虹背影","A silhouette in neon"),year:2024},
+  {caption:pair("疾速追杀","John Wick"),year:2024},
   {caption:pair("烛光肖像","Portrait by candlelight"),year:2024},
-  {caption:pair("逆光中的两人","Two figures in backlight"),year:2024},
-  {caption:pair("沙发上的人物","A figure on a sofa"),year:2024},
-  {caption:pair("车内与车外","Inside and outside the car"),year:2024},
+  {caption:pair("绝命毒师","Breaking Bad"),year:2024},
+  {caption:pair("小丑1","Joker 1"),year:2024},
+  {caption:pair("绝命毒师","Breaking Bad"),year:2024},
   {caption:pair("暮色雪山","Snowy mountain at dusk"),year:2024},
-  {caption:pair("荒漠探索","Desert exploration"),year:2024},
+  {caption:pair("火星救援","The Martian"),year:2024},
   {caption:pair("光束与烟雾","A beam of light and smoke"),year:2024},
-  {caption:pair("舞台光下的人物","A figure in stage light"),year:2024}
+  {caption:pair("爆裂鼓手","Whiplash"),year:2024}
  ].map((p,i)=>({...p,width:800,height:[400,335,565,335,335,335,335,335,335,800,335,335,335,335,335,559,335,800,335][i],image:'assets/speed-paintings/study-'+String(i+1).padStart(2,'0')+'.webp',thumbnail:'assets/speed-paintings/study-'+String(i+1).padStart(2,'0')+'-small.webp'}));
  entries.push({id:'speed-paintings',kind:'paintings',title:pair('我的速涂','My speed paintings'),date:'2024 — 2025',paintings});
  pair('我的','My');pair('速涂','Speed paintings');pair('一些人物、场景与光影的速涂记录。','Speed painting studies of people, environments, light and shadow.');
