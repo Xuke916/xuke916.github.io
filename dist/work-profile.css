@@ -20,7 +20,7 @@
 .wp-layout{padding-top:55px;padding-bottom:50px;border-top:1px solid #ffffff1a}
 .wp-motion:not(.is-entered) .wp-display>strong{transform:translateY(-12%);clip-path:inset(0 0 100% 0)}
 .wp-motion .wp-display>strong{color:#f3f3eb;transition:transform .85s cubic-bezier(.22,.7,.2,1) .12s,clip-path .85s cubic-bezier(.22,.7,.2,1) .12s}
-.wp-on-draw{fill:none;stroke:#fff;stroke-width:60;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
+.wp-on-draw{fill:none;stroke:#fff;stroke-width:130;stroke-linecap:butt;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0}
 .wp-motion:not(.is-entered) .wp-on-draw{stroke-dashoffset:1}
 .wp-motion.is-entered .wp-on-draw{transition:stroke-dashoffset .55s cubic-bezier(.3,.05,.4,1)}
 .wp-motion.is-entered .wp-on-draw-n{transition-delay:.32s;transition-duration:.5s}

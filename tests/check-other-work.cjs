@@ -15,7 +15,7 @@ assert.equal(host.querySelectorAll('[data-ow-art]').length,5);
 for(const drawing of api.entries[0].drawings)for(const source of [drawing.image,drawing.thumbnail])assert.ok(fs.statSync(path.join(dist,source)).size>1000);
 const paintings=api.entries.at(-1).paintings;
 assert.equal(host.querySelector('.ow-paintings h2').getAttribute('aria-label'),'我的速涂');
-assert.equal(host.querySelectorAll('[data-ow-painting]').length,19);
+assert.equal(host.querySelectorAll('[data-ow-painting]').length,20);
 assert.equal(host.querySelectorAll('.ow-toc button').length,5);
 for(const painting of paintings)for(const source of [painting.image,painting.thumbnail])assert.ok(fs.statSync(path.join(dist,source)).size>1000);
 const original=host.textContent;
