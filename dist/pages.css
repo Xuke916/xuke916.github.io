@@ -119,7 +119,7 @@
 
 /* Life uses a light page surface; both collections share the same blue accent. */
 .detail-mode{--detail-surface:#111}
-.detail-mode.detail-light{background:#fafbf8;color:#0a2447;--detail-surface:#fafbf8}
+.detail-mode.detail-light{--paper:#f3f2e9;--detail-surface:var(--paper);background:var(--paper);color:#0a2447}
 .detail-light .detail-pages{background:var(--detail-surface);color:#0a2447;--detail-border:#0a244725;--detail-muted:#647892}
 .detail-light .site-header{color:var(--header-color)}
 .detail-light .detail-back,.detail-light .detail-top-label,.detail-light .detail-section-kicker,.detail-light .detail-story-bottom,.detail-light .projects-wheel-hint{color:#647892}
