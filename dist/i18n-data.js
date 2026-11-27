@@ -25,7 +25,7 @@ window.PORTFOLIO_EN = {
   "带玻璃罩与暖光的木质展柜概念": "Wooden display cabinet concept with a glass case and warm lighting",
   "道具概念｜木质展柜、玻璃罩与暖色照明。": "Prop concept | Wooden display cabinet, glass case and warm lighting.",
   "放大当前照片": "Enlarge the current photo",
-  "球场之外": "BEYOND THE FIELD",
+  "设计之外": "BEYOND THE DESIGN",
   "日常之中": "IN EVERYDAY LIFE",
   "跳转至章节导航": "Skip to chapter navigation",
   "向上滑动 · 开始探索": "Swipe up · Explore",
