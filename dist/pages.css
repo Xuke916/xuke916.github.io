@@ -211,3 +211,15 @@
 @media(max-width:600px){.detail-route[data-project-layout="covers"] .work-project-list{padding:65px 7vw 80px}.work-project-list .projects-heading h2{font-size:38px}.work-project-list .project-track{gap:48px}.work-project-list .project-panel{padding-bottom:38px}.work-project-list .projects-controls{margin-bottom:35px;gap:12px}.work-project-list .project-dots{gap:6px}.work-project-list .project-dots>button{font-size:11px;padding:8px 11px}.work-project-list .project-summary{font-size:15px}.detail-route[data-project-layout="covers"] .work-project-list .project-panel-title{margin-top:20px}}
 
 .projects-disclosure{margin-top:28px;padding:22px 26px;border:1px solid #1e90ff66;border-left:4px solid #1e90ff;background:#152235;max-width:880px;color:#f3f3eb}.projects-disclosure>span{display:block;color:#8cc6ff;font:700 12px/1.5 Arial,sans-serif;letter-spacing:.08em;margin-bottom:10px}.projects-disclosure p{font:400 clamp(16px,1.35vw,22px)/1.65 Arial,'Microsoft YaHei',sans-serif;margin:0}.projects-disclosure strong{display:block;font-weight:700;color:#f3f3eb}@media(max-width:600px){.projects-disclosure{padding:18px;margin-top:22px}.projects-disclosure p{font-size:16px}}
+
+/* Other work: Mercedes stays in front, with three narrow covers behind its right edge. */
+.other-cover-stack{position:absolute;inset:0;display:block;isolation:isolate}
+.work-project-list .project-art-main .other-cover-layer{position:absolute;inset:auto;left:calc(var(--cover-depth)*6%);top:calc(12% - var(--cover-depth)*4%);width:82%;height:82%;z-index:calc(4 - var(--cover-depth));overflow:hidden;box-shadow:8px 8px 22px #0007;border:1px solid #b6d5f333;transition:border-color .3s ease}
+.project-art-main .other-cover-front{border-color:#b6d5f34d}
+.project-art-main .other-cover-front>.detail-image{position:absolute;inset:0;width:100%;height:100%}
+.project-art-main .other-cover-layer>img{width:100%;height:100%;object-fit:cover;filter:brightness(.83);transform:none}
+.project-art-other-stack:hover .detail-image>img{transform:none}
+.project-art-other-stack:is(:hover,:focus-visible) .other-cover-layer{border-color:var(--accent)}
+@media(max-width:600px){.work-project-list .project-art-main .other-cover-layer{box-shadow:4px 4px 12px #0007}}
+
+.other-cover-layer[aria-hidden]::after{display:none}

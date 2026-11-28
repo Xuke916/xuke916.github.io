@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '../dist');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-function boot(width, height, reduce = false, initialHash = '', settle = true) {
+function boot(width, height, reduce = false, initialHash = '', settle = true, withOtherWork = false) {
   const dom = new JSDOM(html, { runScripts: 'outside-only', url: 'https://portfolio.test/' + initialHash, pretendToBeVisual: true });
   const w = dom.window, d = w.document;
   let y = 0, clock = 0, id = 0, queue = new Map();
@@ -21,6 +21,7 @@ function boot(width, height, reduce = false, initialHash = '', settle = true) {
   w.HTMLDialogElement.prototype.close = function () { this.open = false; this.dispatchEvent(new w.Event('close')); };
   w.eval(fs.readFileSync(path.join(root, 'content.js'), 'utf8'));
   w.eval(fs.readFileSync(path.join(root, 'app.js'), 'utf8'));
+  if(withOtherWork)w.eval(fs.readFileSync(path.join(root, 'other-work.js'), 'utf8'));
   w.eval(fs.readFileSync(path.join(root, 'pages.js'), 'utf8'));
   function flush() { for (let i = 0; queue.size && i < 1500; i++) { const jobs = [...queue.values()]; queue.clear(); clock += 16.667; jobs.forEach(cb => cb(clock)); } assert.equal(queue.size, 0, 'animation converges'); }
   function scroll(t) { w.scrollTo(0, t * height / 1.5); flush(); }
@@ -306,3 +307,14 @@ for(const [width,height] of [[2743,1306],[3840,1829],[1920,700],[390,844]]){
  }
 }
 console.log('PASS complete social follow bounds at wide, short and mobile sizes on both routes');
+
+for(const [width,height] of [[1600,900],[390,844]]){
+ const {w,d,flush}=boot(width,height,false,'#work',true,true);
+ const cover=d.querySelector('.project-art-other-stack'),front=cover.querySelector('.other-cover-front img');
+ assert.ok(front.src.endsWith('/assets/video-covers/mercedes.webp'),'selected Mercedes art is the front cover');
+ const backs=[...cover.querySelectorAll('.other-cover-layer[aria-hidden] img')];
+ assert.deepEqual(backs.map(el=>el.getAttribute('src')),['assets/video-covers/drill.webp','assets/video-covers/anchor.webp','assets/video-covers/popmart-group.webp']);
+ assert.equal(cover.getAttribute('href'),'#work/other-work');cover.click();flush();
+ assert.equal(w.location.hash,'#work/other-work');assert.ok(d.querySelector('.other-work-case'),'the whole stack opens the existing Other work page');w.close();
+}
+console.log('PASS Other work cover: Mercedes front, three right-hand layers and working detail navigation');
