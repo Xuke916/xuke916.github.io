@@ -242,14 +242,14 @@ for(const route of ['', '#work', '#life', '#work/project-03'])for(const fps of [
  const {w,advance,flush}=boot(1600,900,false,route);
  w.dispatchEvent(new w.WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true}));
  let elapsed=0,t95=null;const samples=[];
- for(let i=0;i<fps*.6;i++){advance(1000/fps);elapsed+=1000/fps;if((i+1)%(fps/10)===0)samples.push(w.scrollY);if(t95===null&&w.scrollY>=162*.95)t95=elapsed;}
- assert.ok(t95>=400&&t95<=475,'wheel has a gentle settling tail without a long drift');
- assert.ok(samples[0]>65,'the first wheel impulse still responds promptly');
+ for(let i=0;i<fps*.9;i++){advance(1000/fps);elapsed+=1000/fps;if((i+1)%(fps/10)===0)samples.push(w.scrollY);if(t95===null&&w.scrollY>=162*.95)t95=elapsed;}
+ assert.ok(t95>=600&&t95<=680,'wheel keeps the requested longer settling tail');
+ assert.ok(samples[0]>50,'the longer glide still responds to the first wheel impulse');
  assert.ok(samples[3]-samples[1]>15,'the picture continues gliding after input stops');
  assert.ok(samples[3]-samples[2]<samples[2]-samples[1],'the trailing movement decelerates');
  frameSamples.push(w.scrollY);
  flush();assert.equal(w.scrollY,162,'inertia preserves the requested distance and fully settles');
- console.log(`PASS ${route||'home'} ${fps}Hz: gentle tail, 95% in ${Math.round(t95)}ms, exact stop`);w.close();
+ console.log(`PASS ${route||'home'} ${fps}Hz: longer tail, 95% in ${Math.round(t95)}ms, exact stop`);w.close();
 }
 for(let i=0;i<frameSamples.length;i+=2)assert.ok(Math.abs(frameSamples[i]-frameSamples[i+1])<.5,'high-refresh and standard displays follow the same motion curve');
 for (const file of ['styles.css', 'content.js', 'app.js', 'pages.js', 'pages.css']) assert.ok(fs.statSync(path.join(root, file)).size > 0);

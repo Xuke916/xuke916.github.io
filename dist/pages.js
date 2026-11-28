@@ -9,7 +9,7 @@
   const root = $('#detail-pages'), home = $('#experience');
   const overlay = $('.route-transition'), cutout = $('.route-cutout'), echo = $('.route-mark-echo');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const SCROLL_DAMPING_MS = 145;
+  const SCROLL_DAMPING_MS = 210;
   const progress = $('.scroll-progress>span'), dialog = $('.image-dialog');
   let route = 'home', busy = false, frame = 0, transitionFrame = 0, lastTime = 0;
   let position = 0, target = 0, written = 0, jump = null, menuPaused = false;
