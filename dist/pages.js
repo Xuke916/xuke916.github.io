@@ -83,7 +83,7 @@
     const content=window.PORTFOLIO_CONTENT,life=content.pages.life,profile=life.profile;
     const library=[...life.team.items,...life.projects].flatMap(group=>group.photos);
     library.push({image:profile.heroPhoto,thumbnail:profile.heroPhotoSmall,width:profile.heroPhotoWidth,height:profile.heroPhotoHeight,alt:profile.heroPhotoAlt});
-    const photos=content.socialPhotos.map(image=>library.find(photo=>photo.image===image));
+    const photos=content.socialPhotos.map(item=>typeof item==='string'?library.find(photo=>photo.image===item):item);
     return `<section class="detail-section socials-section" data-detail-section="socials" aria-label="WHAT'S UP ON SOCIALS"><div class="socials-inner">
       <svg class="socials-emblem" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17"/><path d="M11 6c16 9-2 19 13 30M22 3c-7 16 19 17 9 30"/></svg>
       <h2 class="socials-title"><span class="social-title-line"><strong class="footer-reveal-word" style="--word-index:0">WHAT'S UP</strong></span><span class="social-title-line"><em class="footer-reveal-word" style="--word-index:1">ON SOCIALS</em></span></h2>
