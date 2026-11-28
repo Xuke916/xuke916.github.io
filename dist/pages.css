@@ -212,14 +212,12 @@
 
 .projects-disclosure{margin-top:28px;padding:22px 26px;border:1px solid #1e90ff66;border-left:4px solid #1e90ff;background:#152235;max-width:880px;color:#f3f3eb}.projects-disclosure>span{display:block;color:#8cc6ff;font:700 12px/1.5 Arial,sans-serif;letter-spacing:.08em;margin-bottom:10px}.projects-disclosure p{font:400 clamp(16px,1.35vw,22px)/1.65 Arial,'Microsoft YaHei',sans-serif;margin:0}.projects-disclosure strong{display:block;font-weight:700;color:#f3f3eb}@media(max-width:600px){.projects-disclosure{padding:18px;margin-top:22px}.projects-disclosure p{font-size:16px}}
 
-/* Other work: Mercedes stays in front, with three narrow covers behind its right edge. */
-.other-cover-stack{position:absolute;inset:0;display:block;isolation:isolate}
-.work-project-list .project-art-main .other-cover-layer{position:absolute;inset:auto;left:calc(var(--cover-depth)*6%);top:calc(12% - var(--cover-depth)*4%);width:82%;height:82%;z-index:calc(4 - var(--cover-depth));overflow:hidden;box-shadow:8px 8px 22px #0007;border:1px solid #b6d5f333;transition:border-color .3s ease}
-.project-art-main .other-cover-front{border-color:#b6d5f34d}
-.project-art-main .other-cover-front>.detail-image{position:absolute;inset:0;width:100%;height:100%}
-.project-art-main .other-cover-layer>img{width:100%;height:100%;object-fit:cover;filter:brightness(.83);transform:none}
+/* Other work: one rectangular cover, with center-cropped video strips on the right. */
+.other-cover-stack{position:absolute;inset:0;display:block;overflow:hidden;isolation:isolate;border:1px solid #b6d5f333;transition:border-color .3s ease}
+.work-project-list .project-art-main .other-cover-layer{position:absolute;inset:auto;left:calc(76% + (var(--cover-depth) - 1)*8%);top:0;width:8%;height:100%;overflow:hidden;border:0;box-shadow:none}
+.work-project-list .project-art-main .other-cover-front{left:0;width:76%}
+.project-art-main .other-cover-front>.detail-image{position:absolute;inset:0;width:100%;height:100%;border:0}
+.project-art-main .other-cover-layer>img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;transform:none}
 .project-art-other-stack:hover .detail-image>img{transform:none}
-.project-art-other-stack:is(:hover,:focus-visible) .other-cover-layer{border-color:var(--accent)}
-@media(max-width:600px){.work-project-list .project-art-main .other-cover-layer{box-shadow:4px 4px 12px #0007}}
-
-.other-cover-layer[aria-hidden]::after{display:none}
+.project-art-other-stack:is(:hover,:focus-visible) .other-cover-stack{border-color:var(--accent)}
+.other-cover-layer[aria-hidden]::after,.other-cover-front>.detail-image::after{display:none}
